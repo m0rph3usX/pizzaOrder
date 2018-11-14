@@ -1,0 +1,5 @@
+<?php
+
+$datenbank = 'data.db';
+
+?>

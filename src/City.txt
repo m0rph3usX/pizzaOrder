@@ -1,0 +1,52 @@
+1;Döner;im Fladenbrot;4.50
+1.1;Döner Spezial; mit Pommes im Döner;5.00
+2;Döner;Döner im Yufka;5.00
+2.1;Yufka;Spezial mit Pommes im Yufka;5.50
+3;Döner; vegetarischer Döner;4.50
+3.1;Vegetarischer Yufka;vegetarisch;5.00
+4;Döner Teller;mit Pommes oder Reis und Salat;7.50
+5;Iskender Kebap;Dönerfleisch, Knoblauch-Joghurt und Tomatensoße;8.00
+6;Pom Döner;Dönerfleisch mit Pommes und Knoblauch-Joghurtsoße;5.00
+7;Lahmacun;mit Hackfleisch und Salat;5.00
+8;Kiymali Pide;mit Hackfleisch und Ei;7.00
+9;Peynirli Pide;Weichkäse und Tomaten;6.50
+10;Gemischte Pide;Dönerfleisch, Tomatensoße und Paprika;7.00
+11;Spinat und Ei Pide;mit zartem Spinat und frischem Ei;7.00
+12;Vegetarische Seele;mit Käse, Zwiebeln, Pilzen, Paprika und Tomatensoße;7.00
+13;Schinken-Salami Seele;mit Käse und Tomatensoße;7.00
+14;Döner Seele; mit Käse, Zwiebeln, Dönerfleisch und Tomatensoße;7.00
+15;City Seele;mit Käse, Schinken, Salami, Champignons und Tomatensoße;7.00
+16;Fladenbrot;-;1.50
+24;Pizza Margherita;mit Tomaten und Käse ;5.50
+25;Pizza Salami;mit Tomaten, Käse und Salami ;6.00
+26;Pizza Prosciutto; mit Tomaten, Käse und Vorderschinken;6.00
+27;Pizza Champignon; mit Tomaten, Käse und Pilzen;6.00
+28;Pizza Paprika; mit Tomaten, Käse und Paprika;6.00
+29;Pizza Thunfisch;mit Tomaten, Käse, Zwiebeln und Thunfisch ;7.00
+30;Pizza Sophia Loren;mit Tomaten, Käse, Vorderschinken und Ei;7.00
+31;Pizza Hawaii;mit Tomaten, Käse, Vorderschinken und Ananas ;7.00
+32;Pizza Mozzarella;mit Tomatensoße, Käse, Mozzarella und frischen Tomaten;7.00
+33;Pizza Schinken-Salami;mit Tomaten, Käse, Vorderschinken und Salami;7.00
+34;Pizza Peperoni;mit Tomaten, Käse und Peperoni;6.00
+35;Pizza Meggi;mit Tomaten, Käse, Champignon, Vorderschinken und Kräuterbutter;7.50
+36;Pizza Döner;mit Tomaten, Käse und Dönerfleisch;7.50
+37;Pizza Gemischt;mit Tomaten, Käse, Vorderschinken, Salami und Paprika;7.00
+38;Pizza Vegetarisch;mit Tomaten, Käse, Paprika, Pilzen und Gemüse;7.00
+39;Pizza Napoli;mit Tomaten, Käse, Pilzen, Peperoni und Oliven;6.50
+40;Pizza Regina;mit Tomaten, Käse, Vorderschinken und Champignon;6.50
+41;Pizza Sardellen;mit Tomaten, Käse und Sardellen;7.00
+42;Pizza Quattro Stagioni;mit Tomaten, Käse, Pilzen, Vorderschinken, Salami und Peperoni;7.50
+43;Pizza Meeresfrüchte;mit Tomaten, Käse und Meeresfrüchten;8.00
+44;Pizza City Pizza;mit Tomaten, Käse, Mais, Zwiebeln, Peperoni und Pilzen;7.00
+45;Pizza Salami Pilze;mit Tomaten, Käse, Salami und Pilzen;6.50
+46;Pizza Florenz;mit Tomaten, Käse, Paprika, Salami und Zwiebeln;7.00
+47;Pizza Dersim;mit Tomaten, Käse, Salami, Vorderschinken und Pilzen;7.00
+48;Pizza Kalan;mit Tomaten, Käse, Hackfleisch und Zwiebeln;7.00
+49;Pizza Artischocken;mit Tomaten, Käse und Artischocken;6.50
+50;Pizza Quattro Formaggi; vier versch. Käsesorten;7.50
+51;Pizza Popeye;mit Tomaten, Käse und Spinat;6.50
+52;Pizza Sucuk;mit Tomaten, Käse, Sucuk und Pilzen;7.50
+20;Bauernsalat;mit Tomaten, Zwiebeln, Gurken, Schafskäse und Oliven;5.50
+21;Thunfischsalat;mit Kopfsalat, Thunfisch, Gurken und Tomaten;5.50
+22;Gemischter Salat;-;4.50
+23;Grüner Salat;-;4.50

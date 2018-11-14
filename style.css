@@ -1,0 +1,46 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 26.11.2017, 10:58:04
+    Author     : X
+*/
+
+
+form                     {border:0px solid #666;margin: 0px;}
+
+div.userCntrl            {border:1px solid #666;margin: 0px;}
+
+
+div.currentOrder         {background-color: yellow; border:1px; margin: 0px;}
+div.currentOrderRow      {background-color: transparent; border:1px; solid: #666;margin: 0px;}
+
+div.pollQuery            {border:1px; solid: #666;margin: 0px;}
+
+div.orderList            {border:1px; solid: #666;margin: 0px;}
+div.orderItem            {border:1px; solid: #666;margin: 0px;}
+div.orderItem:hover      {border:1px; solid: #000;margin: 0px;}
+
+span.orderItemButton      {display: inline-block; width: 80px; border:0px; margin: 0px;}
+span.orderItemNr          {display: inline-block; width: 50px; border:0px; margin: 0px;}
+span.orderItemName        {display: inline-block; width:200px; border:0px; margin: 0px;}
+span.orderItemIngredients {display: inline-block; width:500px; border:0px; margin: 0px;}
+span.orderItemPrice       {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
+
+
+span.currentOrderBlank  {display: inline-block; width: 80px; border:0px; margin: 0px;}
+span.currentOrderNr     {display: inline-block; width: 50px; border:0px; margin: 0px;}
+span.currentOrderName   {display: inline-block; width:200px; border:0px; margin: 0px;}
+/*span.currentOrderComment{display: inline-block; width:500px; border:0px; margin: 0px;}*/
+span.currentOrderLogin  {display: inline-block; width:500px; border:0px; margin: 0px;}
+span.currentOrderPrice  {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
+
+
+div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
+div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; text-align: center}
+/*span.currentOrderItem    {display: inline-block; height: 100; width: 80px; border:0px; margin: 0px;}*/
+
+div.adminCntrlRow     {background-color: greenyellow; border:2px; margin: 0px;}
+span.adminCntrlItem   {display: inline-block; width:200px; border:0px; margin: 0px;}
