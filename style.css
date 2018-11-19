@@ -26,17 +26,21 @@ div.orderItem:hover      {border:1px; solid: #000;margin: 0px;}
 span.orderItemButton      {display: inline-block; width: 80px; border:0px; margin: 0px;}
 span.orderItemNr          {display: inline-block; width: 50px; border:0px; margin: 0px;}
 span.orderItemName        {display: inline-block; width:200px; border:0px; margin: 0px;}
-span.orderItemIngredients {display: inline-block; width:500px; border:0px; margin: 0px;}
+span.orderItemIngredients {display: inline-block; width:400px; border:0px; margin: 0px;}
 span.orderItemPrice       {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
 
 
 span.currentOrderBlank  {display: inline-block; width: 80px; border:0px; margin: 0px;}
-span.currentOrderNr     {display: inline-block; width: 50px; border:0px; margin: 0px;}
-span.currentOrderName   {display: inline-block; width:200px; border:0px; margin: 0px;}
-/*span.currentOrderComment{display: inline-block; width:500px; border:0px; margin: 0px;}*/
-span.currentOrderLogin  {display: inline-block; width:500px; border:0px; margin: 0px;}
+span.currentOrderNr     {display: inline-block; width: 30px; border:0px; margin: 0px; text-align: right}
+span.currentOrderName   {display: inline-block; width:150px; border:0px; margin: 0px;}
+span.currentOrderComment{display: inline-block; width:300px; border:0px; margin: 0px;}
+span.currentOrderLogin  {display: inline-block; width:100px; border:0px; margin: 0px;}
 span.currentOrderPrice  {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
+span.orderIsPaid        {display: inline-block; width: 80px; border:0px; margin: 0px;}
 
+span.sumUpTxt           {display: inline-block; width: 820px; border:0px; margin: 0px; text-align: right}
+span.sumUpPrice         {display: inline-block; width:  80px; border:0px; margin: 0px; text-align: right}
+span.sumUpOrder         {display: inline-block; width: 300px; border:0px; margin: 0px; text-align: left}
 
 div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
 div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; text-align: center}
@@ -44,3 +48,14 @@ div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; 
 
 div.adminCntrlRow     {background-color: greenyellow; border:2px; margin: 0px;}
 span.adminCntrlItem   {display: inline-block; width:200px; border:0px; margin: 0px;}
+
+#myProgress {
+    width: 100%;
+    background-color: grey;
+}
+
+#myBar {
+    width: 1%;
+    height: 30px;
+    background-color: green;
+}

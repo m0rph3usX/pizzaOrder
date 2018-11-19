@@ -1,6 +1,7 @@
+# when coming from an older version: execute setup.php to update current database
+
 # pizzaOrder
 php script to allow user ordering pizza
-
 
 Step 1: copy sources to "src" directory as txt files.
 

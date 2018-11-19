@@ -5,6 +5,95 @@
 
 <?php
 
+
+function updateDatabaseToV0_06()
+{
+
+ include 'config.php';
+// include 'utils.php';
+
+
+ $db = new PDO('sqlite:' . $datenbank);
+
+
+ // update cntrl table
+ $db-> exec("INSERT INTO `cntrl` (type, value) VALUES (
+              'version', 0.6)");
+ 
+// update supplier table 
+ $db-> exec("ALTER TABLE supplier ADD phoneNumber char(255);");
+ $db-> exec("ALTER TABLE supplier ADD minAmount DOUBLE;");
+ $db-> exec("ALTER TABLE supplier ADD discountThreshold DOUBLE;");
+ $db-> exec("ALTER TABLE supplier ADD discountPercent DOUBLE;");
+ 
+ // update orderDetail table 
+ $db-> exec("ALTER TABLE orders RENAME TO orderDetail");
+ $db-> exec("ALTER TABLE orderDetail ADD supplierCard_ID INTEGER;");
+ $db-> exec("ALTER TABLE orderDetail ADD comment char(255);");
+ $db-> exec("ALTER TABLE orderDetail ADD isPaid INTEGER;");
+ $db-> exec("ALTER TABLE orderDetail ADD Price DOUBLE;");
+ 
+ 
+  // update orderDetail table 
+  $db-> exec("CREATE TABLE `orders` (      
+      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+      `supplier_ID` INTEGER,
+      `user_ID` INTEGER,
+      `state` INTEGER,
+      `timeStampStarted` INTEGER,
+      `timeStampFreezing` INTEGER,
+      `timeStampReceive` INTEGER,
+      FOREIGN KEY(supplier_ID) REFERENCES supplier(id),
+      FOREIGN KEY(user_ID) REFERENCES user(id))");  
+    
+ $sql = "SELECT value FROM cntrl WHERE type = 'userWhoIsOrdering'";
+
+ $userId = -1;
+ foreach ($db->query($sql) as $row) {
+     $userId = $row['value'];
+ }
+
+ $sql = "SELECT value FROM cntrl WHERE type = 'orderState'";
+ $state = -1;
+ foreach ($db->query($sql) as $row) {
+     $state = $row['value'];
+ }
+ 
+ $sql = "SELECT id FROM supplier WHERE active = 1";
+ $supplierId = -1;
+ foreach ($db->query($sql) as $row) {
+     $supplierId = $row['id'];
+ }
+       
+  // link orders and orderDetail              
+  $db-> exec("UPDATE orderDetail SET `order_ID`= 1");  
+  $db-> exec("INSERT INTO `orders` (supplier_ID, user_ID, state) VALUES (".
+             $supplierId . " , " . $userId . " , " .  $state . ")");    
+}
+
+function updateDatabase()
+{
+ include 'config.php';
+ include 'utils.php';
+
+ 
+ $db = new PDO('sqlite:' . $datenbank);
+ 
+ $sql = "SELECT value FROM cntrl WHERE type = 'version'";
+ 
+ $version = 0;
+ foreach ($db->query($sql) as $row) {
+//     $version = $row['type'];
+     $version = $row['value'];
+ }
+ 
+// echo $version;
+ if($version == 0){
+    updateDatabaseToV0_06();
+ }
+ 
+}
+
 function createNewDB($user, $passwordHash)
 {
  include 'config.php';
@@ -272,7 +361,7 @@ function showAdminPanel()
 {
 //    echo "BLA5";
     include 'config.php';
-    include 'utils.php'; 
+//    include 'utils.php'; 
     
 //    echo "BLA6";
     $userid = $_SESSION['userid'];
@@ -296,19 +385,10 @@ function showAdminPanel()
         echo "</div>";        
     }
 //    echo "BLA7";
-    if(isAdmin() == 1)
-    {
-
-//    echo "BLA8";
+    if(isAdmin() == 1){
        showControlGrid();
-       
-//       echo "BLA9";
        showUsers();
-//       echo "BLA10";
     }
-     
-// 
-//    $db-> exec("CREATE TABLE `user` (     
 }
 
 
@@ -483,6 +563,8 @@ else {
 
 // showUserLogin();
  //echo "BLA3";
+
+ updateDatabase();
  showAdminPanel();    
  //echo "BLA4";
 }
