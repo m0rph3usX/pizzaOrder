@@ -31,7 +31,7 @@ function updateDatabaseToV0_06()
  $db-> exec("ALTER TABLE orderDetail ADD supplierCard_ID INTEGER;");
  $db-> exec("ALTER TABLE orderDetail ADD comment char(255);");
  $db-> exec("ALTER TABLE orderDetail ADD isPaid INTEGER;");
- $db-> exec("ALTER TABLE orderDetail ADD Price DOUBLE;");
+ $db-> exec("ALTER TABLE orderDetail ADD price DOUBLE;");
  
  
   // update orderDetail table 
@@ -52,19 +52,26 @@ function updateDatabaseToV0_06()
  foreach ($db->query($sql) as $row) {
      $userId = $row['value'];
  }
-
+ $userId = 1;
  $sql = "SELECT value FROM cntrl WHERE type = 'orderState'";
  $state = -1;
- foreach ($db->query($sql) as $row) {
-     $state = $row['value'];
+ 
+ if(is_array($db->query($sql)) || is_object($db->query($sql))){
+     foreach ($db->query($sql) as $row) {
+         $state = $row['value'];
+    }
  }
+ 
  
  $sql = "SELECT id FROM supplier WHERE active = 1";
  $supplierId = -1;
- foreach ($db->query($sql) as $row) {
-     $supplierId = $row['id'];
+ if(is_array($db->query($sql)) || is_object($db->query($sql))){
+     foreach ($db->query($sql) as $row) {
+        $supplierId = $row['id'];
+    }
  }
-       
+ 
+  if(($supplierId != -1) && ($state != -1))
   // link orders and orderDetail              
   $db-> exec("UPDATE orderDetail SET `order_ID`= 1");  
   $db-> exec("INSERT INTO `orders` (supplier_ID, user_ID, state) VALUES (".
@@ -359,11 +366,12 @@ function showUsers()
 
 function showAdminPanel()
 {
-//    echo "BLA5";
     include 'config.php';
-//    include 'utils.php'; 
+
+    if(!isset($_SESSION['userid'])) {
+        die;
+    }
     
-//    echo "BLA6";
     $userid = $_SESSION['userid'];
     $db = new PDO('sqlite:' . $datenbank);
     
@@ -384,7 +392,6 @@ function showAdminPanel()
             echo "Daten gespeichert";
         echo "</div>";        
     }
-//    echo "BLA7";
     if(isAdmin() == 1){
        showControlGrid();
        showUsers();
@@ -542,32 +549,15 @@ function showAdminUserData()
     echo "</div>";                                               
 }
 
-
-
-//function main()
-//{
 include 'config.php';
-//include 'utils.php';
-// Datenbank-Datei erstellen
 if (!file_exists($datenbank)) {
- //echo "BLA1";
  showAdminUserData();       
- //echo "BLA2";
-     
-
+}     
+else{
+    updateDatabase();
+    showAdminPanel();    
 }
-else {
- // Verbindung
-// $db = new PDO('sqlite:' . $datenbank);
-// echo 'Datenbank existiert bereits!';
 
-// showUserLogin();
- //echo "BLA3";
-
- updateDatabase();
- showAdminPanel();    
- //echo "BLA4";
-}
 
 
 

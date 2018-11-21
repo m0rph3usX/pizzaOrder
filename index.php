@@ -28,16 +28,8 @@ showOrderStarted();
     echo "</head>";
     echo "<body>";       
                               
-            $db = new PDO('sqlite:' . $datenbank);    
-//            $sql = "SELECT value FROM cntrl WHERE type = 'orderState'";
-            $sql = "SELECT state FROM orders WHERE state < 3";
-                        
-            foreach ($db->query($sql) as $row) {
-//                $orderState = $row['value'];
-                $orderState = $row['state'];
-            }      
-        
-//            echo $orderState;
+
+        echo getOrderState();
         switch (getOrderState()) {
             case 0:
                 orderNotStarted();
