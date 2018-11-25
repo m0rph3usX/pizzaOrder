@@ -1,30 +1,3 @@
-<!--function move() {
-    var elem = document.getElementById("myBar");
-    var width = 10;
-    var id = setInterval(frame, 10);
-    
-    var dateTime = new Date;
-    var dateTimeEnd = new Date;
-    
-    dateTime = dateTime - dateTime.getHours() - dateTime.getMinutes() - dateTime.getSeconds() - dateTime.getMilliseconds();    
-    dateTime.getMonth() = new Date('Jul 15 01:30:00 2001');
-
-    this.setTime(this.getTime() + (h*60*60*1000)); 
-    
-    function frame() {
-        datetime = Date.now();
-        if (width >= 100) {
-            clearInterval(id);
-        } else {
-            width++;
-            elem.style.width = width + '%';
-            elem.innerHTML   = width * 0.1 + '%';
-//            elem.innerHTML   = datetime;
-        }
-    }
-} 
-</script>-->
-
 <?php
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -40,7 +13,7 @@ function getCurrentSupplierId()
     $db = new PDO('sqlite:' . $datenbank);    
     $sql = "SELECT supplier_ID FROM orders WHERE state < 3";
     foreach ($db->query($sql) as $row) {       
-        $supplier_ID = $row['supplier_ID'];       
+        echo $supplier_ID = $row['supplier_ID'];       
     }    
     return $supplier_ID;
 }
@@ -211,7 +184,7 @@ function showOrderRefreshed()
             }
             
             
-            $orderId = getCurrentOrderId();
+            $orderId = getCurrentOrderId();            
             $price   = $_POST['supplierCard_price'];
             
             $supplierID = getCurrentSupplierId();
@@ -233,7 +206,6 @@ function showOrderRefreshed()
             $db-> exec($sql);
                     
             $orderId = getCurrentOrderId();
-//            $db-> exec("UPDATE cntrl SET `value` = 2 WHERE `type` = 'orderState'");
             $db-> exec("UPDATE orders SET `state` = 2 WHERE `id` = " . $orderId );
             echo "Bestellung wurde geschlossen! <br>";
         }
@@ -275,7 +247,7 @@ function showOrderRefreshed()
         $db-> exec("INSERT INTO orders
                       (supplier_ID, user_ID, state)                         
                        VALUES ( " .
-                       "0, " . $userid . ", 1 )");
+                       "0, " . $userid . ", 0 )");
         
         echo "Bestellung wurde neu gestartet! <br>";
     }
@@ -315,38 +287,21 @@ function showOrderStarted()
 {
     include 'config.php';
     $userid = $_SESSION['userid'];
-    
-//    if(isset($_GET['pollSubmit'])) { 
-//        // neue Bestellung anlegen
-//        $db = new PDO('sqlite:' . $datenbank);         
-//        $supplierID = $_POST['supplier'];
-//
-//        $db-> exec("UPDATE cntrl SET `value` = 1 WHERE `type` = 'orderState'");
-//
-//        $db-> exec("UPDATE supplier SET `active` = 0");
-//        $db-> exec("UPDATE supplier SET `active` = 1 WHERE id = " . $supplierID);
-//
-//        $db-> exec( "UPDATE cntrl SET `value`= ". $userid ." WHERE `type` ='userWhoIsOrdering'");
-//
-//        echo "Bestellung wurde gestartet! <br>";
-//    }    
-    
+  
 
     
-        if(isset($_GET['pollSubmit'])) { 
-            // neue Bestellung anlegen
-            $db = new PDO('sqlite:' . $datenbank);         
-            $supplierID = $_POST['supplier'];
-            $orderId = getCurrentOrderId();
+    if(isset($_GET['pollSubmit'])) { 
+        // neue Bestellung anlegen
+        $db = new PDO('sqlite:' . $datenbank);         
+        $supplierID = $_POST['supplier'];
+        $orderId = getCurrentOrderId();
 
-//            $db-> exec("UPDATE orders SET `supplier_ID` = " .$supplierID ." WHERE `id` = ". $orderId);
-            
-            $db-> exec("INSERT INTO orders
-                        (supplier_ID, user_ID, state)                         
-                       VALUES ( " .
-                       $supplierID . ",". $userid . ", 1 )");           
-            echo "Bestellung wurde gestartet! <br>";
-        }    
+        $db-> exec("INSERT INTO orders
+                    (supplier_ID, user_ID, state)                         
+                   VALUES ( " .
+                   $supplierID . ",". $userid . ", 1 )");           
+        echo "Bestellung wurde gestartet! <br>";
+    }    
 }
 
 function orderNotStarted()
@@ -389,19 +344,18 @@ function showOrderItems()
            
            $orderId = getCurrentOrderId();
            
-           $sql = "SELECT supplier.id, supplier.name FROM supplier, orders WHERE orders.id = " .$orderId;
-
+           $sql = "SELECT supplier_ID, supplier.name FROM orders INNER JOIN supplier ON orders.supplier_ID = supplier.id WHERE (orders.id = " . $orderId .")";
+           
+           
            foreach ($db->query($sql) as $row) {
 
-               $supplier_ID = $row['id'];
+               $supplier_ID = $row['supplier_ID'];
 
-               $supplierName = $row['name'];
-               $supplierSelect = $supplier_ID;                                
+               $supplierName = $row['name'];               
            }
-
-           echo "<br><center> Speisekarte: </center><br>";
-
-           $sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " .$supplierSelect;
+                      
+           
+           $sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " .$supplier_ID;
 
            echo "<div class='orderItem'>";
                echo "<span class='orderItemButton'>";               
@@ -467,11 +421,9 @@ function showIncomingOrders()
 
     $oderstate = getOrderState();
     
-//    $sql = "SELECT value FROM  cntrl WHERE cntrl.type = 'userWhoIsOrdering'";
-    $sql = "SELECT user_ID FROM  orders WHERE orders.state < 3";
-
+    $sql = "SELECT user_ID FROM  orders WHERE orders.state < 3";    
+            
     foreach ($db->query($sql) as $row) {
-//        $oderUserId = $row['value'];
         $oderUserId = $row['user_ID'];
     }
 
@@ -487,7 +439,8 @@ function showIncomingOrders()
     $orderId = getCurrentOrderId();
 
     $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$orderId ;
-
+    
+    
     echo "<div class='currentOrder'>";            
           echo "<div class='currentOrderRow'>";                   
           echo "<center>Bestellung bei ' ". $supplierName . " ' wurde von ". $oderUserName . " gestartet.</center><br>";
@@ -598,13 +551,13 @@ function showIncomingOrders()
                     if($userid == getUserWhoIsOrdering()){
                         if($isPaid == 1){
                            echo "<form action='' method='post'>";
-                           echo "<input type='submit' value='OFFEN'name='orderPaidStorno'/>";
+                           echo "<input type='submit' value='BEZAHLT'name='orderPaidStorno'/>";
                            echo "<input type='hidden' value=".$row['order_ID']." name='orderId'/>";                         
                            echo "</form>";
                         }
                         else {
                            echo "<form action='' method='post'>";
-                           echo "<input type='submit' value='BEZAHLT'name='orderPaid'/>";
+                           echo "<input type='submit' value='OFFEN'name='orderPaid'/>";
                            echo "<input type='hidden' value=".$row['order_ID']." name='orderId'/>";                         
                            echo "</form>";
                         }                        

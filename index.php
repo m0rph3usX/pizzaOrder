@@ -29,7 +29,6 @@ showOrderStarted();
     echo "<body>";       
                               
 
-        echo getOrderState();
         switch (getOrderState()) {
             case 0:
                 orderNotStarted();

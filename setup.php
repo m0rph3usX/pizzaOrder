@@ -10,8 +10,6 @@ function updateDatabaseToV0_06()
 {
 
  include 'config.php';
-// include 'utils.php';
-
 
  $db = new PDO('sqlite:' . $datenbank);
 
@@ -32,6 +30,22 @@ function updateDatabaseToV0_06()
  $db-> exec("ALTER TABLE orderDetail ADD comment char(255);");
  $db-> exec("ALTER TABLE orderDetail ADD isPaid INTEGER;");
  $db-> exec("ALTER TABLE orderDetail ADD price DOUBLE;");
+ $db-> exec("UPDATE orderDetail SET supplierCard_ID = order_ID;"); 
+ 
+ 
+ // copy price to new table
+ $sql = "SELECT 
+                [main].[orderDetail].[id], 
+                [main].[supplierCard].[price] AS [price1]
+                FROM   [main].[orderDetail]
+                INNER JOIN [main].[supplierCard] ON [main].[orderDetail].[supplierCard_ID] = [main].[supplierCard].[id];";
+
+ $db2 = new PDO('sqlite:' . $datenbank);    
+ foreach ($db->query($sql) as $row) {          
+    $sql = "UPDATE orderDetail SET price = ". $row['price1'] . " WHERE id = " .$row['id'];    
+    $db-> exec($sql);
+ }    
+    
  
  
   // update orderDetail table 
@@ -52,7 +66,6 @@ function updateDatabaseToV0_06()
  foreach ($db->query($sql) as $row) {
      $userId = $row['value'];
  }
- $userId = 1;
  $sql = "SELECT value FROM cntrl WHERE type = 'orderState'";
  $state = -1;
  
@@ -72,7 +85,6 @@ function updateDatabaseToV0_06()
  }
  
   if(($supplierId != -1) && ($state != -1))
-  // link orders and orderDetail              
   $db-> exec("UPDATE orderDetail SET `order_ID`= 1");  
   $db-> exec("INSERT INTO `orders` (supplier_ID, user_ID, state) VALUES (".
              $supplierId . " , " . $userId . " , " .  $state . ")");    
