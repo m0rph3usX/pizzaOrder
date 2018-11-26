@@ -5,118 +5,12 @@
 
 <?php
 
-
-function updateDatabaseToV0_06()
-{
-
- include 'config.php';
-
- $db = new PDO('sqlite:' . $datenbank);
-
-
- // update cntrl table
- $db-> exec("INSERT INTO `cntrl` (type, value) VALUES (
-              'version', 0.6)");
- 
-// update supplier table 
- $db-> exec("ALTER TABLE supplier ADD phoneNumber char(255);");
- $db-> exec("ALTER TABLE supplier ADD minAmount DOUBLE;");
- $db-> exec("ALTER TABLE supplier ADD discountThreshold DOUBLE;");
- $db-> exec("ALTER TABLE supplier ADD discountPercent DOUBLE;");
- 
- // update orderDetail table 
- $db-> exec("ALTER TABLE orders RENAME TO orderDetail");
- $db-> exec("ALTER TABLE orderDetail ADD supplierCard_ID INTEGER;");
- $db-> exec("ALTER TABLE orderDetail ADD comment char(255);");
- $db-> exec("ALTER TABLE orderDetail ADD isPaid INTEGER;");
- $db-> exec("ALTER TABLE orderDetail ADD price DOUBLE;");
- $db-> exec("UPDATE orderDetail SET supplierCard_ID = order_ID;"); 
- 
- 
- // copy price to new table
- $sql = "SELECT 
-                [main].[orderDetail].[id], 
-                [main].[supplierCard].[price] AS [price1]
-                FROM   [main].[orderDetail]
-                INNER JOIN [main].[supplierCard] ON [main].[orderDetail].[supplierCard_ID] = [main].[supplierCard].[id];";
-
- $db2 = new PDO('sqlite:' . $datenbank);    
- foreach ($db->query($sql) as $row) {          
-    $sql = "UPDATE orderDetail SET price = ". $row['price1'] . " WHERE id = " .$row['id'];    
-    $db-> exec($sql);
- }    
-    
- 
- 
-  // update orderDetail table 
-  $db-> exec("CREATE TABLE `orders` (      
-      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-      `supplier_ID` INTEGER,
-      `user_ID` INTEGER,
-      `state` INTEGER,
-      `timeStampStarted` INTEGER,
-      `timeStampFreezing` INTEGER,
-      `timeStampReceive` INTEGER,
-      FOREIGN KEY(supplier_ID) REFERENCES supplier(id),
-      FOREIGN KEY(user_ID) REFERENCES user(id))");  
-    
- $sql = "SELECT value FROM cntrl WHERE type = 'userWhoIsOrdering'";
-
- $userId = -1;
- foreach ($db->query($sql) as $row) {
-     $userId = $row['value'];
- }
- $sql = "SELECT value FROM cntrl WHERE type = 'orderState'";
- $state = -1;
- 
- if(is_array($db->query($sql)) || is_object($db->query($sql))){
-     foreach ($db->query($sql) as $row) {
-         $state = $row['value'];
-    }
- }
- 
- 
- $sql = "SELECT id FROM supplier WHERE active = 1";
- $supplierId = -1;
- if(is_array($db->query($sql)) || is_object($db->query($sql))){
-     foreach ($db->query($sql) as $row) {
-        $supplierId = $row['id'];
-    }
- }
- 
-  if(($supplierId != -1) && ($state != -1))
-  $db-> exec("UPDATE orderDetail SET `order_ID`= 1");  
-  $db-> exec("INSERT INTO `orders` (supplier_ID, user_ID, state) VALUES (".
-             $supplierId . " , " . $userId . " , " .  $state . ")");    
-}
-
-function updateDatabase()
-{
- include 'config.php';
- include 'utils.php';
-
- 
- $db = new PDO('sqlite:' . $datenbank);
- 
- $sql = "SELECT value FROM cntrl WHERE type = 'version'";
- 
- $version = 0;
- foreach ($db->query($sql) as $row) {
-//     $version = $row['type'];
-     $version = $row['value'];
- }
- 
-// echo $version;
- if($version == 0){
-    updateDatabaseToV0_06();
- }
- 
-}
-
 function createNewDB($user, $passwordHash)
 {
  include 'config.php';
- include 'utils.php';
+ if(!isset($utilsIncluded)){
+    include 'utils.php';
+ }
 
  $db = new PDO('sqlite:' . $datenbank);
  
@@ -181,7 +75,6 @@ function createNewDB($user, $passwordHash)
         // einlesen der Verzeichnisses
         while (($file = readdir($handle)) !== false)
         {    
-//            sleep(1);
             flush();
             usleep(1);
             
@@ -234,6 +127,7 @@ function createNewDB($user, $passwordHash)
   chmod($datenbank, 0777);
  }
  
+
  echo 'Datenbank erstellt!';
 }
 
@@ -506,40 +400,45 @@ function update_progress($percent) {
 function showAdminUserData()
 {
     include 'config.php'; 
-    if(isset($_GET['createNewDb'])) {
+    
+    
+    if(isset($_GET['createNewDb'])) {            
+        $error = false;
+        $login = $_POST['login'];
+        $password = $_POST['password'];
+        $password2 = $_POST['password2'];
+
+        //if(!filter_var($login, FILTER_VALIDATE_EMAIL)) {
+        //echo 'Bitte eine gültige E-Mail-Adresse eingeben<br>';
+        //$error = true;
+        //} 
+        if(strlen($password) == 0) {
+        echo 'Bitte ein Passwort angeben<br>';
+        $error = true;
+        }
+        if($password != $password2) {
+        echo 'Die Passwörter müssen übereinstimmen<br>';
+        $error = true;
+        }
+
+
+
+        //Keine Fehler, wir können den Nutzer registrieren
+        if(!$error) { 
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        createNewDB($login,$password_hash);
+       
+        if(!isset($db)){
+            $db = new PDO('sqlite:' . $datenbank);
+        }
         
-    
-    $error = false;
-    $login = $_POST['login'];
-    $password = $_POST['password'];
-    $password2 = $_POST['password2'];
-
-    //if(!filter_var($login, FILTER_VALIDATE_EMAIL)) {
-    //echo 'Bitte eine gültige E-Mail-Adresse eingeben<br>';
-    //$error = true;
-    //} 
-    if(strlen($password) == 0) {
-    echo 'Bitte ein Passwort angeben<br>';
-    $error = true;
-    }
-    if($password != $password2) {
-    echo 'Die Passwörter müssen übereinstimmen<br>';
-    $error = true;
-    }
-    
-
-
-    //Keine Fehler, wir können den Nutzer registrieren
-    if(!$error) { 
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-//    echo "CREATENEWDB";
-    createNewDB($login,$password_hash);
-    
-    $db = new PDO('sqlite:' . $datenbank);
-    $statement = $db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, 1)");
-    $result = $statement->execute(array('login' => $login, 'password' => $password_hash));
-    } 
+        $statement = $db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, 1)");
+        $result = $statement->execute(array('login' => $login, 'password' => $password_hash));
+        
+        
+        updateDatabase();
+        } 
    }
 
 
@@ -562,6 +461,7 @@ function showAdminUserData()
 }
 
 include 'config.php';
+include 'utils.php';
 if (!file_exists($datenbank)) {
  showAdminUserData();       
 }     

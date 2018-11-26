@@ -7,7 +7,14 @@
 include 'config.php';
 include 'utils.php';
 
-//session_start();
+
+if (!file_exists($datenbank)) {
+ echo "no database found! - run setup.php";       
+ die;
+}   
+
+updateDatabase();
+
 
 if(isset($_GET['logout'])) {        
         session_destroy();    
