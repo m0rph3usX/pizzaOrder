@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<title>Pizzabestellskript</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="template/css/style.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<!-- Main Container -->
+<div class="container"> 
+  <!-- Navigation -->
+  <header>
+  </header>
+  <!-- Hero Section -->
+  <section class="hero">    
+    <p class="tagline">PIZZA ORDER SCRIPT</p>
+  </section>
+  <!-- login section -->
+  <section class="login">	 
+    <h2 class="hidden">login</h2>
+    <form action="?login=1" method="post">
+		<div class="text_row">
+			<p class="text_column">Login</p>
+			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
+		</div>
+		<div class="text_row">
+			<p class="text_column">Passwort </p>
+			<p class="text_column"><input size="25" maxlength="250" name="password" type="password"></p>
+			<p class="text_column"><input type='submit' value='einloggen'></p>
+		</div>	 	
+ 	 </form>
+  </section>
+  <!-- login section -->
+  <!-- register section -->
+  <section class="register">	 
+    <h2 class="hidden">register</h2>
+    <form action="?register=1" method="post">
+		<div class="text_row">
+			<p class="text_column">Login</p>
+			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
+		</div>
+		<div class="text_row">
+			<p class="text_column">Passwort </p>
+			<p class="text_column"><input size="25" maxlength="250" name="password" type="password"></p>
+		</div>
+		<div class="text_row">
+			<p class="text_column">Passwort wiederholen</p>
+			<p class="text_column"><input size="25" maxlength="250" name="password2" type="password"></p>
+		</div>	
+		<div class="text_row">
+			<input type="submit" value="registrieren">
+		</div>
+  	</form>
+  </section>
+  <!-- register section -->
+  <!-- logout section -->
+  <section class="logout">
+	<form action='?logout=1' method='post'>            
+      <span class ='userCntrlInfo'>Angemeldet als: [%loginName%]</span>
+      <span class ='userCntrlOptions'>
+         <input type='submit' value='ausloggen'>
+	  </span>
+ 	</form>		
+  </section>
+  <!-- logout section -->
+  <!-- finish order section -->
+  <section class="finishOrder">
+  	<div class=''>
+		<form action='?finish' method='post'>
+		<input type='submit' value='Bestellung abschließen'  name='finish'/>
+		<input type='hidden' value='' name='supplierCard_ID'/>
+		</form>
+	</div>
+  </section>
+  <!-- finish order section -->
+  <!-- new order section -->
+  <section class=startNewOrder>
+	  <div class="startNewOrder">
+		<form action="?pollSubmit=1" method="post">
+		<!-- HEADER -->
+		<div class="text_row">Bestellung starten:</div>
+		<p class="text_row">
+		  <div class="text_column">Lieferant</div>
+			<div class="text_column">[%supplierList%]</div>
+		</p>		
+
+		<div class="text_row">
+			<div class="text_column">Countdown für eingehende Bestellungen</div>
+			<div class="text_column"><select name='timeFreezeHH' width='100'>[%countDwnHH%]</select> Stunden
+				<select name='timeFreezeMM' width='100'>[%countDwnMM%]</select> Minuten
+			</div>
+
+			<div class="text_row"><input value="Bestellung starten" type="submit"></div>
+
+		</div>		
+		</form>
+	  </div>
+  </section>
+  <!-- new order section -->
+	
+  <!-- order finished section -->
+  <section class=orderFinished> 
+	    <div class=''>
+        <form action='?restart' method='post'>
+			<input type='submit' value='neue Bestellung starten'  name='restart'/>
+			<input type='hidden' value='' name='restart'/>
+        </form>
+    </div>
+  </section>
+  <!-- order finished section -->
+	
+  <!-- incoming orders section -->
+  <section class=orderRunning>
+	  <div class='currentOrder'>
+				<div class='currentOrderRow'>                 				
+				<center>Javascript<br> 
+				 		Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
+						aktuelle Bestellungen: </center>                
+            </div>
+
+            <div class='currentOrderRow'>                                       
+              <span class='currentOrderBlank'></span>
+              <span class='orderIsPaid'>Status</span>                
+              <span class='currentOrderNr'>Nr.</span>
+              <span class='currentOrderBlank'></span>              
+              <span class='currentOrderName'>Beschreibung</span>  
+              <span class='currentOrderLogin'>Besteller</span>
+              <span class='currentOrderComment'>Kommentar</span>                
+              <span class='currentOrderPrice'>Preis</span>
+			</div>							
+			
+			<!-- incoming orders section row odd -->
+			<div class='currentOrderRowOdd'>
+                <span class='currentOrderBlank'>[%killOrder%]</span>
+				<span class='orderIsPaid'>[%payState%]</span>
+                <span class='currentOrderNr'>[%supplierCardNr%]</span>
+                <span class='currentOrderBlank'></span>              
+                <span class='currentOrderName'>[%orderName%]</span>                  
+                <span class='currentOrderLogin'>[%login%]</span>
+                <span class='currentOrderComment'>[%comment%]</span>                  
+                <span class='currentOrderPrice'>[%price%]</span>             
+            </div>
+			<!-- incoming orders section row odd -->
+			<!-- incoming orders section row even -->
+		  	<div class='currentOrderRowEven'>
+                <span class='currentOrderBlank'>[%killOrder%]</span>
+				<span class='orderIsPaid'>[%payState%]</span>
+                <span class='currentOrderNr'>[%supplierCardNr%]</span>
+                <span class='currentOrderBlank'></span>              
+                <span class='currentOrderName'>[%orderName%]</span>                  
+                <span class='currentOrderLogin'>[%login%]</span>
+                <span class='currentOrderComment'>[%comment%]</span>                  
+                <span class='currentOrderPrice'>[%price%]</span>             
+            </div>
+			<!-- incoming orders section row even -->
+			
+			<br>
+			<div class='currentOrder'>
+				<span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span>            
+				<span class='sumUpPrice'>[%orderSum%] € </span>
+			</div>
+			
+			
+			<center>        
+			<br> Zusammenfassung der Bestellung: <br>                      
+			<div class='currentOrder'>
+					<!-- incoming orders final -->
+                    <span class='sumUpOrder'>[%finalCount%] x Nr. [%finalNumber%] - [%finalName%] [%finalComment%]</span>
+					<!-- incoming orders final -->
+            </div>           
+			</center>                
+		</div>
+		
+  </section>	
+  <!-- incoming orders section -->
+  
+  <!-- order items section -->
+  <section class=orderItems>  
+    <div class='orderItem'>           
+        <div class='orderList'>           
+           <div class='orderItem'>
+               <span class='orderItemButton'></span>                       
+               <span class='orderItemNr'>Nr</span>                     
+               <span class='orderItemName'>Beschreibung</span>
+               <span class='orderItemIngredients'>Zutaten</span>
+			   <span class='orderItemPrice'>Preis</span>
+           </div>
+
+		   <!-- order items section row -->
+		   <!-- order items section row odd -->
+           <div class='orderItemOdd'>			   
+			   <form action='' method='post'>
+				   <span class='orderItemButton'>[%orderButton%]</span>
+				   <span class='orderItemNr'>[%orderNr%]</span>                   
+				   <span class='orderItemName'>[%orderName%]</span>
+				   <span class='orderItemIngredients'>[%orderIngredients%]</span>	
+				   <span class='orderItemPrice'>[%price%] €</span>
+			   </form>
+            </div>
+		   <!-- order items section row odd -->
+		   <!-- order items section row even -->
+           <div class='orderItemEven'>			   
+			   <form action='' method='post'>
+				   <span class='orderItemButton'>[%orderButton%]</span>
+				   <span class='orderItemNr'>[%orderNr%]</span>                   
+				   <span class='orderItemName'>[%orderName%]</span>
+				   <span class='orderItemIngredients'>[%orderIngredients%]</span>	
+				   <span class='orderItemPrice'>[%price%] €</span>
+			   </form>
+            </div>
+			<!-- order items section row even -->			
+			
+			<!-- order items section row -->			
+		</div>
+	</div>
+  </section>	
+  <!-- order items section -->
+
+  <section class=copyright>
+	<div class="copyright">		
+		<p>PIZZA ORDER SCRIPT v. [%version%]</p>
+	</div>	 	  
+  </section>
+</div>
+<!-- Main Container Ends -->
+</body>
+</html>

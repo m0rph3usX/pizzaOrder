@@ -1,5 +1,5 @@
 <?php
 
-$datenbank = 'data.db';
+$database = 'data.db';
 
 ?>

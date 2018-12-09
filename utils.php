@@ -10,12 +10,158 @@ $utilsIncluded = 1;
 
 session_start();
 
-function getCurrentSupplierId()
-{    
-    if(!isset($datenbank)){
+
+function getLogin()
+{
+    if(!isset($database)){
         include 'config.php';
     }
-    $db = new PDO('sqlite:' . $datenbank);    
+    
+	
+    $userid = $_SESSION['userid'];
+    $db = new PDO('sqlite:' . $database);    
+    $sql = "SELECT login FROM user WHERE id = " . $userid;
+
+    foreach ($db->query($sql) as $row) {        
+      $login = $row['login'];           
+    } 
+    
+    return $login;
+}
+
+function input_login()
+{
+    include 'config.php';
+    
+    $pdo = new PDO('sqlite:' . $database); 
+	if(isset($_GET['login']))
+    {        
+      $login = $_POST['login'];
+      $password = $_POST['password'];
+
+      $statement = $pdo->prepare("SELECT * FROM user WHERE login = :login");
+      $result = $statement->execute(array('login' => $login));
+      $user = $statement->fetch();
+
+      echo "<br>";
+      //Überprüfung des Passworts
+      if ($user !== false && password_verify($password, $user['password'])) {
+        $_SESSION['userid'] = $user['id'];          
+          $loginSucceeded = true;
+          echo "Login erfolgreich.";
+		  header("Refresh:0");		  
+        }
+        else
+        {
+          $loginSucceeded = false;
+          echo "Login oder Passwort ungültig.";                      
+        }			
+    }
+}
+
+function input_register()
+{	
+	include 'config.php';	 
+	if(isset($_GET['register'])) {
+
+	
+	 $error     = false;
+	 $login     = $_POST['login'];
+	 $password  = $_POST['password'];
+	 $password2 = $_POST['password2'];
+	 
+	 $db = new PDO('sqlite:' . $database);
+	 
+	 if(strlen($password) == 0) {
+			echo 'Bitte ein Passwort angeben<br>';
+			$error = true;
+		 }
+		 if($password != $password2) {
+			echo 'Die Passwörter müssen übereinstimmen<br>';
+			$error = true;
+		 }
+		 
+		 //check if login is already used
+		 if(!$error) { 
+			$statement = $db->prepare("SELECT * FROM user WHERE login = :login");
+			$result = $statement->execute(array('login' => $login));
+			$user = $statement->fetch();
+		 
+			if($user !== false) {
+				echo 'Login ist bereits vergeben<br>';
+				$error = true;
+			} 
+		 }
+		 
+		 //no errors, register user
+		 if(!$error) { 
+			$password_hash = password_hash($password, PASSWORD_DEFAULT);	 
+			$isAdmin = 0;
+		 
+			foreach ($db->query("SELECT COUNT(*) FROM user") as $row) {   
+				$count = $row[0];
+			}
+		 
+			if($count < 1){  $isAdmin = 1; }
+		 
+			$statement = $db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, $isAdmin)");
+			$result = $statement->execute(array('login' => $login, 'password' => $password_hash));
+		 
+			if($result) { 
+				echo 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
+				header("Refresh:0");	
+			} else {
+				echo 'Beim Abspeichern ist leider ein Fehler aufgetreten<br>';
+			}
+		 } 
+	}
+}
+
+function input_logout()
+{
+	if(isset($_GET['logout'])) {        
+		if(isset($_SESSION['userid'])){
+			session_destroy();            
+			header("Refresh:0");
+		}
+	}
+	
+}
+
+
+function replaceSection($splitter, $replacement, $page)
+{
+	$splitted = explode($splitter,$page);
+	
+	if(count($splitted) == 3){
+		$page = $splitted[0] . $replacement . $splitted[2];	
+	}
+	return $page;
+}
+
+function removeSection($splitter, $page)
+{
+	$splitted = explode($splitter,$page);
+	
+	if(count($splitted) == 3){
+		$page = $splitted[0] . $splitted[2];
+	}
+	return $page;
+}
+
+function extractSection($splitter, $page)
+{
+	$splitted = explode($splitter,$page);
+	$page = $splitted[1];
+	return $page;
+}
+
+function getCurrentSupplierId()
+{    
+    if(!isset($database)){
+        include 'config.php';
+    }
+    $db = new PDO('sqlite:' . $database);    
     $sql = "SELECT supplier_ID FROM orders WHERE state < 3";
     foreach ($db->query($sql) as $row) {       
         $supplier_ID = $row['supplier_ID'];       
@@ -26,13 +172,13 @@ function getCurrentSupplierId()
 
 function updateDatabaseToV0_06()
 {
- if(!isset($datenbank)){
+ if(!isset($database)){
     include 'config.php';
  }
  
  
 
- $db = new PDO('sqlite:' . $datenbank);
+ $db = new PDO('sqlite:' . $database);
 
 
  // update cntrl table
@@ -61,13 +207,11 @@ function updateDatabaseToV0_06()
                 FROM   [main].[orderDetail]
                 INNER JOIN [main].[supplierCard] ON [main].[orderDetail].[supplierCard_ID] = [main].[supplierCard].[id];";
 
- $db2 = new PDO('sqlite:' . $datenbank);    
+ $db2 = new PDO('sqlite:' . $database);    
  foreach ($db->query($sql) as $row) {          
     $sql = "UPDATE orderDetail SET price = ". $row['price1'] . " WHERE id = " .$row['id'];    
     $db-> exec($sql);
- }    
-    
- 
+ }        
  
   // update orderDetail table 
   $db-> exec("CREATE TABLE `orders` (      
@@ -117,11 +261,11 @@ function updateDatabaseToV0_06()
 
 function updateDatabase()
 {
-    if(!isset($datenbank)){
+    if(!isset($database)){
        include 'config.php';
     }
     
-    $db = new PDO('sqlite:' . $datenbank);
+    $db = new PDO('sqlite:' . $database);
 
 
     $sql = "SELECT value FROM cntrl WHERE type = 'version'";
@@ -137,11 +281,10 @@ function updateDatabase()
     }
 }
 
-
 function getUserWhoIsOrdering()
 {
     include 'config.php';
-    $db = new PDO('sqlite:' . $datenbank);    
+    $db = new PDO('sqlite:' . $database);    
     $sql = "SELECT user_ID FROM orders WHERE state < 3";
     foreach ($db->query($sql) as $row) {       
         $userId = $row['user_ID'];       
@@ -149,13 +292,12 @@ function getUserWhoIsOrdering()
     return $userId;
 }
 
-
 function getCurrentSupplierName()
 {
     include 'config.php';
     
     $supplier_Name = '';
-    $db = new PDO('sqlite:' . $datenbank);    
+    $db = new PDO('sqlite:' . $database);    
     $sql = "SELECT supplier.name FROM supplier, orders WHERE supplier.id = orders.supplier_ID";
 
     foreach ($db->query($sql) as $row) {       
@@ -164,89 +306,10 @@ function getCurrentSupplierName()
     return $supplier_Name;
 }
 
-
-function showUserLogin()
-{
-    include 'config.php';
-    
-    $pdo = new PDO('sqlite:' . $datenbank); 
-    if(isset($_GET['login']))
-    {        
-      $login = $_POST['login'];
-      $password = $_POST['password'];
-
-      $statement = $pdo->prepare("SELECT * FROM user WHERE login = :login");
-      $result = $statement->execute(array('login' => $login));
-      $user = $statement->fetch();
-
-      echo "<br>";
-      //Überprüfung des Passworts
-      if ($user !== false && password_verify($password, $user['password'])) {
-        $_SESSION['userid'] = $user['id'];          
-          $loginSucceeded = true;
-          echo "Login erfolgreich.";
-        }
-        else
-        {
-          $loginSucceeded = false;
-          echo "Login oder Passwort ungültig.";                      
-        }
-    }
-
-     
-    
-    if(!isset($_SESSION['userid'])) {
-      
-      echo "<div class='userCntrl'>";      
-        $loginSucceeded = false;
-        echo "Bitte zuerst einloggen oder <a href='register.php'>registrieren</a> <br>";
-        echo "<span class ='userCntrlInfo'>";        
-        echo "<form action='?login=1' method='post'>";
-        echo "Login: ";
-        echo "<input type='text' size='25' maxlength='250' name='login'>";
-        echo "    Passwort: ";
-        echo "<input type='password' size='25'  maxlength='250' name='password'>";
-        echo "    ";
-        echo "<input type='submit' value='einloggen'>";                 
-      echo "</span>";
-    
-      echo "<span class ='userCntrlOptions'>";
-      echo "</span>";
-
-      if (!$loginSucceeded)
-      {
-        die;
-      }
-    }
-    else
-    {
-      $userid = $_SESSION['userid'];
-      $db = new PDO('sqlite:' . $datenbank);    
-      $sql = "SELECT login FROM user WHERE id = " . $userid;
-
-      
-      foreach ($db->query($sql) as $row) {        
-        $login = $row['login'];           
-      }
-    
-      echo "<form action='?logout=1' method='post'>";
-            
-      echo "<span class ='userCntrlInfo'>";
-         echo "Angemeldet als: " . $login;
-      echo "</span>";
-  
-      echo "<span class ='userCntrlOptions'>";       
-         echo "<input type='submit' value='ausloggen'>";
-         echo "</form>";
-      echo "</span>";
-    }                     
-echo "</div>";
-}
-
 function getOrderState()
 {
     include 'config.php';
-    $db = new PDO('sqlite:' . $datenbank);    
+    $db = new PDO('sqlite:' . $database);    
     $sql = "SELECT state FROM orders WHERE state < 3";
     
 
@@ -264,7 +327,7 @@ function getOrderState()
 function getCurrentOrderId()
 {
     include 'config.php';
-    $db = new PDO('sqlite:' . $datenbank);    
+    $db = new PDO('sqlite:' . $database);    
     $sql = "SELECT id, state FROM orders WHERE state < 3";
     
     $orderId = 0;
@@ -277,71 +340,93 @@ function getCurrentOrderId()
     return $orderId;
 }
 
-function showOrderRefreshed()
+function eventOrderKill()
 {
-    include 'config.php';
+	include 'config.php';
     
     $userid = $_SESSION['userid'];
-    
-    echo "<div class='orderRefreshed'>";
-    
-    
-    if(isset($_GET['ordering'])) { 
-        
-       // Bestellung entgegen nehmen 
-        if(isset($_POST['supplierCard_ID']))
-        {
-            include 'config.php';
-
-            $order_ID = $_POST['supplierCard_ID'];
-
-            $db = new PDO('sqlite:' . $datenbank);    
-            $sql = "SELECT * FROM orderDetail WHERE user_ID = " . $userid;
-
-            $counter = 0;
-            foreach ($db->query($sql) as $row) {
-                $counter++;
-            }
-            
-     
-            $orderId = getCurrentOrderId();                       
-            $price   = $_POST['supplierCard_price'];
-            $supplierID = getCurrentSupplierId();
-            $db-> exec("INSERT INTO orderDetail 
-                        (order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
-                       VALUES ( " .
-                       $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
-            echo "<center>Die Bestellung wurde angenommen<br></center>";
-        }
-    }
-
-    if(isset($_POST['finish']))
-    { 
-        if($userid == getUserWhoIsOrdering())
-        {
-            $db = new PDO('sqlite:' . $datenbank);         
-            
-            $sql = "UPDATE cntrl SET `value`= 12.15 WHERE `type` ='arrivalInfo'";
-            $db-> exec($sql);
-                    
-            $orderId = getCurrentOrderId();
-            $db-> exec("UPDATE orders SET `state` = 2 WHERE `id` = " . $orderId );
-            echo "Bestellung wurde geschlossen! <br>";
-        }
-
-    }
     if(isset($_POST['orderKill']))
     {            
         include 'config.php';
 
         $order_ID = $_POST['orderKill'];
-        $db = new PDO('sqlite:' . $datenbank);    
+        $db = new PDO('sqlite:' . $database);    
         $sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;      
         
         $db-> exec($sql);        
-        echo "<center>Die Bestellung wurde storniert<br></center>";
-    }
+    }	
+}
+
+function eventOrderPaid(){
+	include 'config.php';
+    if(isset($_POST['eventButtonPayOrder']))
+    { 
+      $order_ID = $_POST['orderId'];
+      $db = new PDO('sqlite:' . $database);              
+
+      $sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = ". $order_ID . " )";
+      $db-> exec($sql);      	 
+    } 
+	
+    if(isset($_POST['eventButtonOrderStorno']))
+    { 
+
+      $order_ID = $_POST['orderId'];
+      $db = new PDO('sqlite:' . $database);              
+      $sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = ". $order_ID . " )";
+      $db-> exec($sql);
+    }	
+}
+function eventOrderAdd(){
+	include 'config.php';
     
+    $userid = $_SESSION['userid'];
+        
+	if(isset($_POST['eventButtonAddOrder']))
+	{
+		include 'config.php';
+
+		$order_ID = $_POST['supplierCard_ID'];
+
+		$db = new PDO('sqlite:' . $database);    
+		$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $userid;
+
+		$counter = 0;
+		foreach ($db->query($sql) as $row) {
+			$counter++;
+		}
+		
+ 
+		$orderId = getCurrentOrderId();                       
+		$price   = $_POST['supplierCard_price'];
+		$supplierID = getCurrentSupplierId();
+		$db-> exec("INSERT INTO orderDetail 
+					(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
+				   VALUES ( " .
+				   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
+	}
+}
+function eventOrderRestart(){
+    include 'config.php';
+	
+    $userid = $_SESSION['userid'];
+	
+    if(isset($_POST['restart']))
+    { 
+        $db = new PDO('sqlite:' . $database);         
+  
+        $db-> exec("INSERT INTO orders
+                      (supplier_ID, user_ID, state)                         
+                       VALUES ( " .
+                       "0, " . $userid . ", 0 )");			   	    		 
+    }
+}
+
+function eventOrderComment(){
+    include 'config.php';
+    
+    $userid = $_SESSION['userid'];
+	
     if(isset($_POST['orderUpdateCommentID']))
     {            
         include 'config.php';
@@ -349,222 +434,141 @@ function showOrderRefreshed()
 
         $order_ID = $_POST['orderUpdateCommentID'];
         $comment  = $_POST['orderUpdateCommentTxt'];
-        $db = new PDO('sqlite:' . $datenbank);              
+        $db = new PDO('sqlite:' . $database);              
         
         $comment = str_replace(' ', '#$#', $comment);
         
         $sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
         $db-> exec($sql);
-         echo "<center>Kommentar wurde gespeichert<br></center>";
     }
-    
-    if(isset($_POST['restart']))
-    { 
-        
-        $db = new PDO('sqlite:' . $datenbank);         
-  
-        $db-> exec("INSERT INTO orders
-                      (supplier_ID, user_ID, state)                         
-                       VALUES ( " .
-                       "0, " . $userid . ", 0 )");
-        
-        echo "Bestellung wurde neu gestartet! <br>";
-    }
-    
-    if(isset($_POST['orderPaidStorno']))
-    { 
-      include 'config.php';
-
-      $order_ID = $_POST['orderId'];
-      $db = new PDO('sqlite:' . $datenbank);              
-        
-      
-        
-      $sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = ". $order_ID . " )";
-      $db-> exec($sql);
-      echo "<center>Bezahlstatus storniert<br></center>";  
-    }
-    
-    if(isset($_POST['orderPaid']))
-    { 
-      include 'config.php';
-
-      $order_ID = $_POST['orderId'];
-      $db = new PDO('sqlite:' . $datenbank);              
-        
-      
-        
-      $sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = ". $order_ID . " )";
-      $db-> exec($sql);
-      echo "<center>Bestellung als bezahlt markiert <br></center>";  
-    }    
-                           
-    echo "</div>";
 }
+
+function eventOrderFinished(){
+    include 'config.php';
+    
+    $userid = $_SESSION['userid'];
+    if(isset($_POST['finish']))
+    { 
+        if($userid == getUserWhoIsOrdering())
+        {
+            $db = new PDO('sqlite:' . $database);         
+            
+            $sql = "UPDATE cntrl SET `value`= 12.15 WHERE `type` ='arrivalInfo'";
+            $db-> exec($sql);
+                    
+            $orderId = getCurrentOrderId();
+            $db-> exec("UPDATE orders SET `state` = 2 WHERE `id` = " . $orderId );
+        }
+    }
+}
+
 
 function showOrderStarted()
 {
     include 'config.php';
-    $userid = $_SESSION['userid'];
-  
-
-    
-    if(isset($_GET['pollSubmit'])) { 
-
-        $timeHH = $_POST['timeFreezeHH'];
-        $timeMM = $_POST['timeFreezeMM'];
-
-                             
-        $timestampNow = time();
-        $timestampFreeze = $timestampNow + 3600 * $timeHH + $timeMM * 60;
-                
-        // neue Bestellung anlegen
-        $db = new PDO('sqlite:' . $datenbank);         
-        $supplierID = $_POST['supplier'];
-        $orderId = getCurrentOrderId();
-    
-        
-        $sql = "INSERT INTO orders
-                    (supplier_ID, user_ID, state, timeStampStarted, timeStampFreezing)                         
-                   VALUES ( " .
-                   $supplierID . ",". $userid . ", 1, ". $timestampNow ." , " . $timestampFreeze . " )";
-        
-        $db-> exec($sql);
-        echo "Bestellung wurde gestartet! <br>";
-    }    
+	
+	if(isset($_SESSION['userid'])){	
+		$userid = $_SESSION['userid'];
+		  
+		if(isset($_GET['pollSubmit'])) { 
+			
+			$timeHH = $_POST['timeFreezeHH'];
+			$timeMM = $_POST['timeFreezeMM'];
+			
+			$timestampNow = time();
+			$timestampFreeze = $timestampNow + 3600 * $timeHH + $timeMM * 60;
+					
+			// create new order
+			$db = new PDO('sqlite:' . $database);         
+			$supplierID = $_POST['supplier'];
+			$orderId = getCurrentOrderId();
+		
+			
+			$sql = "INSERT INTO orders
+						(supplier_ID, user_ID, state, timeStampStarted, timeStampFreezing)                         
+					   VALUES ( " .
+					   $supplierID . ",". $userid . ", 1, ". $timestampNow ." , " . $timestampFreeze . " )";
+			
+			$db-> exec($sql);
+			echo "Bestellung wurde gestartet! <br>";
+			header("Refresh:0");
+		}    
+	}
 }
 
-function orderNotStarted()
+function getSupplierList()
 {
     include 'config.php';
     
+    $db = new PDO('sqlite:' . $database);    
+    $sql = "SELECT id, name FROM supplier";
+
+    $string = "<form action='?pollSubmit=1' method='post'>";
+
+    foreach ($db->query($sql) as $row) {
+        $string = $string . "<input type='radio' name='supplier' value='".$row['id']. "' CHECKED />". $row["name"] ."<br>";                            
+    }
     
-    $orderState = getOrderState();
-    if($orderState == 0){                                   
-        // select supplier
-        echo "<div class'pollQuery'";                                                                                                                                
-            echo "Keine aktiven Bestellungen.<br>";
-
-            echo "Neue Bestellung starten?<br>";
-            echo "Lieferant wählen:<br>";
-
-            $db = new PDO('sqlite:' . $datenbank);    
-            $sql = "SELECT id, name FROM supplier";
-
-            echo "<form action='?pollSubmit=1' method='post'>";
-
-                foreach ($db->query($sql) as $row) {
-                    echo "<input type='radio' name='supplier' value='".$row['id']."'/>". $row["name"] ."<br>";                            
-                }      
-                
-                echo "Countdown bis keine weiteren Bestellungen mehr angenommen werden:<br>";                
-                echo "<select name='timeFreezeHH' width='100'>";
-
-                    for ($hh = 0; $hh < 24; $hh++) {
-                        if($hh < 10){
-                            echo "<option value='".$hh."'>0".$hh." </option> ";                                                
-                        }
-                        else {
-                            echo "<option value='".$hh."'>".$hh." </option> ";                                                
-                        }
-                        
-                    }   
-                echo "</select>"; 
-                echo "Stunden ";
-                echo "<select name='timeFreezeMM' width='100'>";
-                    for ($mm = 0; $mm < 60; $mm = $mm + 5) {
-                        if($mm < 10){
-                            echo "<option value='".$mm."'>0".$mm." </option> ";                                              
-                        }
-                        else{
-                                echo "<option value='".$mm."' selected='selected'>".$mm." </option> ";                                              
-                        }
-                    }
-                echo "</select>";               
-                echo "Minuten ";
-                echo "<br>";
-                echo "<input type='submit' value='Bestellung starten'>"; 
-
-            echo "</form>";                                                                              
-        echo "</div";                                                                 
-    }    
+    return $string;
 }
 
-
-function showOrderItems()
+function createOrderTable($page)
 {
     include 'config.php';
-    $db = new PDO('sqlite:' . $datenbank);    
-    $userid = $_SESSION['userid'];
-        
-    echo "<div class='orderItem'>";
-           // who wants what ?
-           echo "<div class='orderList'>";
-           
-           $orderId = getCurrentOrderId();
-           
-           $sql = "SELECT supplier_ID, supplier.name FROM orders INNER JOIN supplier ON orders.supplier_ID = supplier.id WHERE (orders.id = " . $orderId .")";
-           
-           
-           foreach ($db->query($sql) as $row) {
+    $db = new PDO('sqlite:' . $database);        
+	
+	$userid = -1;
+	if(isset($_SESSION['userid'])){
+		$userid = $_SESSION['userid'];
+	}
+	
+                   
+    $orderId = getCurrentOrderId();           
+    $sql = "SELECT supplier_ID, supplier.name FROM orders INNER JOIN supplier ON orders.supplier_ID = supplier.id WHERE (orders.id = " . $orderId .")";
+      
+    foreach ($db->query($sql) as $row) {
+	    $supplier_ID = $row['supplier_ID'];
+	    $supplierName = $row['name'];               
+    }
+                                
+    $sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " .$supplier_ID;
 
-               $supplier_ID = $row['supplier_ID'];
+	$templateRowOdd  = extractSection("<!-- order items section row odd -->", $page);	
+	$templateRowEven = extractSection("<!-- order items section row even -->", $page);
+	
+	
+	//$templateRow = $page;
+	
+	$page = "";
+	$rowCount = 0;
+	foreach ($db->query($sql) as $row) {
+		if($userid > -1){
+			$button = "<input type='submit' value='bestellen'       name='eventButtonAddOrder'/>
+					   <input type='hidden' value=".$row['id']."    name='supplierCard_ID'/>
+					   <input type='hidden' value=".$row['price']." name='supplierCard_price'/>";
+	    }
+		else{
+			$button = "";
+		}
+		
+		if(($rowCount % 2) > 0){
+			$templateRow = $templateRowOdd;
+		}
+		else{
+			$templateRow = $templateRowEven;
+		}
+		$newRow = preg_replace("/\[\%orderButton\%\]/"     ,  $button    		 			  , $templateRow);
+		$newRow = preg_replace("/\[\%orderNr\%\]/"         ,  $row['nr']  		 			  , $newRow);
+		$newRow = preg_replace("/\[\%orderName\%\]/"       ,  $row['name']		 			  , $newRow);
+		$newRow = preg_replace("/\[\%orderIngredients\%\]/",  $row['ingredients']		      , $newRow);
+		$newRow = preg_replace("/\[\%price\%\]/"		   ,  number_format($row['price'] , 2), $newRow);           
+		
+		$page = $page . $newRow;
+		
+		$rowCount = $rowCount + 1;
+	}
 
-               $supplierName = $row['name'];               
-           }
-                      
-           
-           $sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " .$supplier_ID;
-
-           echo "<div class='orderItem'>";
-               echo "<span class='orderItemButton'>";               
-               echo "</span>";
-                       
-               echo "<span class='orderItemNr'>";
-                  echo "Nr";
-               echo "</span>";                     
-
-               echo "<span class='orderItemName'>";
-                  echo "Beschreibung";
-               echo "</span>";    
-
-               echo "<span class='orderItemIngredients'>";
-                  echo "Zutaten";
-               echo "</span>";                     
-
-               echo "<span class='orderItemPrice'>";
-                  echo "Preis";
-               echo "</span>"; 
-           echo "</div>";
-
-           foreach ($db->query($sql) as $row) {               
-               echo "<div class='orderItem'>";   
-                   echo "<form action='?ordering=1' method='post'>";
-                       echo "<span class='orderItemButton'>";                        
-                          echo "<input type='submit' value='bestellen'    name='supplierCard_ID'/>";
-                          echo "<input type='hidden' value=".$row['id']." name='supplierCard_ID'/>";
-                          echo "<input type='hidden' value=".$row['price']." name='supplierCard_price'/>";
-                       echo "</span>";
-                                                                                      
-                       echo "<span class='orderItemNr'>";
-                          echo $row['nr'];
-                       echo "</span>";                     
-
-                       echo "<span class='orderItemName'>";
-                          echo $row['name'];
-                       echo "</span>";    
-
-                       echo "<span class='orderItemIngredients'>";
-                          echo $row['ingredients'];
-                       echo "</span>";                     
-
-                       echo "<span class='orderItemPrice'>";
-                          echo number_format($row['price'] , 2) . " €";
-                       echo "</span>";
-                   echo "</form>";
-              echo "</div>";               
-           }                    
-        echo "</div>";   
+	return $page;	
 }
 
 function showCountDown($timeEnd)
@@ -605,12 +609,16 @@ function showCountDown($timeEnd)
     <?php
 }
 
-function showIncomingOrders()
+function createIncomingOrdersTable($page)
 {
     include 'config.php';
     
-    $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);   
+	$userid = -1;
+	if(isset($_SESSION['userid'])){
+		$userid = $_SESSION['userid'];
+	}
+	
+    $db = new PDO('sqlite:' . $database);   
     $supplierName = getCurrentSupplierName();
 
     $oderstate = getOrderState();
@@ -643,255 +651,182 @@ function showIncomingOrders()
     
     $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$orderId ;
     
+	$page = preg_replace("/\[\%supplierName\%\]/" ,  $supplierName, $page);
+	$page = preg_replace("/\[\%orderOwner\%\]/"   ,  $oderUserName, $page);
+	$page = preg_replace("/\[\%timestamp\%\]/"    ,  date("d.m.Y - H:i", $timeStampStarted), $page);
     
-    echo "<div class='currentOrder'>";            
-          echo "<div class='currentOrderRow'>";                   
-          echo "<center>Bestellung bei ' ". $supplierName . " ' wurde von ". $oderUserName . " am ". date("d.m.Y - H:i", $timeStampStarted) . " Uhr gestartet.</center><br>";
-//          echo "<center>Eingangsfrist der Bestellungen: ".date("d.m.Y - H:i", $timeStampFreezing) ." Uhr</center><br>";
-          echo "<center>" ?> <div id="countdownFreeze"></div>  <?php echo"</center><br>";
-          
-          showCountDown($timeStampFreezing);
-          
-//         //<!-- Progress bar holder -->
-//         echo "<div id='progress' style='width:500px;border:10px solid #ccc;'></div> <br>";
-//         //<!-- Progress information -->
-//         echo "<div id='information' style='width'></div><br>";                           
-         
-          echo "<center>aktuelle Bestellungen: </center><br>";                  
-          echo "</div>";
-
-          echo "<div class='currentOrderRow'>";                                       
-              echo "<span class='currentOrderBlank'>";                       
-              echo "</span>";
-
-              echo "<span class='orderIsPaid'>";
-                  echo "Status";
-              echo "</span>";
-                
-              echo "<span class='currentOrderNr'>";
-                  echo "Nr.";
-              echo "</span>";
-
-              echo "<span class='currentOrderBlank'>";                       
-              echo "</span>";
-              
-              echo "<span class='currentOrderName'>";
-                echo "Beschreibung";
-              echo "</span>";  
-
-              echo "<span class='currentOrderLogin'>";
-                echo "Besteller";
-              echo "</span>";
-
-              echo "<span class='currentOrderComment'>";
-                echo "Kommentar";
-              echo "</span>";  
-                
-              echo "<span class='currentOrderPrice'>";
-                  echo "Preis";
-              echo "</span>";  
-
-          echo "</div>";
-
+	class supplierNr {
+		public $nr;
+		public $count;
+		public $name;
+		public $comment;            
+	}
         
+	$nrList  = array();      
+	$iCounter = 0;
 
-
-
-        class supplierNr {
-            public $nr;
-            public $count;
-            public $name;
-            public $comment;            
-        }
-        
-        $nrList  = array();      
-        $iCounter = 0;
-
-        $nrObject = new supplierNr();
-        $nrObject->nr    =  0;
-        $nrObject->count =  0;
-        array_push($nrList, $nrObject);
+	$nrObject = new supplierNr();
+	$nrObject->nr    =  0;
+	$nrObject->count =  0;
+	array_push($nrList, $nrObject);
                         
-        
-        foreach ($db->query($sql) as $row) {     
+    
+	$table = "";
+	
+	$templateRowOdd  = extractSection("<!-- incoming orders section row odd -->", $page);	
+	$templateRowEven = extractSection("<!-- incoming orders section row even -->", $page);	
+	
+	$rowCount = 0;
+	foreach ($db->query($sql) as $row) {     
+		$orderCounter = $orderCounter + 1;
+		$priceCounter = $priceCounter + doubleval(str_replace(',','.', $row['price']));            
+		$isPaid = $row['isPaid'];
+		$supplierCardNr =  $row['nr'];			
+		$comment = $row['comment'];
+		$comment = str_replace('#$#', ' ', $comment);
+			  
+		// count all same supplier-nr together
+
+		$max = sizeof($nrList);
+
+		for ($i = 0; $i < $max; $i++) {
+			if(($nrList[$i]->nr      === $supplierCardNr) && 
+			   ($nrList[$i]->comment === $comment )){
+				$nrList[$i]->count = $nrList[$i]->count +1;
+				break;
+			}
+
+			if($i === ($max -1)){                        
+				$nrObject = new supplierNr();
+
+				$nrObject->nr      =  $supplierCardNr;
+				$nrObject->count   =  1;
+				$nrObject->comment =  $comment;
+				$nrObject->name  =  $row['name'];;
+				array_push($nrList, $nrObject);
+			}
+		}
+	
+					
+		//  --- show kill button if allowed ---------------------------------------------------------
+		$killButton = "";
+		if(($userid == $row['user_ID']) && ($oderstate == 1))
+		{
+			$killButton = "<form action='' method='post'>
+						   <input type='submit' value='stornieren'name='orderKill'/>
+						   <input type='hidden' value=".$row['order_ID']." name='orderKill'/>                        
+						   </form>";
+		}
+			
+		if(($rowCount % 2) > 0){
+			$newRow = preg_replace("/\[\%killOrder\%\]/" ,  $killButton, $templateRowEven);		
+		}
+		else{
+			$newRow = preg_replace("/\[\%killOrder\%\]/" ,  $killButton, $templateRowOdd);		
+		}
+		
+		$rowCount = $rowCount +1;
+	
+		$payState = "";
+		
+		//  --- show order control button if allowed ---------------------------------------------------------		
+		if($userid == getUserWhoIsOrdering()){
+			if($isPaid == 1){
+			   $payState = "<form action='' method='post'>
+							    <input type='submit' value='BEZAHLT'name='eventButtonOrderStorno'/>
+							    <input type='hidden' value=".$row['order_ID']." name='orderId'/>                       
+							    </form>";
+			}
+			else {
+			
+			$payState = "<form action='' method='post'>
+							  <input type='submit' value='OFFEN'name='eventButtonPayOrder'/>
+							  <input type='hidden' value=".$row['order_ID']." name='orderId'/>
+							  </form>";
+			}                        
+		}
+		else{
+			if($isPaid == 1){$payState = "BEZAHLT";}
+			else		    {$payState = "OFFEN";}				
+		}
+		
+		$newRow = preg_replace("/\[\%payState\%\]/" 	  ,  $payState		, $newRow);					
+		$newRow = preg_replace("/\[\%supplierCardNr\%\]/" ,  $supplierCardNr, $newRow);
+		$newRow = preg_replace("/\[\%orderName\%\]/"      ,  $row['name']   , $newRow);
+		$newRow = preg_replace("/\[\%login\%\]/"          ,  $row['login']  , $newRow);
+
+		
+		//  --- show comment control button if allowed ---------------------------------------------------------		
+		if(($userid == $row['user_ID']) && ($oderstate == 1)){
+				 $comment = "<form action='' method='post'>                   
+								<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
+								<input type='submit' value='speichern'name='updateComment'/>                     
+								<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>
+							 </form>";                     
+	    }			  
+		$newRow = preg_replace("/\[\%comment\%\]/"        ,  $comment  , $newRow);	
+		$newRow = preg_replace("/\[\%price\%\]/"        ,  number_format($row['price'] , 2) . " €"  , $newRow);	
+		
+		$table = $table . $newRow;
+		$iCounter = $iCounter +1;                        
+		
+	}
+
+	
+	$page   = replaceSection("<!-- incoming orders section row odd -->", $table, $page);	
+	$page   = removeSection ("<!-- incoming orders section row even -->", $page);	
+
+	$page = preg_replace("/\[\%orderCount\%\]/" ,  $orderCounter, $page);
+	$page = preg_replace("/\[\%orderSum\%\]/" ,  number_format($priceCounter , 2), $page);
+	 
+	 
+	// show discount
+		   
+	// comprimized order        
+	$max = sizeof($nrList);
             
-            
-//            var_dump($row);
-            $orderCounter = $orderCounter + 1;
-            $priceCounter = $priceCounter + doubleval(str_replace(',','.', $row['price']));            
-            $isPaid = $row['isPaid'];
-            $supplierCardNr =  $row['nr'];
-            
-            
-            $comment = $row['comment'];
-            $comment = str_replace('#$#', ' ', $comment);
-                  
-            // count all same supplier-nr together
-
-            $max = sizeof($nrList);
-
-            for ($i = 0; $i < $max; $i++) {
-                if(($nrList[$i]->nr      === $supplierCardNr) && 
-                   ($nrList[$i]->comment === $comment )){
-                    $nrList[$i]->count = $nrList[$i]->count +1;
-                    break;
-                }
-
-                if($i === ($max -1)){                        
-                    $nrObject = new supplierNr();
-
-                    $nrObject->nr      =  $supplierCardNr;
-                    $nrObject->count   =  1;
-                    $nrObject->comment =  $comment;
-                    $nrObject->name  =  $row['name'];;
-                    array_push($nrList, $nrObject);
-                }
-            }
-        
-            echo "<div class='currentOrderRow'>";                                       
-                echo "<span class='currentOrderBlank'>"; 
-                  if(($userid == $row['user_ID']) && ($oderstate == 1))
-                  {
-                     echo "<form action='' method='post'>";
-                        echo "<input type='submit' value='stornieren'name='orderKill'/>";
-                        echo "<input type='hidden' value=".$row['order_ID']." name='orderKill'/>";                         
-                     echo "</form>";
-                  }                    
-                echo "</span>";
-
-                echo "<span class='orderIsPaid'>";                                           
-                    if($userid == getUserWhoIsOrdering()){
-                        if($isPaid == 1){
-                           echo "<form action='' method='post'>";
-                           echo "<input type='submit' value='BEZAHLT'name='orderPaidStorno'/>";
-                           echo "<input type='hidden' value=".$row['order_ID']." name='orderId'/>";                         
-                           echo "</form>";
-                        }
-                        else {
-                           echo "<form action='' method='post'>";
-                           echo "<input type='submit' value='OFFEN'name='orderPaid'/>";
-                           echo "<input type='hidden' value=".$row['order_ID']." name='orderId'/>";                         
-                           echo "</form>";
-                        }                        
-                    }
-                    else{
-                        if($isPaid == 1){
-                            echo "BEZAHLT";
-                        }
-                        else{
-                            echo "OFFEN";
-                        }
-                            
-                    }
-                echo "</span>";
-              
-                echo "<span class='currentOrderNr'>";
-                    echo $supplierCardNr;
-                echo "</span>";
-
-                echo "<span class='currentOrderBlank'>";                       
-                echo "</span>";
-              
-                echo "<span class='currentOrderName'>";
-                    echo $row['name'];
-                echo "</span>";  
-                
-                echo "<span class='currentOrderLogin'>";
-                    echo $row['login'];                        
-                echo "</span>";
-
-                echo "<span class='currentOrderComment'>";                  
-//                  echo $comment;
-                  if(($userid == $row['user_ID']) && ($oderstate == 1))
-                  {
-                     echo "<form action='' method='post'>";                     
-                        echo "<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >";
-                        echo "<input type='submit' value='speichern'name='updateComment'/>";                       
-                        echo "<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>";
-                     echo "</form>";                     
-                  }
-                  else   
-                  {
-                    echo $comment;
-                  }
-                echo "</span>";  
-                
-                echo "<span class='currentOrderPrice'>";
-                    echo number_format($row['price'] , 2) . " €";
-                echo "</span>";             
-
-            echo "</div>";
-       
-            
-            $iCounter = $iCounter +1;                        
-            
-        }
-
-
-        // show sum 
-        echo "<br>";
-        echo "<div class='currentOrder'>";            
-            echo "<span class='sumUpTxt'>";                
-                echo $orderCounter . " Bestellung(en), Summe gesamt = "        ;
-            echo "</span>";
-            
-            echo "<span class='sumUpPrice'>";
-                echo number_format($priceCounter , 2) . " €"; 
-            echo "</span>";
-        echo "</div>";
-        
-        
-        
-        // show discount
-        
-        
-        // comprimized order        
-        $max = sizeof($nrList);
-        
-        echo "<center>";
-        sort($nrList);
-        echo "<br> Zusammenfassung der Bestellung: <br>";
-                       
-        for ($i = 01; $i < $max; $i++) {
-            if($nrList[$i]->count > 0){
-                echo "<div class='currentOrder'>";
-                    echo "<span class='sumUpOrder'>";                
-                        echo $nrList[$i]->count  ."x Nr. " .   $nrList[$i]->nr . "   -   " . $nrList[$i]->name . " " . $nrList[$i]->comment;
-                    echo "</span>";
-                echo "</div>";
-            
-                
-            }
-        }
-        
-        echo "</center>";    
+    sort($nrList);
                
-    echo "</div>";      
+	$newRow = extractSection("<!-- incoming orders final -->", $page);	
+		
+	$finalTable = "";
+	$tableRow = "";
+    for ($i = 01; $i < $max; $i++) {
+		if($nrList[$i]->count > 0){
+			$tableRow = preg_replace("/\[\%finalCount\%\]/" ,  $nrList[$i]->count   , $newRow  );
+			$tableRow = preg_replace("/\[\%finalNumber\%\]/" , $nrList[$i]->nr      , $tableRow);
+			$tableRow = preg_replace("/\[\%finalName\%\]/"   , $nrList[$i]->name    , $tableRow);
+			$tableRow = preg_replace("/\[\%finalComment\%\]/", $nrList[$i]->comment , $tableRow);
+			
+			$finalTable = $finalTable . $tableRow;                
+        }
+    }     
+
+	$page  = replaceSection("<!-- incoming orders final -->", $finalTable, $page);	
+	
+	
+	return $page;	
 }
 
-function orderRunning()
+
+function showOrderFinish()
 {
     include 'config.php';
        
     
     $userid = $_SESSION['userid'];
 
+    $string = '';
     if($userid == getUserWhoIsOrdering())
     {
-        echo "<div class=''>";
-            echo "<form action='?finish' method='post'>";
-            echo "<input type='submit' value='Bestellung abschließen'  name='finish'/>";
-            echo "<input type='hidden' value='' name='supplierCard_ID'/>";
-            echo "</form>";
-        echo "</div>";
-    }
-    
-    $orderState = getOrderState();
-    
-    showIncomingOrders();
-    
-   
-    showOrderItems();                
+        $string = "<div class=''>
+                   form action='?finish' method='post'>
+                   <input type='submit' value='Bestellung abschließen'  name='finish'/>
+                   <input type='hidden' value='' name='supplierCard_ID'/>
+                   </form>
+                   </div>";
+    }    
+    return $string;
 }
 
 function showInformationOfArrival()
@@ -899,7 +834,7 @@ function showInformationOfArrival()
     include 'config.php';
     
     $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);    
+    $db = new PDO('sqlite:' . $database);    
     
     $sql = "SELECT value FROM cntrl WHERE `type` ='arrivalInfo'";
     
@@ -939,30 +874,14 @@ function showInformationOfArrival()
     
     echo "</div>";
 }
-function orderFinished()
-{
-    include 'config.php';
-    showIncomingOrders();
-    showInformationOfArrival();
-    
-       
-   
 
-    
-    echo "<div class=''>";
-        echo "<form action='?restart' method='post'>";
-        echo "<input type='submit' value='neue Bestellung starten'  name='restart'/>";
-        echo "<input type='hidden' value='' name='restart'/>";
-        echo "</form>";
-    echo "</div>";    
-}
 
 function isAdmin()
 {
     include 'config.php';
        
     $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);   
+    $db = new PDO('sqlite:' . $database);   
     
     $sql = "SELECT isAdmin FROM user WHERE user.id = $userid";
 
