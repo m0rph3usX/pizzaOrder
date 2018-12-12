@@ -1,11 +1,4 @@
 <?php
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 $utilsIncluded = 1;
 
 session_start();
@@ -34,7 +27,7 @@ function input_login()
     include 'config.php';
     
     $pdo = new PDO('sqlite:' . $database); 
-	if(isset($_GET['login']))
+    if(isset($_GET['login']))
     {        
       $login = $_POST['login'];
       $password = $_POST['password'];
@@ -170,7 +163,7 @@ function getCurrentSupplierId()
 }
 
 
-function updateDatabaseToV0_06()
+function updateDatabaseToV0_6()
 {
  if(!isset($database)){
     include 'config.php';
@@ -241,32 +234,54 @@ function updateDatabaseToV0_06()
  }
  
  
- $sql = "SELECT id FROM supplier WHERE active = 1";
- $supplierId = -1;
- if(is_array($db->query($sql)) || is_object($db->query($sql))){
+$sql = "SELECT id FROM supplier WHERE active = 1";
+$supplierId = -1;
+if(is_array($db->query($sql)) || is_object($db->query($sql))){
      foreach ($db->query($sql) as $row) {
         $supplierId = $row['id'];
     }
- }
- 
+}
+
  $db-> exec("UPDATE orderDetail SET `order_ID`= 1");  
  
  if(($supplierId != -1) && ($state != -1)){
   
     $db-> exec("INSERT INTO `orders` (supplier_ID, user_ID, state) VALUES (".
              $supplierId . " , " . $userId . " , " .  $state . ")");    
- }
-  
+ } 
 }
 
-function updateDatabase()
-{
+function updateDatabaseToV0_7(){
+
+	 if(!isset($database)){
+	    include 'config.php';
+	 }
+ 
+	$db = new PDO('sqlite:' . $database);
+	$sql = "CREATE TABLE `bank` (
+		`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+		`user_id_transactor`	INTEGER,
+		`user_id_customer`	INTEGER,
+		`amount`		DOUBLE,
+		`orderDetail_id`	INTEGER,
+		`timestamp`		INTEGER
+		);";
+
+	// update cntrl table
+	$db-> exec($sql);
+	
+	$db-> exec("ALTER TABLE user ADD isBankTransactor INTEGER;");
+	
+	$db-> exec("UPDATE cntrl SET value = 0.7 WHERE type = 'version';");		 
+}
+
+
+function getVersion(){
     if(!isset($database)){
        include 'config.php';
     }
     
     $db = new PDO('sqlite:' . $database);
-
 
     $sql = "SELECT value FROM cntrl WHERE type = 'version'";
 
@@ -274,10 +289,19 @@ function updateDatabase()
     foreach ($db->query($sql) as $row) {
         $version = $row['value'];
     }
-
-   // echo $version;
+    
+    return $version;
+}
+function updateDatabase()
+{
+    $version = getVersion();
     if($version == 0){    
-       updateDatabaseToV0_06();
+       updateDatabaseToV0_6();
+       $version = getVersion();
+    }
+    
+    if($version == 0.6){
+	updateDatabaseToV0_7();
     }
 }
 
@@ -353,7 +377,11 @@ function eventOrderKill()
         $db = new PDO('sqlite:' . $database);    
         $sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;      
         
-        $db-> exec($sql);        
+        $db-> exec($sql);     
+
+        $sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
+        
+        $db-> exec($sql); 	
     }	
 }
 
@@ -461,6 +489,50 @@ function eventOrderFinished(){
         }
     }
 }
+
+function eventBankInput()
+{
+    include 'config.php';
+    
+    $userid = $_SESSION['userid'];
+    if(isset($_POST['eventButtonBankInput']))
+    {       
+        include 'config.php';
+	
+	$customer_id = $_POST['customer_id'];
+	$amount      = $_POST['amount'];
+	       
+        $db = new PDO('sqlite:' . $database);    
+        $sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
+		VALUES 		 (" .$userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
+        	
+        $db-> exec($sql);        
+    }	
+}
+
+function eventVirtualPay()
+{
+    include 'config.php';
+    
+    $userid = $_SESSION['userid'];    						  
+							   
+    if(isset($_POST['eventVirtualPayButton']))
+    {       
+        include 'config.php';
+	
+	$orderDetail_id = $_POST['orderDetail_id'];
+	$price          = $_POST['price'];
+	       
+        $db = new PDO('sqlite:' . $database);    
+        $sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
+		VALUES 		 (" .$userid .      " , ". $userid ." , " . -$price  . "," . time() ."," . $orderDetail_id .")";        	
+        $db-> exec($sql);        
+			
+        $sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
+        $db-> exec($sql);        
+    }	
+}
+
 
 
 function showOrderStarted()
@@ -648,6 +720,9 @@ function createIncomingOrdersTable($page)
         $timeStampStarted = $row['timeStampStarted'];
         $timeStampFreezing = $row['timeStampFreezing'];
     }
+              
+    // insert countdown
+    //script_countdown($timeStampFreezing);
     
     $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$orderId ;
     
@@ -679,7 +754,8 @@ function createIncomingOrdersTable($page)
 	$rowCount = 0;
 	foreach ($db->query($sql) as $row) {     
 		$orderCounter = $orderCounter + 1;
-		$priceCounter = $priceCounter + doubleval(str_replace(',','.', $row['price']));            
+		$price = doubleval(str_replace(',','.', $row['price']));
+		$priceCounter = $priceCounter + $price;            
 		$isPaid = $row['isPaid'];
 		$supplierCardNr =  $row['nr'];			
 		$comment = $row['comment'];
@@ -707,38 +783,49 @@ function createIncomingOrdersTable($page)
 			}
 		}
 	
+		if(($rowCount % 2) > 0){ $newRow = $templateRowEven;}
+		else{   		 $newRow = $templateRowOdd ;}
 					
 		//  --- show kill button if allowed ---------------------------------------------------------
-		$killButton = "";
+		$killButton 	  = "";
+		$virtualPayButton = "";
+		
 		if(($userid == $row['user_ID']) && ($oderstate == 1))
 		{
 			$killButton = "<form action='' method='post'>
 						   <input type='submit' value='stornieren'name='orderKill'/>
 						   <input type='hidden' value=".$row['order_ID']." name='orderKill'/>                        
-						   </form>";
+						   </form>";						   				
 		}
+		if(($userid == $row['user_ID']) && ($isPaid < 1))
+		{
+			if(countMoney() >= $price){ 
+				$virtualPayButton = "<form action='' method='post'>
+							   <input type='submit' value='virtualPay'name='eventVirtualPayButton'/>
+							   <input type='hidden' value=".$row['order_ID']." name='orderDetail_id'/>                        
+							   <input type='hidden' value=".$price." name='price'/>                        
+						     </form>";
+			}
+		}
+		
+
 			
-		if(($rowCount % 2) > 0){
-			$newRow = preg_replace("/\[\%killOrder\%\]/" ,  $killButton, $templateRowEven);		
-		}
-		else{
-			$newRow = preg_replace("/\[\%killOrder\%\]/" ,  $killButton, $templateRowOdd);		
-		}
+		$newRow = preg_replace("/\[\%killOrder\%\]/"  ,  $killButton	  , $newRow);
+		$newRow = preg_replace("/\[\%virtualPay\%\]/" ,  $virtualPayButton, $newRow);
 		
 		$rowCount = $rowCount +1;
 	
 		$payState = "";
 		
 		//  --- show order control button if allowed ---------------------------------------------------------		
-		if($userid == getUserWhoIsOrdering()){
+		if(($userid == getUserWhoIsOrdering()) and ($isPaid < 2)){
 			if($isPaid == 1){
 			   $payState = "<form action='' method='post'>
 							    <input type='submit' value='BEZAHLT'name='eventButtonOrderStorno'/>
 							    <input type='hidden' value=".$row['order_ID']." name='orderId'/>                       
 							    </form>";
 			}
-			else {
-			
+			else {			
 			$payState = "<form action='' method='post'>
 							  <input type='submit' value='OFFEN'name='eventButtonPayOrder'/>
 							  <input type='hidden' value=".$row['order_ID']." name='orderId'/>
@@ -746,11 +833,12 @@ function createIncomingOrdersTable($page)
 			}                        
 		}
 		else{
-			if($isPaid == 1){$payState = "BEZAHLT";}
-			else		    {$payState = "OFFEN";}				
+			if($isPaid     ==  2){$payState = "VIRTUELL BEZAHLT";}
+			else if($isPaid == 1){$payState = "BEZAHLT";}
+			else		     {$payState = "OFFEN";}				
 		}
 		
-		$newRow = preg_replace("/\[\%payState\%\]/" 	  ,  $payState		, $newRow);					
+		$newRow = preg_replace("/\[\%payState\%\]/" 	  ,  $payState	    , $newRow);					
 		$newRow = preg_replace("/\[\%supplierCardNr\%\]/" ,  $supplierCardNr, $newRow);
 		$newRow = preg_replace("/\[\%orderName\%\]/"      ,  $row['name']   , $newRow);
 		$newRow = preg_replace("/\[\%login\%\]/"          ,  $row['login']  , $newRow);
@@ -876,6 +964,41 @@ function showInformationOfArrival()
 }
 
 
+function script_countdown($timeEnd){
+    $timeEnd =  $timeEnd * 1000; // convert seconds to milliseconds
+    ?>
+    <script>
+    var countDownDate = '<?php echo $timeEnd ?>';
+    
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+
+      // Get todays date and time
+      var now = new Date().getTime();
+
+      // Find the distance between now and the count down date
+      var distance = countDownDate - now;
+
+      // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="demo"
+      document.getElementById("countdownFreeze").innerHTML = "Countdown bis bestellt wird: " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+      
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("countdownFreeze").innerHTML = ""; 
+      }
+    }, 1000);
+    </script>
+    <?php
+}
+
 function isAdmin()
 {
     include 'config.php';
@@ -892,5 +1015,61 @@ function isAdmin()
     
     return $isAdmin;
 }
+
+function isBankTransactor()
+{
+    include 'config.php';
+    
+$isBankTransactor = 0;    
+    if(isset($_SESSION['userid'])){
+      $userid = $_SESSION['userid'];
+      $db = new PDO('sqlite:' . $database);   
+	    
+      $sql = "SELECT isBankTransactor FROM user WHERE user.id = $userid";
+
+	    
+      foreach ($db->query($sql) as $row) {
+  	$isBankTransactor = $row['isBankTransactor'];
+      }
+    }
+    return $isBankTransactor;
+}
+
+
+function addUserIdLogin($item){ 
+    include 'config.php';
+       
+    $db = new PDO('sqlite:' . $database);   
+    
+    $sql = "SELECT id, login FROM user";
+
+    $comboboxItems = "";
+    foreach ($db->query($sql) as $row) {
+	$newItem = preg_replace("/\[\%bank_customer_user_ID\%\]/" , $row['id']   , $item);
+	$newItem = preg_replace("/\[\%bank_customer_login\%\]/"   , $row['login'], $newItem);
+        $comboboxItems = $comboboxItems . $newItem;
+    }
+    
+    return $comboboxItems;
+}
+
+function countMoney(){
+    include 'config.php';
+    
+    $userid = $_SESSION['userid'];    
+    $db = new PDO('sqlite:' . $database);   
+    
+    $sql = "SELECT amount FROM bank WHERE user_id_customer = " . $userid;
+
+    $money = 0;
+    foreach ($db->query($sql) as $row) {
+	$money = $money + $row['amount'];	
+    }
+    
+    return number_format($money , 2);
+} 
+
 ?>
+
+
 

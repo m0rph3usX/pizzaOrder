@@ -28,7 +28,15 @@ $template 	    = "template/index.html";
 $page        = file_get_contents($template);
 #-------------------------------------------
 
-
+if(isBankTransactor() == 0){
+  $page = removeSection("<!-- bank section -->", $page);
+}
+else{
+  eventBankInput();
+  eventVirtualPay();
+  $combobox = addUserIdLogin(extractSection("<!-- bank section customer bankInput-->", $page));
+  $page  = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
+}
 
 
 if(!isset($_SESSION['userid'])){
@@ -55,11 +63,15 @@ if(isset($_SESSION['userid'])){
 	eventOrderRestart ();
 
 	$page = preg_replace("/\[\%loginName\%\]/" ,  getLogin(), $page);	
+	$page = preg_replace("/\[\%money\%\]/" ,  countMoney(), $page);	
 	# load userpanel
 	// hide login / register sections
 	$page = removeSection("<!-- login section -->", $page);
 	$page = removeSection("<!-- register section -->", $page);
 }
+
+$page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
+
 
 
 # load orders
@@ -71,14 +83,6 @@ case 0:
 	$page = removeSection("<!-- incoming orders section -->", $page);
 	$page = removeSection("<!-- order items section -->"    , $page); 
 	$page = removeSection("<!-- order finished section -->"	, $page);
-	
-	if($userid == -1){
-//		$page = removeSection("<!-- new order section -->"	, $page);
-	}
-	else{
-		//$page = removeSection("<!-- finish order section -->"   , $page);
-	}
-	
 	
 	showOrderStarted();
 	//$page = preg_replace($template_ordersTxt   , $layout_startNewOrder, $page);	
@@ -119,7 +123,6 @@ case 1:
 	
 	$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
 	$page = replaceSection("<!-- order items section row -->", $table, $page); 
-
 	break;
 case 2:      
 	#---------------------------------------------------------------------------

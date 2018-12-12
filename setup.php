@@ -12,7 +12,7 @@ function createNewDB($user, $passwordHash)
     include 'utils.php';
  }
 
- $db = new PDO('sqlite:' . $datenbank);
+ $db = new PDO('sqlite:' . $database);
  
  $db->beginTransaction();
  
@@ -121,14 +121,14 @@ function createNewDB($user, $passwordHash)
     $db->commit();    
    
  
- // Schreibrechte überprüfen
- if (!is_writable($datenbank)) {
+ // check chmod 
+ if (!is_writable($database)) {
   // Schreibrechte setzen
-  chmod($datenbank, 0777);
+  chmod($database, 0777);
  }
  
 
- echo 'Datenbank erstellt!';
+ echo 'database erstellt!';
 }
 
 
@@ -143,7 +143,7 @@ function showControlGrid()
 //    include 'utils.php';
 
     $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);
+    $db = new PDO('sqlite:' . $database);
     
     $sql = "SELECT * FROM cntrl";
 
@@ -209,8 +209,8 @@ function showUsers()
     
     
     $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);
-    $dbExec = new PDO('sqlite:' . $datenbank);
+    $db = new PDO('sqlite:' . $database);
+    $dbExec = new PDO('sqlite:' . $database);
     
     $sql = "SELECT * FROM user";
     
@@ -279,7 +279,7 @@ function showAdminPanel()
     }
     
     $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $datenbank);
+    $db = new PDO('sqlite:' . $database);
     
     if (isset ($_POST['storeDb']))
     {
@@ -430,7 +430,7 @@ function showAdminUserData()
         createNewDB($login,$password_hash);
        
         if(!isset($db)){
-            $db = new PDO('sqlite:' . $datenbank);
+            $db = new PDO('sqlite:' . $database);
         }
         
         $statement = $db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, 1)");
@@ -444,7 +444,7 @@ function showAdminUserData()
 
     echo "<div class=''>";                                       
         echo "<span class=''>";                       
-            echo "Neue Datenbank erstellen";
+            echo "Neue database erstellen";
             
             echo "<form action='?createNewDb=1' method='post'>";
                 echo "Admin Login Name:<br>";
@@ -454,7 +454,7 @@ function showAdminUserData()
                 echo "Passwort wiederholen:<br>";
                     echo "<input type='password' size='40' maxlength='250' name='password2'><br><br>";
  
-                echo "<input type='submit' value='Datenbank erstellen'>";
+                echo "<input type='submit' value='database erstellen'>";
             echo "</form>";                                        
         echo "</span>";
     echo "</div>";                                               
@@ -462,7 +462,7 @@ function showAdminUserData()
 
 include 'config.php';
 include 'utils.php';
-if (!file_exists($datenbank)) {
+if (!file_exists($database)) {
  showAdminUserData();       
 }     
 else{

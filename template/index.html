@@ -58,6 +58,7 @@
   <section class="logout">
 	<form action='?logout=1' method='post'>            
       <span class ='userCntrlInfo'>Angemeldet als: [%loginName%]</span>
+	  <span class ='userCntrlInfo'>Guthaben: [%money%] €</span>
       <span class ='userCntrlOptions'>
          <input type='submit' value='ausloggen'>
 	  </span>
@@ -74,6 +75,22 @@
 	</div>
   </section>
   <!-- finish order section -->
+  <!-- bank section -->
+  <section class=bank>
+	  <div class="bank">
+		  <form method='post'>
+		  Geldbetrag wählen :<input type='number' min="5.00" max="50.00" step="0.50" value="10.00" name='amount'/> € 
+		  		 
+		  <select name="customer_id">
+			<!-- bank section customer bankInput-->
+			<option value="[%bank_customer_user_ID%]">[%bank_customer_login%]</option>
+			<!-- bank section customer bankInput-->
+		  </select> 
+		  <input type='submit' value='Betrag einbezahlen'   name='eventButtonBankInput'/>
+		  </form>
+	  </div>
+  </section>
+  <!-- bank section -->
   <!-- new order section -->
   <section class=startNewOrder>
 	  <div class="startNewOrder">
@@ -113,14 +130,16 @@
   <!-- incoming orders section -->
   <section class=orderRunning>
 	  <div class='currentOrder'>
-				<div class='currentOrderRow'>                 				
-				<center>Javascript<br> 
+	    <div class='currentOrderRow'>                 				
+		<center>
+		<div id='countdownFreeze'></div>
 				 		Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
 						aktuelle Bestellungen: </center>                
             </div>
 
             <div class='currentOrderRow'>                                       
               <span class='currentOrderBlank'></span>
+			  <span class='currentOrderBlank'></span>
               <span class='orderIsPaid'>Status</span>                
               <span class='currentOrderNr'>Nr.</span>
               <span class='currentOrderBlank'></span>              
@@ -133,6 +152,7 @@
 			<!-- incoming orders section row odd -->
 			<div class='currentOrderRowOdd'>
                 <span class='currentOrderBlank'>[%killOrder%]</span>
+				<span class='currentOrderBlank'>[%virtualPay%]</span>
 				<span class='orderIsPaid'>[%payState%]</span>
                 <span class='currentOrderNr'>[%supplierCardNr%]</span>
                 <span class='currentOrderBlank'></span>              
@@ -145,6 +165,7 @@
 			<!-- incoming orders section row even -->
 		  	<div class='currentOrderRowEven'>
                 <span class='currentOrderBlank'>[%killOrder%]</span>
+				<span class='currentOrderBlank'>[%virtualPay%]</span>
 				<span class='orderIsPaid'>[%payState%]</span>
                 <span class='currentOrderNr'>[%supplierCardNr%]</span>
                 <span class='currentOrderBlank'></span>              
