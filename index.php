@@ -12,6 +12,8 @@ if (!file_exists($database)) {
 #check database version
 updateDatabase();
 
+
+
 $userid = -1;
 if(isset($_SESSION['userid'])){
 	$userid = $_SESSION['userid'];
@@ -122,7 +124,8 @@ case 1:
 	$page = replaceSection("<!-- incoming orders section -->", $table, $page);
 	
 	$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
-	$page = replaceSection("<!-- order items section row -->", $table, $page); 
+	$page  = replaceSection("<!-- order items section row -->", $table, $page); 
+
 	break;
 case 2:      
 	#---------------------------------------------------------------------------

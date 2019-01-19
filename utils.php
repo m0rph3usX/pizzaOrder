@@ -42,7 +42,8 @@ function input_login()
         $_SESSION['userid'] = $user['id'];          
           $loginSucceeded = true;
           echo "Login erfolgreich.";
-		  header("Refresh:0");		  
+
+		  header("Location: index.php");		  
         }
         else
         {
@@ -102,7 +103,7 @@ function input_register()
 		 
 			if($result) { 
 				echo 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
-				header("Refresh:0");	
+				header("Location: index.php");		  
 			} else {
 				echo 'Beim Abspeichern ist leider ein Fehler aufgetreten<br>';
 			}
@@ -115,7 +116,7 @@ function input_logout()
 	if(isset($_GET['logout'])) {        
 		if(isset($_SESSION['userid'])){
 			session_destroy();            
-			header("Refresh:0");
+			header("Location: index.php");		  
 		}
 	}
 	
@@ -382,7 +383,10 @@ function eventOrderKill()
         $sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
         
         $db-> exec($sql); 	
+		
+		header("Location: index.php");
     }	
+	
 }
 
 function eventOrderPaid(){
@@ -393,7 +397,9 @@ function eventOrderPaid(){
       $db = new PDO('sqlite:' . $database);              
 
       $sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = ". $order_ID . " )";
-      $db-> exec($sql);      	 
+      $db-> exec($sql);   
+
+	  header("Location: index.php");	  
     } 
 	
     if(isset($_POST['eventButtonOrderStorno']))
@@ -403,6 +409,7 @@ function eventOrderPaid(){
       $db = new PDO('sqlite:' . $database);              
       $sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = ". $order_ID . " )";
       $db-> exec($sql);
+	  header("Location: index.php");
     }	
 }
 function eventOrderAdd(){
@@ -432,6 +439,8 @@ function eventOrderAdd(){
 					(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
 				   VALUES ( " .
 				   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
+				   
+	    header("Location: index.php");
 	}
 }
 function eventOrderRestart(){
@@ -441,12 +450,15 @@ function eventOrderRestart(){
 	
     if(isset($_POST['restart']))
     { 
-        $db = new PDO('sqlite:' . $database);         
-  
-        $db-> exec("INSERT INTO orders
-                      (supplier_ID, user_ID, state)                         
-                       VALUES ( " .
-                       "0, " . $userid . ", 0 )");			   	    		 
+		if(getOrderState() != 1){
+			$db = new PDO('sqlite:' . $database);         
+	  
+			$db-> exec("INSERT INTO orders
+						  (supplier_ID, user_ID, state)                         
+						   VALUES ( " .
+						   "0, " . $userid . ", 0 )");			   	    		 
+	   }
+	   header("Location: index.php");
     }
 }
 
@@ -468,6 +480,8 @@ function eventOrderComment(){
         
         $sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
         $db-> exec($sql);
+		
+		header("Location: index.php");
     }
 }
 
@@ -487,6 +501,7 @@ function eventOrderFinished(){
             $orderId = getCurrentOrderId();
             $db-> exec("UPDATE orders SET `state` = 2 WHERE `id` = " . $orderId );
         }
+		header("Location: index.php");
     }
 }
 
@@ -499,14 +514,15 @@ function eventBankInput()
     {       
         include 'config.php';
 	
-	$customer_id = $_POST['customer_id'];
-	$amount      = $_POST['amount'];
+		$customer_id = $_POST['customer_id'];
+		$amount      = $_POST['amount'];
 	       
         $db = new PDO('sqlite:' . $database);    
         $sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
 		VALUES 		 (" .$userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
         	
-        $db-> exec($sql);        
+        $db-> exec($sql);  
+		header("Location: index.php");		
     }	
 }
 
@@ -520,17 +536,18 @@ function eventVirtualPay()
     {       
         include 'config.php';
 	
-	$orderDetail_id = $_POST['orderDetail_id'];
-	$price          = $_POST['price'];
-	       
-        $db = new PDO('sqlite:' . $database);    
-        $sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
-		VALUES 		 (" .$userid .      " , ". $userid ." , " . -$price  . "," . time() ."," . $orderDetail_id .")";        	
-        $db-> exec($sql);        
-			
-        $sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
-        $db-> exec($sql);        
-    }	
+		$orderDetail_id = $_POST['orderDetail_id'];
+		$price          = $_POST['price'];
+			   
+			$db = new PDO('sqlite:' . $database);    
+			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
+			VALUES 		 (" .$userid .      " , ". $userid ." , " . -$price  . "," . time() ."," . $orderDetail_id .")";        	
+			$db-> exec($sql);        
+				
+			$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
+			$db-> exec($sql);        
+		}	
+		header("Location: index.php");
 }
 
 
@@ -563,7 +580,8 @@ function showOrderStarted()
 			
 			$db-> exec($sql);
 			echo "Bestellung wurde gestartet! <br>";
-			header("Refresh:0");
+		
+			header("Location: index.php");		  
 		}    
 	}
 }
@@ -875,23 +893,37 @@ function createIncomingOrdersTable($page)
             
     sort($nrList);
                
-	$newRow = extractSection("<!-- incoming orders final -->", $page);	
-		
-	$finalTable = "";
-	$tableRow = "";
-    for ($i = 01; $i < $max; $i++) {
-		if($nrList[$i]->count > 0){
-			$tableRow = preg_replace("/\[\%finalCount\%\]/" ,  $nrList[$i]->count   , $newRow  );
-			$tableRow = preg_replace("/\[\%finalNumber\%\]/" , $nrList[$i]->nr      , $tableRow);
-			$tableRow = preg_replace("/\[\%finalName\%\]/"   , $nrList[$i]->name    , $tableRow);
-			$tableRow = preg_replace("/\[\%finalComment\%\]/", $nrList[$i]->comment , $tableRow);
-			
-			$finalTable = $finalTable . $tableRow;                
-        }
-    }     
-
-	$page  = replaceSection("<!-- incoming orders final -->", $finalTable, $page);	
 	
+	if($orderCounter > 0){
+		$newRow = extractSection("<!-- incoming orders final -->", $page);	
+		
+		$newRowOdd  = extractSection("<!-- incoming orders final odd row-->", $page);	
+		$newRowEven = extractSection("<!-- incoming orders final even row-->", $page);	
+		
+		$finalTable = "";
+		$tableRow = "";
+		for ($i = 01; $i < $max; $i++) {
+			if($nrList[$i]->count > 0){
+				if($i % 2 == 0) {
+					$newRow = $newRowEven;
+				}
+				else{
+					$newRow = $newRowOdd;
+				}
+				$tableRow = preg_replace("/\[\%finalCount\%\]/" ,  $nrList[$i]->count   , $newRow  );
+				$tableRow = preg_replace("/\[\%finalNumber\%\]/" , $nrList[$i]->nr      , $tableRow);
+				$tableRow = preg_replace("/\[\%finalName\%\]/"   , $nrList[$i]->name    , $tableRow);
+				$tableRow = preg_replace("/\[\%finalComment\%\]/", $nrList[$i]->comment , $tableRow);
+				
+				$finalTable = $finalTable . $tableRow;                
+			}
+		}     
+
+		$page  = replaceSection("<!-- incoming orders final -->", $finalTable, $page);	
+	}
+	else{
+		$page  = removeSection("<!-- incoming orders sumup -->", $page);	
+	}
 	
 	return $page;	
 }
@@ -964,37 +996,22 @@ function showInformationOfArrival()
 }
 
 
-function script_countdown($timeEnd){
+function script_countdown(){
+
+	include 'config.php';
+	$orderId = getCurrentOrderId();
+	$db = new PDO('sqlite:' . $database);   
+	
+    $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $orderId;
+    foreach ($db->query($sql) as $row) {
+        $timeEnd = $row['timeStampFreezing'];
+    }
+	
     $timeEnd =  $timeEnd * 1000; // convert seconds to milliseconds
-    ?>
-    <script>
-    var countDownDate = '<?php echo $timeEnd ?>';
     
-    // Update the count down every 1 second
-    var x = setInterval(function() {
+	?>
+    <script type="text/javascript">
 
-      // Get todays date and time
-      var now = new Date().getTime();
-
-      // Find the distance between now and the count down date
-      var distance = countDownDate - now;
-
-      // Time calculations for days, hours, minutes and seconds
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // Display the result in the element with id="demo"
-      document.getElementById("countdownFreeze").innerHTML = "Countdown bis bestellt wird: " + hours + "h "
-      + minutes + "m " + seconds + "s ";
-      
-      // If the count down is finished, write some text
-      if (distance < 0) {
-        clearInterval(x);
-        document.getElementById("countdownFreeze").innerHTML = ""; 
-      }
-    }, 1000);
     </script>
     <?php
 }

@@ -131,11 +131,13 @@
   <section class=orderRunning>
 	  <div class='currentOrder'>
 	    <div class='currentOrderRow'>                 				
-		<center>
-		<div id='countdownFreeze'></div>
-				 		Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
-						aktuelle Bestellungen: </center>                
-            </div>
+		<center>		
+			<div id='countdownFreeze'>
+			</div>
+			Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
+			aktuelle Bestellungen: </center>                
+		</div>
+		  
 
             <div class='currentOrderRow'>                                       
               <span class='currentOrderBlank'></span>
@@ -182,16 +184,38 @@
 				<span class='sumUpPrice'>[%orderSum%] € </span>
 			</div>
 			
-			
+			<!-- incoming orders sumup -->
 			<center>        
 			<br> Zusammenfassung der Bestellung: <br>                      
 			<div class='currentOrder'>
+					<div class='sumUpOrderHeader'>
+						<span class='sumUpOrderItem'>Anzahl</span>
+						<span class='sumUpOrderItem'>Bestellnummer</span>
+						<span class='sumUpOrderItem'>Bestellung</span>
+						<span class='sumUpOrderItem'>Kommentar</span>				
+					</div>			
 					<!-- incoming orders final -->
-                    <span class='sumUpOrder'>[%finalCount%] x Nr. [%finalNumber%] - [%finalName%] [%finalComment%]</span>
+					<!-- incoming orders final odd row-->
+					<div class='sumUpOrderOdd'>
+						<span class='sumUpOrderItem'>[%finalCount%] </span>
+						<span class='sumUpOrderItem'>[%finalNumber%]</span>
+						<span class='sumUpOrderItem'>[%finalName%]  </span>
+						<span class='sumUpOrderItem'>[%finalComment%]</span>				
+					</div>
+					<!-- incoming orders final odd row-->
+					<!-- incoming orders final even row-->
+					<div class='sumUpOrderEven'>
+						<span class='sumUpOrderItem'>[%finalCount%] </span>
+						<span class='sumUpOrderItem'>[%finalNumber%]</span>
+						<span class='sumUpOrderItem'>[%finalName%]  </span>
+						<span class='sumUpOrderItem'>[%finalComment%]</span>				
+					</div>
+					<!-- incoming orders final even row-->
 					<!-- incoming orders final -->
             </div>           
 			</center>                
 		</div>
+	  	<!-- incoming orders sumup -->
 		
   </section>	
   <!-- incoming orders section -->

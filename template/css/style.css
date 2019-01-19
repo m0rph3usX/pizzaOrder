@@ -556,9 +556,14 @@ span.currentOrderLogin  {display: inline-block; width:100px; border:0px; margin:
 span.currentOrderPrice  {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
 span.orderIsPaid        {display: inline-block; width: 80px; border:0px; margin: 0px;}
 
-span.sumUpTxt           {display: inline-block; width: 820px; border:0px; margin: 0px; text-align: right}
+div.sumUpOrderHeader    {background-color:#939393; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
+div.sumUpOrderOdd    {background-color: #BBBBBB; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
+div.sumUpOrderEven   {background-color:#DDDDDD; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
+
+span.sumUpTxt           {display: inline-block; width: 978px; border:0px; margin: 0px; text-align: right}
 span.sumUpPrice         {display: inline-block; width:  80px; border:0px; margin: 0px; text-align: right}
 span.sumUpOrder         {display: inline-block; width: 100%; border:0px; margin: 0px; text-align: center}
+span.sumUpOrderItem     {display: inline-block; width: 24%; border:0px; margin: 0px; text-align: left}
 
 div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
 div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; text-align: center}
