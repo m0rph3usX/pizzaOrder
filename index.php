@@ -126,6 +126,7 @@ case 1:
 	$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
 	$page  = replaceSection("<!-- order items section row -->", $table, $page); 
 
+	//script_countdown();
 	break;
 case 2:      
 	#---------------------------------------------------------------------------

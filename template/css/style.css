@@ -571,3 +571,15 @@ div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; 
 
 div.adminCntrlRow     {background-color: greenyellow; border:2px; margin: 0px;}
 span.adminCntrlItem   {display: inline-block; width:200px; border:0px; margin: 0px;}
+
+
+div.adminItemOdd        {background-color: #C4BCEF;   display: inline-block; width: 100%; border:1px; solid: #666;margin: 0px;}
+div.adminItemOdd:hover  {background-color: lightgray; display: inline-block; width: 100%; border:1px; solid: #777;margin: 0px;}
+div.adminItemEven       {background-color: #B5A8FD; display: inline-block; width: 100%; border:1px; solid: #666;margin: 0px;}
+div.adminItemEven:hover {background-color: lightgray; display: inline-block; width: 100%; border:1px; solid: #777;margin: 0px;}
+
+
+
+span.adminUserLogin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
+span.adminUserIsAdmin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
+span.adminUserIsBank 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}

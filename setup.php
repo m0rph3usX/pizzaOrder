@@ -7,11 +7,13 @@
 
 function createNewDB($user, $passwordHash)
 {
- include 'config.php';
- if(!isset($utilsIncluded)){
-    include 'utils.php';
- }
 
+	include 'config.php';
+	if(!isset($utilsIncluded)){
+//		include 'utils.php';
+	}
+
+		echo "blaa";
  $db = new PDO('sqlite:' . $database);
  
  $db->beginTransaction();
@@ -461,7 +463,9 @@ function showAdminUserData()
 }
 
 include 'config.php';
-include 'utils.php';
+ if(!isset($utilsIncluded)){
+    include 'utils.php';
+ }
 if (!file_exists($database)) {
  showAdminUserData();       
 }     
