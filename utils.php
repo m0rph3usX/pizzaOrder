@@ -2,7 +2,7 @@
 $utilsIncluded = 1;
 
 session_start();
-
+include 'config.php';
 
 function getLogin()
 {
@@ -392,7 +392,7 @@ function eventButtonSetCurrentOrderer(){
 	
     if(isset($_POST['eventButtonSetCurrentOrderer']))
     {            
-        include 'config.php';
+        //include 'config.php';
 		
 		$newOrdererId = $_POST['newOrderer'];
 			
@@ -414,7 +414,7 @@ function eventSetUserIsBank(){
 	
     if(isset($_POST['eventSetUserIsBank']))
     {            
-        include 'config.php';
+        //include 'config.php';
 		
 		$loginId = $_POST['userId'];
 		$value   = $_POST['isBank'];		
@@ -438,7 +438,7 @@ function eventSetUserIsAdmin(){
 	
     if(isset($_POST['eventSetUserIsAdmin']))
     {            
-        include 'config.php';
+        //include 'config.php';
 
         $loginId = $_POST['userId'];
 		$value   = $_POST['isAdmin'];		
@@ -461,7 +461,7 @@ function eventOrderKill()
     $userid = $_SESSION['userid'];
     if(isset($_POST['orderKill']))
     {            
-        include 'config.php';
+        //include 'config.php';
 
         $order_ID = $_POST['orderKill'];
         $db = new PDO('sqlite:' . $database);    
@@ -472,7 +472,7 @@ function eventOrderKill()
         $sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
         
         $db-> exec($sql); 	
-		
+						
 		header("Location: index.php");
     }	
 	
@@ -512,7 +512,7 @@ function eventOrderAdd(){
         
 	if(isset($_POST['eventButtonAddOrder']))
 	{
-		include 'config.php';
+		//include 'config.php';
 
 		$order_ID = $_POST['supplierCard_ID'];
 
@@ -532,7 +532,7 @@ function eventOrderAdd(){
 					(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
 				   VALUES ( " .
 				   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
-				   
+				   				 
 	    header("Location: index.php");
 	}
 }
@@ -565,7 +565,7 @@ function eventOrderComment(){
 	
     if(isset($_POST['orderUpdateCommentID']))
     {            
-        include 'config.php';
+        //include 'config.php';
               
 
         $order_ID = $_POST['orderUpdateCommentID'];
@@ -612,7 +612,7 @@ function eventBankInput()
     $userid = $_SESSION['userid'];
     if(isset($_POST['eventButtonBankInput']))
     {       
-        include 'config.php';
+        //include 'config.php';
 	
 		$customer_id = $_POST['customer_id'];
 		$amount      = $_POST['amount'];
@@ -622,7 +622,7 @@ function eventBankInput()
 		VALUES 		 (" .$userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
         	
         $db-> exec($sql);  
-		header("Location: index.php");		
+		header("Location: bank.php");		
     }	
 }
 
@@ -636,7 +636,7 @@ function eventVirtualPay()
 							   
     if(isset($_POST['eventVirtualPayButton']))
     {       
-        include 'config.php';
+        //include 'config.php';
 	
 		$orderDetail_id = $_POST['orderDetail_id'];
 		$price          = $_POST['price'];
@@ -648,8 +648,10 @@ function eventVirtualPay()
 				
 			$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
 			$db-> exec($sql);        
-		}	
-		//header("Location: index.php");
+			
+		header("Location: index.php");
+	}	
+		
 }
 
 
@@ -708,6 +710,7 @@ function getSupplierList()
     return $string;
 }
 
+
 function createOrderTable($page)
 {
    if(!isset($database)){
@@ -739,6 +742,7 @@ function createOrderTable($page)
 	
 	$page = "";
 	$rowCount = 0;
+	
 	foreach ($db->query($sql) as $row) {
 		if($userid > -1){
 			$button = "<input type='submit' value='bestellen'       name='eventButtonAddOrder'/>
@@ -765,9 +769,10 @@ function createOrderTable($page)
 		
 		$rowCount = $rowCount + 1;
 	}
-
+ 
 	return $page;	
 }
+
 
 function showCountDown($timeEnd)
 {
@@ -805,6 +810,23 @@ function showCountDown($timeEnd)
     }, 1000);
     </script>
     <?php
+}
+
+
+function getTimeStampFreezingOrder(){
+   include_once 'config.php';
+        
+	$db = new PDO('sqlite:' . $database);   
+
+	$orderId = getCurrentOrderId()	;
+    $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $orderId;
+	
+	$timeStampFreezing = 0;
+    foreach ($db->query($sql) as $row) {
+        $timeStampFreezing = $row['timeStampFreezing'];
+    }
+     
+	return $timeStampFreezing;
 }
 
 function createIncomingOrdersTable($page)
@@ -1179,7 +1201,7 @@ function addUserIdLogin($item){
        
     $db = new PDO('sqlite:' . $database);   
     
-    $sql = "SELECT id, login FROM user";
+    $sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
 
     $comboboxItems = "";
     foreach ($db->query($sql) as $row) {
@@ -1308,6 +1330,64 @@ function adminShowUserData($page){
 	return $page;
 }
 
+
+function showBankInfo($page){
+    if(!isset($database)){
+        include 'config.php';
+    }
+   
+   
+   
+	$rowOdd  = extractSection("<!-- bank items section row even -->", $page);
+	$rowEven = extractSection("<!-- bank items section row odd -->" , $page);
+
+    $userid = $_SESSION['userid'];    
+    $db = new PDO('sqlite:' . $database);   
+    
+    //$sql = "SELECT * FROM bank ORDER BY id DESC";
+	
+	$sql = "SELECT  bank.*, user.login, user1.login AS login1 FROM
+			bank 
+			INNER JOIN user ON user.id = bank.user_id_transactor
+			INNER JOIN user user1 ON user1.id = bank.user_id_customer ORDER BY id DESC;";
+
+	$completeAmount = 0;
+	
+	$counter = 1;
+	$table   = "";
+    foreach ($db->query($sql) as $row) {
+	
+		if(($counter % 2) == 0){
+		   $newRow = $rowEven;
+		}
+		else{
+		   $newRow = $rowOdd;
+		}
+		
+		
+		$timestamp = date('d.m.o -  H:i:s' ,$row['timestamp']);
+		//$timestamp = date('H:i:s - m.i:s' ,$row['timestamp']); 
+		 
+		$newRow  = preg_replace("/\[\%bankId\%\]/" 		  , $row['id']    			   , $newRow);
+		$newRow  = preg_replace("/\[\%bankTimestamp\%\]/" , $timestamp		    	   , $newRow);
+		$newRow  = preg_replace("/\[\%banker\%\]/" 		  , $row['login'] , $newRow);
+		$newRow  = preg_replace("/\[\%account\%\]/"	  	  , $row['login1']   , $newRow);
+		$newRow  = preg_replace("/\[\%amount\%\]/" 		  , number_format($row['amount'] , 2), $newRow);
+		
+		
+		$completeAmount = $completeAmount + $row['amount'];
+		
+		$table = $table . $newRow;
+		$counter = $counter +1;
+	}
+	
+	$page = replaceSection("<!-- bank items section row -->", $table, $page);	
+
+
+	$page = preg_replace("/\[\%completeAmount\%\]/"		   ,  number_format($completeAmount , 2), $page); 	
+	
+	return $page;
+}
 ?>
 
 

@@ -16,11 +16,19 @@
   <section class="hero">    
     <p class="tagline">PIZZA ORDER SCRIPT</p>
   </section>
+  
+	
+	
+  <!-- InfoMessage -->
+  <!-- InfoMessage -->
+	
   <!-- login section -->
-  <section class="login">	 
+  <section class="login">
+    <div class="loginRegister">
+	
     <h2 class="hidden">login</h2>
     <form action="?login=1" method="post">
-		<div class="text_row">
+		<div class="text_row">			
 			<p class="text_column">Login</p>
 			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
 		</div>
@@ -30,10 +38,12 @@
 			<p class="text_column"><input type='submit' value='einloggen'></p>
 		</div>	 	
  	 </form>
+  </div>
   </section>
   <!-- login section -->
   <!-- register section -->
-  <section class="register">	 
+  <section class="register">
+   <span class ='register'>
     <h2 class="hidden">register</h2>
     <form action="?register=1" method="post">
 		<div class="text_row">
@@ -52,8 +62,10 @@
 			<input type="submit" value="registrieren">
 		</div>
   	</form>
+  </span>
   </section>
   <!-- register section -->
+  
   <!-- logout section -->
   <section class="logout">
 	<form action='?logout=1' method='post'>            
@@ -75,22 +87,7 @@
 	</div>
   </section>
   <!-- finish order section -->
-  <!-- bank section -->
-  <section class=bank>
-	  <div class="bank">
-		  <form method='post'>
-		  Geldbetrag wählen :<input type='number' min="5.00" max="50.00" step="0.50" value="10.00" name='amount'/> € 
-		  		 
-		  <select name="customer_id">
-			<!-- bank section customer bankInput-->
-			<option value="[%bank_customer_user_ID%]">[%bank_customer_login%]</option>
-			<!-- bank section customer bankInput-->
-		  </select> 
-		  <input type='submit' value='Betrag einbezahlen'   name='eventButtonBankInput'/>
-		  </form>
-	  </div>
-  </section>
-  <!-- bank section -->
+  
   <!-- new order section -->
   <section class=startNewOrder>
 	  <div class="startNewOrder">
@@ -189,7 +186,7 @@
 			<br> Zusammenfassung der Bestellung: <br>                      
 			<div class='currentOrder'>
 					<div class='sumUpOrderHeader'>
-						<span class='sumUpOrderItem'>Anzahl</span>
+						<span class='sumUpOrderItemCount'>Anzahl</span>
 						<span class='sumUpOrderItem'>Bestellnummer</span>
 						<span class='sumUpOrderItem'>Bestellung</span>
 						<span class='sumUpOrderItem'>Kommentar</span>				
@@ -197,7 +194,7 @@
 					<!-- incoming orders final -->
 					<!-- incoming orders final odd row-->
 					<div class='sumUpOrderOdd'>
-						<span class='sumUpOrderItem'>[%finalCount%] </span>
+						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
 						<span class='sumUpOrderItem'>[%finalNumber%]</span>
 						<span class='sumUpOrderItem'>[%finalName%]  </span>
 						<span class='sumUpOrderItem'>[%finalComment%]</span>				
@@ -205,7 +202,7 @@
 					<!-- incoming orders final odd row-->
 					<!-- incoming orders final even row-->
 					<div class='sumUpOrderEven'>
-						<span class='sumUpOrderItem'>[%finalCount%] </span>
+						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
 						<span class='sumUpOrderItem'>[%finalNumber%]</span>
 						<span class='sumUpOrderItem'>[%finalName%]  </span>
 						<span class='sumUpOrderItem'>[%finalComment%]</span>				

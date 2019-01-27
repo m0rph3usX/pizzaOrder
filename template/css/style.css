@@ -106,10 +106,8 @@ ul li:hover a {
 	padding-right: 25px;
 	padding-top: 35px;
 	display: inline-block;
-	background-color: #FFFFFF;
-	margin-top: 0px;
-	
-	
+	background-color: #5E5D5D;
+	margin-top: 0px;	
 }
 
 .register {
@@ -117,7 +115,7 @@ ul li:hover a {
 	padding-right: 25px;
 	padding-top: 35px;
 	display: inline-block;
-	background-color: #FFFFFF;
+	background-color: #2B2222;
 	margin-top: 0px;
 	
 }
@@ -531,6 +529,8 @@ div.currentOrderRow         {background-color: lightgray; border:1px; solid: #66
 div.currentOrderRowOdd    {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
 div.currentOrderRowEven  {background-color: #B5A8FD; border:1px; solid: #555;margin: 0px;}
 
+div.loginRegister {background-color: #3E2E2F; border:1px; solid: #3E2E2F;margin: 0px;}
+
 
 div.pollQuery            {border:1px; solid: #666;margin: 0px;}
 
@@ -563,7 +563,8 @@ div.sumUpOrderEven   {background-color:#DDDDDD; display: inline-block; width: 70
 span.sumUpTxt           {display: inline-block; width: 978px; border:0px; margin: 0px; text-align: right}
 span.sumUpPrice         {display: inline-block; width:  80px; border:0px; margin: 0px; text-align: right}
 span.sumUpOrder         {display: inline-block; width: 100%; border:0px; margin: 0px; text-align: center}
-span.sumUpOrderItem     {display: inline-block; width: 24%; border:0px; margin: 0px; text-align: left}
+span.sumUpOrderItem     {display: inline-block; width: 30%; border:0px; margin: 0px; text-align: left}
+span.sumUpOrderItemCount{display: inline-block; width: 5%; border:0px; margin: 0px; text-align: right}
 
 div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
 div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; text-align: center}
@@ -583,3 +584,22 @@ div.adminItemEven:hover {background-color: lightgray; display: inline-block; wid
 span.adminUserLogin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
 span.adminUserIsAdmin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
 span.adminUserIsBank 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
+
+
+div.infoMessageYellow   {background-color: #E4FB00;  display: inline-block; width: 100%; border:1px; solid: #E4FB00; margin: 0px; text-align: center;}
+
+div.infoMessageGreen   {background-color: #00C003;  display: inline-block; width: 100%; border:1px; solid: #00C003; margin: 0px; text-align: center;}
+
+div.infoMessageRed   {background-color: #FF0004;  display: inline-block; width: 100%; border:1px; solid: #FF0004; margin: 0px; text-align: center;}
+
+
+div.bankItemOdd       {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
+div.bankItemOdd:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+div.bankItemEven     {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
+div.bankItemEven:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+
+span.bankItemId      	 {display: inline-block; width: 10%; border:0px; margin: 0px;}
+span.bankItemTimestamp   {display: inline-block; width: 20%; border:0px; margin: 0px;}
+span.bankItemCustomer    {display: inline-block; width: 20%; border:0px; margin: 0px;}
+span.bankItemBanker      {display: inline-block; width: 20%; border:0px; margin: 0px;}
+span.bankItemAmount      {display: inline-block; width: 20%; border:0px; margin: 0px; text-align: right}

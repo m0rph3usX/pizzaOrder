@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------
-include 'config.php';
-include 'utils.php';
+include_once 'config.php';
+include_once 'utils.php';
 
 #check for existing database
 if (!file_exists($database)) {
@@ -11,8 +11,6 @@ if (!file_exists($database)) {
 
 #check database version
 updateDatabase();
-
-
 
 $userid = -1;
 if(isset($_SESSION['userid'])){
@@ -30,31 +28,34 @@ $template 	    = "template/index.html";
 $page        = file_get_contents($template);
 #-------------------------------------------
 
-if(isBankTransactor() == 0){
-  $page = removeSection("<!-- bank section -->", $page);
-}
-else{
-  eventBankInput();
-  eventVirtualPay();
-  $combobox = addUserIdLogin(extractSection("<!-- bank section customer bankInput-->", $page));
-  $page  = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
-}
+
+//if(isBankTransactor() == 0){
+//  $page = removeSection("<!-- bank section -->", $page);
+//}
+//else{
+//  eventBankInput();
+//  $combobox = addUserIdLogin(extractSection("<!-- bank section customer bankInput-->", $page));
+//  $page  = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
+//}
 
 
+if($userid == -1){
+	$page = removeSection("<!-- order finished section -->"	, $page);
+}
 if(!isset($_SESSION['userid'])){
 	input_register();
 	input_login();
-	
+
 	$page = removeSection("<!-- logout section -->", $page);	
 	$page = removeSection("<!-- new order section -->"	, $page);	
-	$page = removeSection("<!-- finish order section -->", $page);
-	
+	$page = removeSection("<!-- finish order section -->", $page);	
 } else if($userid != getUserWhoIsOrdering()){
 	$page = removeSection("<!-- finish order section -->", $page);
 }
 	
 if(isset($_SESSION['userid'])){
 
+	eventVirtualPay();
 	input_logout();
 
 	eventOrderKill	  ();
@@ -126,7 +127,7 @@ case 1:
 	$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
 	$page  = replaceSection("<!-- order items section row -->", $table, $page); 
 
-	//script_countdown();
+
 	break;
 case 2:      
 	#---------------------------------------------------------------------------
@@ -143,4 +144,6 @@ case 2:
 }
 
 echo $page;
+
+	script_countdown(getTimeStampFreezingOrder());
 ?>
