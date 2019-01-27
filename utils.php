@@ -1341,7 +1341,7 @@ function showBankInfo($page){
 	$rowOdd  = extractSection("<!-- bank items section row even -->", $page);
 	$rowEven = extractSection("<!-- bank items section row odd -->" , $page);
 
-    $userid = $_SESSION['userid'];    
+    //$userid = $_SESSION['userid'];    
     $db = new PDO('sqlite:' . $database);   
     
     //$sql = "SELECT * FROM bank ORDER BY id DESC";
