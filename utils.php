@@ -4,6 +4,11 @@ $utilsIncluded = 1;
 session_start();
 include 'config.php';
 
+function tooLateMessage()
+{
+	echo "<script>alert('Sie sind leider zu spät die Deadline wurde überschritten!');</script>";
+}
+
 function getLogin()
 {
     if(!isset($database)){
@@ -470,6 +475,12 @@ function eventSetUserIsAdmin(){
     }	
 }
 
+
+function checkDeadLine(){
+	if(getTimeStampFreezingOrder() < time()){
+		closeCurrentOrder();
+	}
+}
 function eventOrderKill()
 {
    if(!isset($database)){
@@ -477,24 +488,28 @@ function eventOrderKill()
    }
     
     $userid = $_SESSION['userid'];
-    if(isset($_POST['orderKill'])&& (getOrderState() < 2))
+    if(isset($_POST['orderKill']))
     {            
-        //include 'config.php';
+		checkDeadLine();
+		
+		if(getOrderState() >= 2){
+		    tooLateMessage();
+		}
+		else{
+			$order_ID = $_POST['orderKill'];
+			$db = new PDO('sqlite:' . $database);    
+			$sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;      
+			
+			$db-> exec($sql);     
 
-        $order_ID = $_POST['orderKill'];
-        $db = new PDO('sqlite:' . $database);    
-        $sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;      
-        
-        $db-> exec($sql);     
+			//$sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
+			$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;      
+			
+			$db-> exec($sql); 
 
-        //$sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
-		$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;      
-        
-        $db-> exec($sql); 	
-						
-		header("Location: index.php");
+			header("Location: index.php");			
+		}
     }	
-	
 }
 
 function eventOrderPaid(){
@@ -529,30 +544,36 @@ function eventOrderAdd(){
     
     $userid = $_SESSION['userid'];
         
-	if(isset($_POST['eventButtonAddOrder'])&& (getOrderState() < 2))
+	if(isset($_POST['eventButtonAddOrder']))
 	{
-		//include 'config.php';
-
-		$order_ID = $_POST['supplierCard_ID'];
-
-		$db = new PDO('sqlite:' . $database);    
-		$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $userid;
-
-		$counter = 0;
-		foreach ($db->query($sql) as $row) {
-			$counter++;
+		checkDeadLine();
+	
+		if(getOrderState() >= 2){
+		   tooLateMessage();
+		   
 		}
-		
- 
-		$orderId = getCurrentOrderId();                       
-		$price   = $_POST['supplierCard_price'];
-		$supplierID = getCurrentSupplierId();
-		$db-> exec("INSERT INTO orderDetail 
-					(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
-				   VALUES ( " .
-				   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
-				   				 
-	    header("Location: index.php");
+		else{
+			$order_ID = $_POST['supplierCard_ID'];
+
+			$db = new PDO('sqlite:' . $database);    
+			$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $userid;
+
+			$counter = 0;
+			foreach ($db->query($sql) as $row) {
+				$counter++;
+			}
+			
+	 
+			$orderId = getCurrentOrderId();                       
+			$price   = $_POST['supplierCard_price'];
+			$supplierID = getCurrentSupplierId();
+			$db-> exec("INSERT INTO orderDetail 
+						(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
+					   VALUES ( " .
+					   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
+		   header("Location: index.php");
+		}
+	    
 	}
 }
 function eventOrderRestart(){
@@ -582,18 +603,24 @@ function eventOrderComment(){
     
     $userid = $_SESSION['userid'];
 	
-    if(isset($_POST['orderUpdateCommentID']) && (getOrderState() < 2))
+    if(isset($_POST['orderUpdateCommentID']))
     {                         
-        $order_ID = $_POST['orderUpdateCommentID'];
-        $comment  = $_POST['orderUpdateCommentTxt'];
-        $db = new PDO('sqlite:' . $database);              
-        
-        $comment = str_replace(' ', '#$#', $comment);
-        
-        $sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
-        $db-> exec($sql);
+		checkDeadLine();
+		if(getOrderState() >= 2){
+		   tooLateMessage();		   
+		}
+		else{		
+			$order_ID = $_POST['orderUpdateCommentID'];
+			$comment  = $_POST['orderUpdateCommentTxt'];
+			$db = new PDO('sqlite:' . $database);              
+			
+			$comment = str_replace(' ', '#$#', $comment);
+			
+			$sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
+			$db-> exec($sql);
+			header("Location: index.php");
+		}
 		
-		header("Location: index.php");
     }
 }
 
@@ -871,9 +898,6 @@ function createIncomingOrdersTable($page)
         $timeStampStarted = $row['timeStampStarted'];
         $timeStampFreezing = $row['timeStampFreezing'];
     }
-              
-    // insert countdown
-    //script_countdown($timeStampFreezing);
     
     $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$orderId ;
     
@@ -1380,7 +1404,10 @@ function eventUpdateArrivalInfo(){
 		//header("Location: index.php");			
 	}
 }
+
 ?>
+
+
 
 
 
