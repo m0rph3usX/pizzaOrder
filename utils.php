@@ -392,9 +392,8 @@ function eventButtonSetCurrentOrderer(){
 	
     if(isset($_POST['eventButtonSetCurrentOrderer']))
     {            
-        //include 'config.php';
+        
 		
-		echo "BLA";
 		$newOrdererId = $_POST['newOrderer'];
 			
  
@@ -1051,6 +1050,7 @@ function createIncomingOrdersTable($page)
 	
 	$page = preg_replace("/\[\%orderSumRealMoney\%\]/"    ,  number_format($moneyReal , 2), $page);
 	$page = preg_replace("/\[\%orderSumVirtualMoney\%\]/" ,  number_format($moneyVirtual , 2), $page);
+	$page = preg_replace("/\[\%orderSumToGet\%\]/"        ,  number_format($priceCounter - ($moneyVirtual + $moneyReal), 2), $page);
 	 
 	 
 	// show discount
@@ -1275,7 +1275,7 @@ function adminSetCurrentOrderer($page){
     $userid = $_SESSION['userid'];    
     $db = new PDO('sqlite:' . $database);   
     
-    $sql = "SELECT id, login FROM user";
+    $sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
 	
 	$defaultItem = extractSection("<!-- admin current orderer item -->", $page);
 	
@@ -1314,7 +1314,7 @@ function adminShowUserData($page){
     $userid = $_SESSION['userid'];    
     $db = new PDO('sqlite:' . $database);   
     
-    $sql = "SELECT id, login, created_at, isAdmin, isBankTransactor FROM user";
+    $sql = "SELECT id, login, created_at, isAdmin, isBankTransactor FROM user ORDER BY UPPER(login) ASC";
 	
 	$rowOdd  = extractSection("<!-- admin user section row odd -->", $page);
 	$rowEven = extractSection("<!-- admin user section row even -->", $page);

@@ -49,29 +49,7 @@ else{
 	$page = removeSection("<!-- login section -->" , $page);	
 }
 
-
-
 $page = showBankInfo($page);
-	
-//if(isset($_SESSION['userid'])){
-
-//	eventVirtualPay();
-	//input_logout();
-
-	//eventOrderKill	  ();
-	//eventOrderAdd 	  ();
-	//eventOrderPaid	  ();
-	//eventOrderComment ();
-	//eventOrderFinished();
-	//eventOrderRestart ();
-
-	//$page = preg_replace("/\[\%loginName\%\]/" ,  getLogin(), $page);	
-	//$page = preg_replace("/\[\%money\%\]/" ,  countMoney(), $page);	
-	//# load userpanel
-	// hide login / register sections
-	//$page = removeSection("<!-- login section -->", $page);
-	//$page = removeSection("<!-- register section -->", $page);
-//}
 
 $page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
 

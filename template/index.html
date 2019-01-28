@@ -17,10 +17,13 @@
     <p class="tagline">PIZZA ORDER SCRIPT</p>
   </section>
   
-	
+
 	
   <!-- InfoMessage -->
   <!-- InfoMessage -->
+	
+  
+
 	
   <!-- login section -->
   <section class="login">
@@ -67,7 +70,7 @@
   <!-- register section -->
   
   <!-- logout section -->
-  <section class="logout">
+  <section class="logout">	
 	<form action='?logout=1' method='post'>            
       <span class ='userCntrlInfo'>Angemeldet als: [%loginName%]</span>
 	  <span class ='userCntrlInfo'>Guthaben: [%money%] €</span>
@@ -75,6 +78,8 @@
          <input type='submit' value='ausloggen'>
 	  </span>
  	</form>		
+	  
+    <a href="bank.php">Zahlungsverlauf anzeigen</a>
   </section>
   <!-- logout section -->
   <!-- finish order section -->
@@ -187,13 +192,18 @@
 			</div>
 		  
 			<div class='currentOrder'>
-				<span class='sumUpTxt'>..davon bar bezahlt =</span>            
+				<span class='sumUpTxt'>...davon bar bezahlt =</span>            
 				<span class='sumUpPrice'>[%orderSumRealMoney%] € </span>
 			</div>
 		
 			<div class='currentOrder'>
-				<span class='sumUpTxt'>..davon virtuell bezahlt =</span>            
+				<span class='sumUpTxt'>...davon virtuell bezahlt =</span>            
 				<span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span>
+			</div>
+		  
+		    <div class='currentOrder'>
+				<span class='sumUpTxt'>...davon noch ausstehend =</span>            
+				<span class='sumUpPrice'>[%orderSumToGet%] € </span>
 			</div>
 		  <!-- order deadline -->
 	    <div class='orderDeadline'>
