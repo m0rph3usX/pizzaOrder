@@ -169,6 +169,24 @@ function getCurrentSupplierId()
 }
 
 
+function getCurrentSupplierPhoneNr()
+{    
+    if(!isset($database)){
+        include 'config.php';
+    }
+	
+	$supplier_ID = getCurrentSupplierId();
+	
+	$phoneNumber = "";
+    $db = new PDO('sqlite:' . $database);    
+    $sql = "SELECT phoneNumber FROM supplier WHERE id = ".$supplier_ID;
+    foreach ($db->query($sql) as $row) {       
+        $phoneNumber = $row['phoneNumber'];       
+    }    
+    return $phoneNumber;
+}
+
+
 function updateDatabaseToV0_6()
 {
  if(!isset($database)){
@@ -459,7 +477,7 @@ function eventOrderKill()
    }
     
     $userid = $_SESSION['userid'];
-    if(isset($_POST['orderKill']))
+    if(isset($_POST['orderKill'])&& (getOrderState() < 2))
     {            
         //include 'config.php';
 
@@ -511,7 +529,7 @@ function eventOrderAdd(){
     
     $userid = $_SESSION['userid'];
         
-	if(isset($_POST['eventButtonAddOrder']))
+	if(isset($_POST['eventButtonAddOrder'])&& (getOrderState() < 2))
 	{
 		//include 'config.php';
 
@@ -564,11 +582,8 @@ function eventOrderComment(){
     
     $userid = $_SESSION['userid'];
 	
-    if(isset($_POST['orderUpdateCommentID']))
-    {            
-        //include 'config.php';
-              
-
+    if(isset($_POST['orderUpdateCommentID']) && (getOrderState() < 2))
+    {                         
         $order_ID = $_POST['orderUpdateCommentID'];
         $comment  = $_POST['orderUpdateCommentTxt'];
         $db = new PDO('sqlite:' . $database);              
@@ -582,6 +597,19 @@ function eventOrderComment(){
     }
 }
 
+
+function closeCurrentOrder(){
+   if(!isset($database)){
+        include 'config.php';
+   }
+   
+   
+	$db = new PDO('sqlite:' . $database);                     		
+	$timeStampArrival = mktime(12, 15, 0, date("m")  , date("d"), date("Y"));
+	
+	$sql = "UPDATE orders SET `state` = 2, timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
+	$db-> exec($sql);			
+}
 function eventOrderFinished(){
    if(!isset($database)){
         include 'config.php';
@@ -590,14 +618,7 @@ function eventOrderFinished(){
     $userid = $_SESSION['userid'];
     if(isset($_POST['finish']))
     { 
-        if($userid == getUserWhoIsOrdering())
-        {
-            $db = new PDO('sqlite:' . $database);                     		
-			$timeStampArrival = mktime(12, 15, 0, date("m")  , date("d"), date("Y"));
-			
-			$sql = "UPDATE orders SET `state` = 2, timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
-			$db-> exec($sql);			
-        }
+		closeCurrentOrder();
 		header("Location: index.php");
     }
 }
@@ -668,8 +689,10 @@ function showOrderStarted()
 			$timeHH = $_POST['timeFreezeHH'];
 			$timeMM = $_POST['timeFreezeMM'];
 			
+			
 			$timestampNow = time();
-			$timestampFreeze = $timestampNow + 3600 * $timeHH + $timeMM * 60;
+			//$timestampFreeze = $timestampNow + 3600 * $timeHH + $timeMM * 60;
+			$timestampFreeze = mktime($timeHH, $timeMM, 0, date("m")  , date("d"), date("Y"));
 					
 			// create new order
 			$db = new PDO('sqlite:' . $database);         
@@ -768,45 +791,6 @@ function createOrderTable($page)
 	}
  
 	return $page;	
-}
-
-
-function showCountDown($timeEnd)
-{
-    $timeEnd =  $timeEnd * 1000; // convert seconds to milliseconds
-  ?>
-    <script>
-    var countDownDate = '<?php echo $timeEnd ?>';
-
-    // Update the count down every 1 second
-    var x = setInterval(function() {
-
-      // Get todays date and time
-      var now = new Date().getTime();
-
-      // Find the distance between now and the count down date
-      var distance = countDownDate - now;
-
-      // Time calculations for days, hours, minutes and seconds
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // Display the result in the element with id="demo"
-//      document.getElementById("countdownFreeze").innerHTML = days + "d " + hours + "h "
-//      + minutes + "m " + seconds + "s ";
-      document.getElementById("countdownFreeze").innerHTML = "Countdown bis bestellt wird: " + hours + "h "
-      + minutes + "m " + seconds + "s ";
-      
-      // If the count down is finished, write some text
-      if (distance < 0) {
-        clearInterval(x);
-        document.getElementById("countdownFreeze").innerHTML = ""; 
-      }
-    }, 1000);
-    </script>
-    <?php
 }
 
 
@@ -1118,76 +1102,7 @@ function showOrderFinish()
     return $string;
 }
 
-function showInformationOfArrival()
-{
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $database);    
-    
-    $sql = "SELECT value FROM cntrl WHERE `type` ='arrivalInfo'";
-    
-    echo "<div class='orderArrival'>";
-    
-    foreach ($db->query($sql) as $row) {
-        $arrivalTxt = $row['value'];        
-    }
-    
-    if(getUserWhoIsOrdering() == $userid)
-    {      
-      
-        if(isset($_POST['saveArrival']))
-        {                       
-            $txt = $_POST['txtArrival'];            
-            
-            $sql = "UPDATE cntrl SET `value`= '".$txt. "' WHERE `type` ='arrivalInfo'";
-            $db-> exec($sql);
-            
-            $arrivalTxt = $txt;
-        }
-        
-        echo "<form action='?updateArrivalInfo' method='post'>";
-            echo 'Bestellung kommt vorraussichtlich um:';
-            echo "<input type='text' value=$arrivalTxt  name='txtArrival'/>";
-            echo ' Uhr      ';
-            echo "<input type='submit' value='speichern'  name='saveArrival'/>";
-            echo "<input type='hidden' value=$arrivalTxt name='saveArrival'/>";
-        echo "</form>";
 
-    }
-    else
-    {
-        echo 'Bestellung kommt vorraussichtlich um: ' . $arrivalTxt . ' Uhr';   
-    }
-    
-    
-    echo "</div>";
-}
-
-
-function script_countdown(){
-
-   if(!isset($database)){
-        include 'config.php';
-   }
-	$orderId = getCurrentOrderId();
-	$db = new PDO('sqlite:' . $database);   
-	
-    $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $orderId;
-    foreach ($db->query($sql) as $row) {
-        $timeEnd = $row['timeStampFreezing'];
-    }
-	
-    $timeEnd =  $timeEnd * 1000; // convert seconds to milliseconds
-    
-	?>
-    <script type="text/javascript">
-
-    </script>
-    <?php
-}
 
 function isAdmin()
 {
@@ -1370,9 +1285,7 @@ function showBankInfo($page){
     if(!isset($database)){
         include 'config.php';
     }
-   
-   
-   
+  
 	$rowOdd  = extractSection("<!-- bank items section row even -->", $page);
 	$rowEven = extractSection("<!-- bank items section row odd -->" , $page);
 

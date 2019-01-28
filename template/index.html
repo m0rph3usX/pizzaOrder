@@ -105,9 +105,9 @@
 		</p>		
 
 		<div class="text_row">
-			<div class="text_column">Countdown für eingehende Bestellungen</div>
-			<div class="text_column"><select name='timeFreezeHH' width='100'>[%countDwnHH%]</select> Stunden
-				<select name='timeFreezeMM' width='100'>[%countDwnMM%]</select> Minuten
+			<div class="text_column">Deadline für eingehende Bestellungen</div>
+			<div class="text_column"><select name='timeFreezeHH' width='100'>[%countDwnHH%]</select>:
+				<select name='timeFreezeMM' width='100'>[%countDwnMM%]</select> Uhr
 			</div>
 
 			<div class="text_row"><input value="Bestellung starten" type="submit"></div>
@@ -212,21 +212,27 @@
 		  <!-- order deadline -->
 		  
 		  <!-- order arrival info -->
-	    <div class='orderArrival'>
+		  <div class='orderArrival'>
+			  Telefon: [%phoneNumber%]
+		  </div>
+		  
+	      <div class='orderArrival'>
 		    Ankuft der Bestellung voraussichtlich: [%orderArrival%] h
 		  </div>
+		  
+		  
 		  <!-- order arrival info -->
 		  
 		  <!-- order arrival control -->
-		  <form action="" method="post">
 		  <div class='orderArrival'>
-			
-				Ankuftszeit anpassen:  
-				<select name='timeArrivalHH' width='100'>[%timeArrivalHH%]</select> :
-				<select name='timeArrivalMM' width='100'>[%timeArrivalMM%]</select> Uhr			
-				<input value="übernehmen" type="submit" name="eventButtonUpdateArrival">
-		  </div>		
-		  </form>
+			  <form action="" method="post">
+
+					Ankuftszeit anpassen:  
+					<select name='timeArrivalHH' width='100'>[%timeArrivalHH%]</select> :
+					<select name='timeArrivalMM' width='100'>[%timeArrivalMM%]</select> Uhr			
+					<input value="übernehmen" type="submit" name="eventButtonUpdateArrival">		 		
+			  </form>
+		  </div>
 	      <!-- order arrival control -->
 		  
 

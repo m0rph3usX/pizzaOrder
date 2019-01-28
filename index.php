@@ -137,16 +137,22 @@ case 1:
 	#---------------------------------------------------------------------------
 	#  ORDER RUNNING
 	#---------------------------------------------------------------------------
-	//orderRunning()
-	$page = removeSection("<!-- new order section -->", $page);		
-	$page = removeSection("<!-- order finished section -->"    , $page); 
-	$page = removeSection("<!-- order arrival info -->"	    , $page);
-	$page = removeSection("<!-- order arrival control -->"	    , $page);
-	$table = createIncomingOrdersTable(extractSection("<!-- incoming orders section -->", $page));
-	$page = replaceSection("<!-- incoming orders section -->", $table, $page);
 	
-	$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
-	$page  = replaceSection("<!-- order items section row -->", $table, $page); 
+	if(getTimeStampFreezingOrder() < time()){
+		closeCurrentOrder();
+		header("Location: index.php");
+	}else{
+		$page = removeSection("<!-- new order section -->", $page);		
+		$page = removeSection("<!-- order finished section -->"    , $page); 
+		$page = removeSection("<!-- order arrival info -->"	    , $page);
+		$page = removeSection("<!-- order arrival control -->"	    , $page);
+		$table = createIncomingOrdersTable(extractSection("<!-- incoming orders section -->", $page));
+		$page = replaceSection("<!-- incoming orders section -->", $table, $page);
+		
+		$table = createOrderTable(extractSection("<!-- order items section row -->", $page));	
+		$page  = replaceSection("<!-- order items section row -->", $table, $page); 
+	}
+
 
 
 	break;
@@ -158,7 +164,7 @@ case 2:
 	$page = removeSection("<!-- order items section -->", $page); 
 	$page = removeSection("<!-- finish order section -->"	    , $page);
 	$page = removeSection("<!-- order deadline -->"	    , $page);	
-	
+	$page = preg_replace("/\[\%phoneNumber\%\]/" , getCurrentSupplierPhoneNr(), $page);
 	
 	if(getUserWhoIsOrdering() == $userid){
 		//$page = removeSection("<!-- order arrival info -->"	    , $page);
@@ -179,5 +185,4 @@ case 2:
 
 echo $page;
 
-	script_countdown(getTimeStampFreezingOrder());
 ?>
