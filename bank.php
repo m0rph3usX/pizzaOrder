@@ -38,11 +38,15 @@ else{
   $page     = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
 }
 
-if(isset($_SESSION['userid'])){
+if($userid > -1){
+//if(isset($_SESSION['userid'])){
 	input_logout();
 
 	$page = preg_replace("/\[\%loginName\%\]/" ,  getLogin(), $page);	
-	$page = preg_replace("/\[\%money\%\]/" ,  countMoney(), $page);	
+	$page = preg_replace("/\[\%money\%\]/"    ,  countMoney(), $page);	
+}
+else{
+	$page = removeSection("<!-- login section -->" , $page);	
 }
 
 

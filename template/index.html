@@ -180,14 +180,54 @@
 				<span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span>            
 				<span class='sumUpPrice'>[%orderSum%] € </span>
 			</div>
+		  
+		  	<div class='currentOrder'>
+				<span class='sumUpTxt'></span>            
+				<span class='sumUpPrice'>__________ </span>
+			</div>
+		  
+			<div class='currentOrder'>
+				<span class='sumUpTxt'>..davon bar bezahlt =</span>            
+				<span class='sumUpPrice'>[%orderSumRealMoney%] € </span>
+			</div>
+		
+			<div class='currentOrder'>
+				<span class='sumUpTxt'>..davon virtuell bezahlt =</span>            
+				<span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span>
+			</div>
+		  <!-- order deadline -->
+	    <div class='orderDeadline'>
+		  	Deadline dieser Sammelbestellung:  [%orderDeadline%]
+		  </div>
+		  <!-- order deadline -->
+		  
+		  <!-- order arrival info -->
+	    <div class='orderArrival'>
+		    Ankuft der Bestellung voraussichtlich: [%orderArrival%] h
+		  </div>
+		  <!-- order arrival info -->
+		  
+		  <!-- order arrival control -->
+		  <form action="" method="post">
+		  <div class='orderArrival'>
 			
-			<!-- incoming orders sumup -->
+				Ankuftszeit anpassen:  
+				<select name='timeArrivalHH' width='100'>[%timeArrivalHH%]</select> :
+				<select name='timeArrivalMM' width='100'>[%timeArrivalMM%]</select> Uhr			
+				<input value="übernehmen" type="submit" name="eventButtonUpdateArrival">
+		  </div>		
+		  </form>
+	      <!-- order arrival control -->
+		  
+
+		  
+		<!-- incoming orders sumup -->
 			<center>        
 			<br> Zusammenfassung der Bestellung: <br>                      
 			<div class='currentOrder'>
 					<div class='sumUpOrderHeader'>
 						<span class='sumUpOrderItemCount'>Anzahl</span>
-						<span class='sumUpOrderItem'>Bestellnummer</span>
+						<span class='sumUpOrderItemNr'>Nr.</span>
 						<span class='sumUpOrderItem'>Bestellung</span>
 						<span class='sumUpOrderItem'>Kommentar</span>				
 					</div>			
@@ -195,7 +235,7 @@
 					<!-- incoming orders final odd row-->
 					<div class='sumUpOrderOdd'>
 						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItem'>[%finalNumber%]</span>
+						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
 						<span class='sumUpOrderItem'>[%finalName%]  </span>
 						<span class='sumUpOrderItem'>[%finalComment%]</span>				
 					</div>
@@ -203,7 +243,7 @@
 					<!-- incoming orders final even row-->
 					<div class='sumUpOrderEven'>
 						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItem'>[%finalNumber%]</span>
+						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
 						<span class='sumUpOrderItem'>[%finalName%]  </span>
 						<span class='sumUpOrderItem'>[%finalComment%]</span>				
 					</div>

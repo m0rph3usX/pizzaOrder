@@ -394,6 +394,7 @@ function eventButtonSetCurrentOrderer(){
     {            
         //include 'config.php';
 		
+		echo "BLA";
 		$newOrdererId = $_POST['newOrderer'];
 			
  
@@ -401,7 +402,7 @@ function eventButtonSetCurrentOrderer(){
         $sql = "UPDATE orders SET user_ID = ".$newOrdererId ." WHERE ( id = ". getCurrentOrderId() . " )";
         $db-> exec($sql); 		
 			
-		header("Location: setup2.php");	
+		//header("Location: setup2.php");	
     }	
 }
 
@@ -469,7 +470,8 @@ function eventOrderKill()
         
         $db-> exec($sql);     
 
-        $sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
+        //$sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
+		$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;      
         
         $db-> exec($sql); 	
 						
@@ -591,13 +593,11 @@ function eventOrderFinished(){
     { 
         if($userid == getUserWhoIsOrdering())
         {
-            $db = new PDO('sqlite:' . $database);         
-            
-            $sql = "UPDATE cntrl SET `value`= 12.15 WHERE `type` ='arrivalInfo'";
-            $db-> exec($sql);
-                    
-            $orderId = getCurrentOrderId();
-            $db-> exec("UPDATE orders SET `state` = 2 WHERE `id` = " . $orderId );
+            $db = new PDO('sqlite:' . $database);                     		
+			$timeStampArrival = mktime(12, 15, 0, date("m")  , date("d"), date("Y"));
+			
+			$sql = "UPDATE orders SET `state` = 2, timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
+			$db-> exec($sql);			
         }
 		header("Location: index.php");
     }
@@ -655,7 +655,6 @@ function eventVirtualPay()
 }
 
 
-
 function showOrderStarted()
 {
    if(!isset($database)){
@@ -677,16 +676,15 @@ function showOrderStarted()
 			$db = new PDO('sqlite:' . $database);         
 			$supplierID = $_POST['supplier'];
 			$orderId = getCurrentOrderId();
-		
 			
-			$sql = "INSERT INTO orders
-						(supplier_ID, user_ID, state, timeStampStarted, timeStampFreezing)                         
-					   VALUES ( " .
-					   $supplierID . ",". $userid . ", 1, ". $timestampNow ." , " . $timestampFreeze . " )";
-			
+			$sql = "UPDATE orders SET 
+					supplier_ID = ".$supplierID.",
+					user_ID     = ". $userid."   ,
+					state       = 1,
+					timeStampStarted = ".$timestampNow.",
+					timeStampFreezing = ".$timestampFreeze . " WHERE (id = " .$orderId. ")";
+					   
 			$db-> exec($sql);
-			echo "Bestellung wurde gestartet! <br>";
-		
 			header("Location: index.php");		  
 		}    
 	}
@@ -814,7 +812,9 @@ function showCountDown($timeEnd)
 
 
 function getTimeStampFreezingOrder(){
-   include_once 'config.php';
+    if(!isset($database)){
+        include 'config.php';
+    }
         
 	$db = new PDO('sqlite:' . $database);   
 
@@ -827,6 +827,24 @@ function getTimeStampFreezingOrder(){
     }
      
 	return $timeStampFreezing;
+}
+
+function getTimeStampArrivalOrder(){
+    if(!isset($database)){
+        include 'config.php';
+    }
+        
+	$db = new PDO('sqlite:' . $database);   
+
+	$orderId = getCurrentOrderId()	;
+    $sql = "SELECT timeStampReceive FROM orders WHERE id = " . $orderId;
+	
+	$timeStampReceive = 0;
+    foreach ($db->query($sql) as $row) {
+        $timeStampReceive = $row['timeStampReceive'];
+    }
+     
+	return $timeStampReceive;
 }
 
 function createIncomingOrdersTable($page)
@@ -902,6 +920,10 @@ function createIncomingOrdersTable($page)
 	$templateRowEven = extractSection("<!-- incoming orders section row even -->", $page);	
 	
 	$rowCount = 0;
+	
+	$moneyVirtual = 0;
+	$moneyReal    = 0;
+	
 	foreach ($db->query($sql) as $row) {     
 		$orderCounter = $orderCounter + 1;
 		$price = doubleval(str_replace(',','.', $row['price']));
@@ -954,7 +976,7 @@ function createIncomingOrdersTable($page)
 							   <input type='submit' value='virtualPay'name='eventVirtualPayButton'/>
 							   <input type='hidden' value=".$row['order_ID']." name='orderDetail_id'/>                        
 							   <input type='hidden' value=".$price." name='price'/>                        
-						     </form>";
+						     </form>";							 						
 			}
 		}
 		
@@ -970,22 +992,32 @@ function createIncomingOrdersTable($page)
 		//  --- show order control button if allowed ---------------------------------------------------------		
 		if(($userid == getUserWhoIsOrdering()) and ($isPaid < 2)){
 			if($isPaid == 1){
-			   $payState = "<form action='' method='post'>
+				$payState = "<form action='' method='post'>
 							    <input type='submit' value='BEZAHLT'name='eventButtonOrderStorno'/>
 							    <input type='hidden' value=".$row['order_ID']." name='orderId'/>                       
 							    </form>";
+				$moneyReal = $moneyReal + $price;
+				
 			}
 			else {			
-			$payState = "<form action='' method='post'>
+				$payState = "<form action='' method='post'>
 							  <input type='submit' value='OFFEN'name='eventButtonPayOrder'/>
 							  <input type='hidden' value=".$row['order_ID']." name='orderId'/>
-							  </form>";
+							  </form>";				
 			}                        
 		}
 		else{
-			if($isPaid     ==  2){$payState = "VIRTUELL BEZAHLT";}
-			else if($isPaid == 1){$payState = "BEZAHLT";}
-			else		     {$payState = "OFFEN";}				
+			if($isPaid     ==  2){
+				$payState = "VIRTUELL BEZAHLT";
+				$moneyVirtual = $moneyVirtual + $price;
+			}
+			else if($isPaid == 1){
+				$payState = "BEZAHLT";
+				$moneyReal = $moneyReal + $price;
+			}
+			else {
+				$payState = "OFFEN";
+			}				
 		}
 		
 		$newRow = preg_replace("/\[\%payState\%\]/" 	  ,  $payState	    , $newRow);					
@@ -1016,6 +1048,9 @@ function createIncomingOrdersTable($page)
 
 	$page = preg_replace("/\[\%orderCount\%\]/" ,  $orderCounter, $page);
 	$page = preg_replace("/\[\%orderSum\%\]/" ,  number_format($priceCounter , 2), $page);
+	
+	$page = preg_replace("/\[\%orderSumRealMoney\%\]/"    ,  number_format($moneyReal , 2), $page);
+	$page = preg_replace("/\[\%orderSumVirtualMoney\%\]/" ,  number_format($moneyVirtual , 2), $page);
 	 
 	 
 	// show discount
@@ -1387,6 +1422,50 @@ function showBankInfo($page){
 	$page = preg_replace("/\[\%completeAmount\%\]/"		   ,  number_format($completeAmount , 2), $page); 	
 	
 	return $page;
+}
+
+
+function getComboboxHH(){
+	$htmlTxt = '';
+	$zero   = '';
+	// write hours
+	for ($hh = 0; $hh < 24; $hh++) {
+		if($hh < 10){$zero   = '0';} else {$zero   = '';}
+		$htmlTxt = $htmlTxt . "<option value='".$hh."'>".$zero .$hh." </option>";                                                                    
+	}
+	return $htmlTxt;
+}
+
+function getComboboxMM(){
+	$htmlTxt = '';
+	$zero   = '';
+	// write minutes
+	for ($mm = 0; $mm < 60; $mm = $mm +5) {
+		if($mm < 10){$zero   = '0';} else {$zero   = '';}
+		$htmlTxt = $htmlTxt . "<option value='".$mm."'>".$zero .$mm." </option>";                                                                    
+	}  
+	return $htmlTxt;
+}
+
+
+function eventUpdateArrivalInfo(){
+   if(!isset($database)){
+        include 'config.php';
+   }
+	
+	if(isset($_POST['eventButtonUpdateArrival'])){
+		
+		$db = new PDO('sqlite:' . $database);   	
+		$timeHH = $_POST['timeArrivalHH'];
+		$timeMM = $_POST['timeArrivalMM'];
+		
+		$timeStampArrival = mktime($timeHH, $timeMM, 0, date("m")  , date("d"), date("Y"));
+		
+		$sql = "UPDATE orders SET timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
+		$db-> exec($sql);
+	
+		//header("Location: index.php");			
+	}
 }
 ?>
 
