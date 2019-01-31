@@ -1362,24 +1362,38 @@ function showBankInfo($page){
 }
 
 
-function getComboboxHH(){
+function getComboboxHH($hour){
 	$htmlTxt = '';
 	$zero   = '';
 	// write hours
 	for ($hh = 0; $hh < 24; $hh++) {
 		if($hh < 10){$zero   = '0';} else {$zero   = '';}
-		$htmlTxt = $htmlTxt . "<option value='".$hh."'>".$zero .$hh." </option>";                                                                    
+		
+		if($hour == $hh){
+			$htmlTxt = $htmlTxt . "<option value='".$hh."' selected>".$zero .$hh." </option>";                                                                    
+		}
+		else{
+			$htmlTxt = $htmlTxt . "<option value='".$hh."'>".$zero .$hh." </option>";                                                                    
+		}
+		
 	}
 	return $htmlTxt;
 }
 
-function getComboboxMM(){
+function getComboboxMM($minute){
 	$htmlTxt = '';
 	$zero   = '';
 	// write minutes
 	for ($mm = 0; $mm < 60; $mm = $mm +5) {
 		if($mm < 10){$zero   = '0';} else {$zero   = '';}
-		$htmlTxt = $htmlTxt . "<option value='".$mm."'>".$zero .$mm." </option>";                                                                    
+		
+		if($minute == $mm){
+			$htmlTxt = $htmlTxt . "<option value='".$mm."' selected>".$zero .$mm." </option>";                                                                    
+		}
+		else{
+			$htmlTxt = $htmlTxt . "<option value='".$mm."'>".$zero .$mm." </option>";                                                                    
+		}
+		
 	}  
 	return $htmlTxt;
 }

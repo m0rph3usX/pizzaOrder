@@ -118,7 +118,7 @@ case 0:
 	//	$htmlTxt = $htmlTxt . "<option value='".$hh."'>".$zero .$hh." </option>";                                                                    
 	//}  
 	//$page = preg_replace("/\[\%countDwnHH\%\]/" , $htmlTxt, $page);
-	$page = preg_replace("/\[\%countDwnHH\%\]/" , getComboboxHH(), $page);
+	$page = preg_replace("/\[\%countDwnHH\%\]/" , getComboboxHH(11), $page);
 	#----------------- fill minutes --------------------------------------------
 	//$htmlTxt = '';
 	//$zero   = '';
@@ -130,7 +130,7 @@ case 0:
 	
 	
 	//$page = preg_replace("/\[\%countDwnMM\%\]/" , $htmlTxt, $page);
-	$page = preg_replace("/\[\%countDwnMM\%\]/" , getComboboxMM(), $page);
+	$page = preg_replace("/\[\%countDwnMM\%\]/" , getComboboxMM(0), $page);
 	
 	break;
 case 1:	
@@ -168,8 +168,8 @@ case 2:
 	
 	if(getUserWhoIsOrdering() == $userid){
 		//$page = removeSection("<!-- order arrival info -->"	    , $page);
-		$page = preg_replace("/\[\%timeArrivalHH\%\]/" , getComboboxHH(), $page);
-		$page = preg_replace("/\[\%timeArrivalMM\%\]/" , getComboboxMM(), $page);
+		$page = preg_replace("/\[\%timeArrivalHH\%\]/" , getComboboxHH(12), $page);
+		$page = preg_replace("/\[\%timeArrivalMM\%\]/" , getComboboxMM(15), $page);
 	}
 	else{
 		$page = removeSection("<!-- order arrival control -->"	    , $page);
