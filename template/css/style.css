@@ -102,21 +102,16 @@ ul li:hover a {
 	color: #A3A3A3;
 }
 .login {
-	padding-left: 25px;
-	padding-right: 25px;
-	padding-top: 35px;
+
 	display: inline-block;
-	background-color: #5E5D5D;
-	margin-top: 0px;	
+	width: 45%;
+
 }
 
 .register {
-	padding-left: 25px;
-	padding-right: 25px;
-	padding-top: 35px;
+
 	display: inline-block;
-	background-color: #2B2222;
-	margin-top: 0px;
+	width: 45%;
 	
 }
 
@@ -524,12 +519,14 @@ nav ul li {
 }
 }
 
+div.loginRegister {background-color:#3E2E2F; width:100%; border:0px; margin: 0px; text-align: center}
+
 div.currentOrder         {background-color: lightgray; border:1px; margin: 0px;}
 div.currentOrderRow      {background-color: lightgray; border:1px; solid: #666;margin: 0px;}
 div.currentOrderRowOdd   {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
 div.currentOrderRowEven  {background-color: #B5A8FD; border:1px; solid: #555;margin: 0px;}
 
-div.loginRegister {background-color: #3E2E2F; border:1px; solid: #3E2E2F;margin: 0px;}
+
 
 
 div.pollQuery            {border:1px; solid: #666;margin: 0px;}
