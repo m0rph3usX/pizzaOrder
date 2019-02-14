@@ -27,9 +27,7 @@
 	
   <!-- login section -->
   <section class="login">
-    <div class="loginRegister">
-	
-    <h2 class="hidden">login</h2>
+    <div class="loginRegister">	
     <form action="?login=1" method="post">
 		<div class="text_row">			
 			<p class="text_column">Login</p>
@@ -45,9 +43,7 @@
   </section>
   <!-- login section -->
   <!-- register section -->
-  <section class="register">
-   <span class ='register'>
-    <h2 class="hidden">register</h2>
+   <span class ='register'>   
     <form action="?register=1" method="post">
 		<div class="text_row">
 			<p class="text_column">Login</p>
@@ -66,7 +62,7 @@
 		</div>
   	</form>
   </span>
-  </section>
+
   <!-- register section -->
   
   <!-- logout section -->
@@ -206,7 +202,7 @@
 				<span class='sumUpPrice'>[%orderSumToGet%] € </span>
 			</div>
 		  <!-- order deadline -->
-	    <div class='orderDeadline'>
+	      <div class='orderDeadline'>
 		  	Deadline dieser Sammelbestellung:  [%orderDeadline%]
 		  </div>
 		  <!-- order deadline -->
@@ -218,10 +214,23 @@
 		  
 	      <div class='orderArrival'>
 		    Ankuft der Bestellung voraussichtlich: [%orderArrival%] h
+		  <br>
+		  
+			  Falls Bestellung schon da ist, hier melden:
+		  <form action="" method="post">  
+					<input value="Lieferung ist da!" type="submit" name="eventButtonOrderArrived">		 		
+		  </form>
+		  <br>
 		  </div>
-		  
-		  
 		  <!-- order arrival info -->
+		  
+		  <!-- order arrival info storno-->
+		  <div class='orderArrival'>
+		  <form action="" method="post">  
+		  		<input value="Sorry Falschalarm" type="submit" name="eventButtonOrderArrivedStorno">		 		
+		  </form>
+		  </div>
+		  <!-- order arrival info storno-->
 		  
 		  <!-- order arrival control -->
 		  <div class='orderArrival'>
@@ -235,7 +244,12 @@
 		  </div>
 	      <!-- order arrival control -->
 		  
-
+		  <!-- order arrived -->
+		  <div class='orderArrival'>
+		  [%orderArrivalLogin%] @ [%orderArrivalTime%] h <br>
+		  Lieferung ist da!!!
+		  </div>
+		  <!-- order arrived -->
 		  
 		<!-- incoming orders sumup -->
 			<center>        

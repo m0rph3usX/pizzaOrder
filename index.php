@@ -49,6 +49,7 @@ if(!isset($_SESSION['userid'])){
 	$page = removeSection("<!-- logout section -->", $page);	
 	$page = removeSection("<!-- new order section -->"	, $page);	
 	$page = removeSection("<!-- finish order section -->", $page);	
+	$page = removeSection("<!-- order arrival info -->"	    , $page);
 } else if($userid != getUserWhoIsOrdering()){
 	$page = removeSection("<!-- finish order section -->", $page);
 }
@@ -145,7 +146,12 @@ case 1:
 		$page = removeSection("<!-- new order section -->", $page);		
 		$page = removeSection("<!-- order finished section -->"    , $page); 
 		$page = removeSection("<!-- order arrival info -->"	    , $page);
+		$page = removeSection("<!-- order arrival info storno-->"	, $page);
 		$page = removeSection("<!-- order arrival control -->"	    , $page);
+		$page = removeSection("<!-- order arrived -->"	, $page);
+		
+		
+		
 		$table = createIncomingOrdersTable(extractSection("<!-- incoming orders section -->", $page));
 		$page = replaceSection("<!-- incoming orders section -->", $table, $page);
 		
@@ -173,6 +179,28 @@ case 2:
 	}
 	else{
 		$page = removeSection("<!-- order arrival control -->"	    , $page);
+	}
+	
+	$arrivalInfo = getArrivalInfo();
+	
+	if($arrivalInfo[0] > 0){
+		$page = removeSection("<!-- order arrival info -->"	    , $page);
+		$page = removeSection("<!-- order arrival control -->"	, $page);
+
+		$page = preg_replace("/\[\%orderArrivalTime\%\]/" , date("d.m.Y - H:i", $arrivalInfo[0]), $page);
+		$page = preg_replace("/\[\%orderArrivalLogin\%\]/" , $arrivalInfo[1], $page);
+		
+		if($userid == $arrivalInfo[2]){
+			eventButtonOrderArrivedStorno();
+		}
+		else{
+			$page = removeSection("<!-- order arrival info storno-->"	, $page);
+		}
+	}
+	else{
+		eventButtonOrderArrived();
+		$page = removeSection("<!-- order arrived -->"	, $page);
+		$page = removeSection("<!-- order arrival info storno-->"	, $page);
 	}
 	
 	$table = createIncomingOrdersTable(extractSection("<!-- incoming orders section -->", $page));

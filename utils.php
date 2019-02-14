@@ -304,6 +304,17 @@ function updateDatabaseToV0_7(){
 	$db-> exec("UPDATE cntrl SET value = 0.7 WHERE type = 'version';");		 
 }
 
+function updateDatabaseToV0_7_5(){
+
+	 if(!isset($database)){
+	    include 'config.php';
+	 }
+ 
+	$db = new PDO('sqlite:' . $database);
+	$db-> exec("ALTER TABLE orders ADD timeStampArrival INTEGER;");
+	$db-> exec("ALTER TABLE orders ADD user_ID_arrival INTEGER;");
+	$db-> exec("UPDATE cntrl SET value = 0.75 WHERE type = 'version';");	
+}
 
 function getVersion(){
     if(!isset($database)){
@@ -330,8 +341,37 @@ function updateDatabase()
     }
     
     if($version == 0.6){
-	updateDatabaseToV0_7();
+		updateDatabaseToV0_7();
+		$version = getVersion();
     }
+
+    if($version == 0.7){
+		updateDatabaseToV0_7_5();
+		$version = getVersion();
+    }
+}
+
+
+function getArrivalInfo(){
+   if(!isset($database)){
+        include 'config.php';
+   }
+    
+    $timestampArrival = 0;
+	$login            = "";
+	$userId           = -1;
+	
+    $db = new PDO('sqlite:' . $database);    
+    $sql = "SELECT orders.timestampArrival, user.id, user.login FROM user INNER JOIN orders ON user.id = orders.user_ID_arrival WHERE orders.id = " . getCurrentOrderId() . " ;";
+	
+    foreach ($db->query($sql) as $row) {       
+        $timestampArrival = $row['timeStampArrival'];       
+		$login           = $row['login'];    
+		$userId          = $row['id'];  		
+    }    
+   
+   return array($timestampArrival, $login, $userId);
+   
 }
 
 function getUserWhoIsOrdering()
@@ -426,6 +466,49 @@ function eventButtonSetCurrentOrderer(){
 			
 		//header("Location: setup2.php");	
     }	
+}
+
+function eventButtonOrderArrived(){
+   if(!isset($database)){
+        include 'config.php';
+   }
+    
+	if(isset($_SESSION['userid'])){
+		$userid = $_SESSION['userid'];	
+						
+		if(isset($_POST['eventButtonOrderArrived']))
+		{ 
+			
+			
+			$timestamp = time();
+						   
+			$db = new PDO('sqlite:' . $database);    
+			$sql = "UPDATE orders SET timestampArrival = ".$timestamp .", user_ID_arrival = " . $userid . " WHERE ( id = ". getCurrentOrderId() . " )";
+			$db-> exec($sql); 		
+				
+			header("Location: index.php");		
+		}	
+
+	}
+}
+
+function eventButtonOrderArrivedStorno(){
+   if(!isset($database)){
+        include 'config.php';
+   }
+    
+	if(isset($_SESSION['userid'])){
+		$userid = $_SESSION['userid'];	
+			
+		if(isset($_POST['eventButtonOrderArrivedStorno']))
+		{ 											   
+			$db = new PDO('sqlite:' . $database);    
+			$sql = "UPDATE orders SET timestampArrival = 0, user_ID_arrival = -1 WHERE ( id = ". getCurrentOrderId() . " )";
+			$db-> exec($sql); 		
+				
+			header("Location: index.php");		
+		}	
+	}
 }
 
 function eventSetUserIsBank(){

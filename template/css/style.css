@@ -524,9 +524,9 @@ nav ul li {
 }
 }
 
-div.currentOrder               {background-color: lightgray; border:1px; margin: 0px;}
-div.currentOrderRow         {background-color: lightgray; border:1px; solid: #666;margin: 0px;}
-div.currentOrderRowOdd    {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
+div.currentOrder         {background-color: lightgray; border:1px; margin: 0px;}
+div.currentOrderRow      {background-color: lightgray; border:1px; solid: #666;margin: 0px;}
+div.currentOrderRowOdd   {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
 div.currentOrderRowEven  {background-color: #B5A8FD; border:1px; solid: #555;margin: 0px;}
 
 div.loginRegister {background-color: #3E2E2F; border:1px; solid: #3E2E2F;margin: 0px;}
@@ -560,8 +560,8 @@ div.sumUpOrderHeader    {background-color:#939393; display: inline-block; width:
 div.sumUpOrderOdd    {background-color: #BBBBBB; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
 div.sumUpOrderEven   {background-color:#DDDDDD; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
 
-span.sumUpTxt           {display: inline-block; width: 978px; border:0px; margin: 0px; text-align: right}
-span.sumUpPrice         {display: inline-block; width:  80px; border:0px; margin: 0px; text-align: right}
+span.sumUpTxt           {display: inline-block; width: 80%; border:0px; margin: 0px; text-align: right}
+span.sumUpPrice         {display: inline-block; width:  10%; border:0px; margin: 0px; text-align: right}
 span.sumUpOrder         {display: inline-block; width: 100%; border:0px; margin: 0px; text-align: center}
 span.sumUpOrderItem     {display: inline-block; width: 150px; border:0px; margin: 0px; text-align: left}
 span.sumUpOrderItemCount{display: inline-block; width: 40px; border:0px; margin: 0px; text-align: right}
