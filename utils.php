@@ -1,6 +1,14 @@
 <?php
 $utilsIncluded = 1;
 
+class ConfigStruct {
+	public $db;  
+	public $orderid;  
+	public $userid;    
+	public $login;	
+	public $isHistory;
+}
+
 session_start();
 include 'config.php';
 
@@ -9,39 +17,31 @@ function tooLateMessage()
 	echo "<script>alert('Sie sind leider zu spät die Deadline wurde überschritten!');</script>";
 }
 
-function getLogin()
+function getLogin($userid)
 {
-    if(!isset($database)){
-        include 'config.php';
-    }
+	global $config;
 
+	$sql = "SELECT login FROM user WHERE id = " . $userid;
 	
-    $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT login FROM user WHERE id = " . $userid;
-
-    foreach ($db->query($sql) as $row) {        
+	$login = "";
+    foreach ($config->db->query($sql) as $row) {        
       $login = $row['login'];           
     } 
-    
     return $login;
 }
 
 function input_login()
 {
-    if(!isset($database)){
-        include 'config.php';
-    }
-    
-    $pdo = new PDO('sqlite:' . $database); 
+	global $config;
+   
     if(isset($_GET['login']))
     {        
-      $login = $_POST['login'];
+      $login    = $_POST['login'];
       $password = $_POST['password'];
 
-      $statement = $pdo->prepare("SELECT * FROM user WHERE login = :login");
-      $result = $statement->execute(array('login' => $login));
-      $user = $statement->fetch();
+      $statement = $config->db->prepare("SELECT * FROM user WHERE login = :login");
+      $result    = $statement->execute(array('login' => $login));
+      $user      = $statement->fetch();
 
       echo "<br>";
       //Überprüfung des Passworts
@@ -62,19 +62,16 @@ function input_login()
 
 function input_register()
 {	
-    if(!isset($database)){
-        include 'config.php';
-    }
+	global $config;
 	
 	if(isset($_GET['register'])) {
 
 	
+
 	 $error     = false;
 	 $login     = $_POST['login'];
 	 $password  = $_POST['password'];
 	 $password2 = $_POST['password2'];
-	 
-	 $db = new PDO('sqlite:' . $database);
 	 
 	 if(strlen($password) == 0) {
 			echo 'Bitte ein Passwort angeben<br>';
@@ -87,7 +84,7 @@ function input_register()
 		 
 		 //check if login is already used
 		 if(!$error) { 
-			$statement = $db->prepare("SELECT * FROM user WHERE login = :login");
+			$statement = $config->db->prepare("SELECT * FROM user WHERE login = :login");
 			$result = $statement->execute(array('login' => $login));
 			$user = $statement->fetch();
 		 
@@ -102,13 +99,13 @@ function input_register()
 			$password_hash = password_hash($password, PASSWORD_DEFAULT);	 
 			$isAdmin = 0;
 		 
-			foreach ($db->query("SELECT COUNT(*) FROM user") as $row) {   
+			foreach ($config->db->query("SELECT COUNT(*) FROM user") as $row) {   
 				$count = $row[0];
 			}
 		 
 			if($count < 1){  $isAdmin = 1; }
 		 
-			$statement = $db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, $isAdmin)");
+			$statement = $config->db->prepare("INSERT INTO user (login, password, isAdmin) VALUES (:login, :password, $isAdmin)");
 			$result = $statement->execute(array('login' => $login, 'password' => $password_hash));
 		 
 			if($result) { 
@@ -120,6 +117,45 @@ function input_register()
 		 } 
 	}
 }
+
+
+function input_change_pw()
+{	
+	global $config;
+	
+	if(isset($_POST['eventButtonChangePw']))
+	{
+		$resetcode = $_GET['resetcode'];
+
+		 $error     = false;
+		 $password  = $_POST['password'];
+		 $password2 = $_POST['password2'];
+		 
+		 if(strlen($password) == 0) {
+				echo 'Bitte ein Passwort angeben<br>';
+				$error = true;
+			 }
+			 if($password != $password2) {
+				echo 'Die Passwörter müssen übereinstimmen<br>';
+				$error = true;
+			 }
+					 
+			 //no errors, register user
+			 if(!$error) { 
+				$password_hash = password_hash($password, PASSWORD_DEFAULT);	 			
+				
+				$sql = "UPDATE user SET password = '".$password_hash."' WHERE resetcode = '". $resetcode . "'" ;
+				$config->db-> exec($sql); 
+		
+				$sql = "UPDATE user SET resetcode = null WHERE resetcode = '". $resetcode . "'" ;
+				$config->db-> exec($sql);		
+											
+				echo 'Passwort erfolgreich geändert';
+				header("Location: index.php");		  
+			 } 
+		}
+}
+
 
 function input_logout()
 {
@@ -161,13 +197,12 @@ function extractSection($splitter, $page)
 }
 
 function getCurrentSupplierId()
-{    
-    if(!isset($database)){
-        include 'config.php';
-    }
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT supplier_ID FROM orders WHERE state < 3";
-    foreach ($db->query($sql) as $row) {       
+{   
+	global $config; 
+	$sql = "SELECT supplier_ID FROM orders WHERE id = ". $config->orderid;
+	
+	
+    foreach ($config->db->query($sql) as $row) {       
         $supplier_ID = $row['supplier_ID'];       
     }    
     return $supplier_ID;
@@ -176,16 +211,13 @@ function getCurrentSupplierId()
 
 function getCurrentSupplierPhoneNr()
 {    
-    if(!isset($database)){
-        include 'config.php';
-    }
-	
+	global $config;
+
 	$supplier_ID = getCurrentSupplierId();
 	
-	$phoneNumber = "";
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT phoneNumber FROM supplier WHERE id = ".$supplier_ID;
-    foreach ($db->query($sql) as $row) {       
+	$phoneNumber = "";  
+    $sql = "SELECT phoneNumber FROM supplier WHERE id = " .$supplier_ID;
+    foreach ($config->db->query($sql) as $row) {       
         $phoneNumber = $row['phoneNumber'];       
     }    
     return $phoneNumber;
@@ -316,17 +348,28 @@ function updateDatabaseToV0_7_5(){
 	$db-> exec("UPDATE cntrl SET value = 0.75 WHERE type = 'version';");	
 }
 
+
+function updateDatabaseToV0_8_0(){
+
+	 if(!isset($database)){
+	    include 'config.php';
+	 }
+ 
+	$db = new PDO('sqlite:' . $database);
+	$db-> exec("ALTER TABLE user ADD resetcode varchar(255)");	
+	
+	$db-> exec("UPDATE cntrl SET value = 0.8 WHERE type = 'version';");	
+}
+
+
+
 function getVersion(){
-    if(!isset($database)){
-       include 'config.php';
-    }
-    
-    $db = new PDO('sqlite:' . $database);
+    global $config;
 
     $sql = "SELECT value FROM cntrl WHERE type = 'version'";
 
     $version = 0;
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $version = $row['value'];
     }
     
@@ -349,25 +392,28 @@ function updateDatabase()
 		updateDatabaseToV0_7_5();
 		$version = getVersion();
     }
+
+    if($version == 0.75){
+		updateDatabaseToV0_8_0();
+		$version = getVersion();
+    }	
+	
 }
 
 
 function getArrivalInfo(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
+    global $config;
+	
     $timestampArrival = 0;
 	$login            = "";
 	$userId           = -1;
+    
+	$sql = "SELECT orders.timestampArrival, user.id, user.login FROM user INNER JOIN orders ON user.id = orders.user_ID_arrival WHERE orders.id = " . $config->orderid . " ;";
 	
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT orders.timestampArrival, user.id, user.login FROM user INNER JOIN orders ON user.id = orders.user_ID_arrival WHERE orders.id = " . getCurrentOrderId() . " ;";
-	
-    foreach ($db->query($sql) as $row) {       
+    foreach ($config->db->query($sql) as $row) {       
         $timestampArrival = $row['timeStampArrival'];       
-		$login           = $row['login'];    
-		$userId          = $row['id'];  		
+		$login            = $row['login'];    
+		$userId           = $row['id'];  		
     }    
    
    return array($timestampArrival, $login, $userId);
@@ -376,14 +422,11 @@ function getArrivalInfo(){
 
 function getUserWhoIsOrdering()
 {
-   if(!isset($database)){
-        include 'config.php';
-    }
-    
-	$userId = -1;
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT user_ID FROM orders WHERE state < 3";
-    foreach ($db->query($sql) as $row) {       
+	global $config;
+   
+	$userId = -1;   
+	$sql = "SELECT user_ID FROM orders WHERE id = " . $config->orderid;
+    foreach ($config->db->query($sql) as $row) {       
         $userId = $row['user_ID'];       
     }    
     return $userId;
@@ -391,16 +434,13 @@ function getUserWhoIsOrdering()
 
 function getCurrentSupplierName()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
     
     $supplier_Name = '';
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT supplier.name FROM supplier, orders WHERE supplier.id = orders.supplier_ID";
+    $sql = "SELECT supplier.name, orders.id FROM supplier, orders WHERE supplier.id = orders.supplier_ID AND orders.id = " . $config->orderid;
 
-    foreach ($db->query($sql) as $row) {       
+    foreach ($config->db->query($sql) as $row) {       
         $supplier_Name = $row['name'];       
     }    
     return $supplier_Name;
@@ -408,83 +448,62 @@ function getCurrentSupplierName()
 
 function getOrderState()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
+   global $config;
+     
+   $sql = "SELECT state, id FROM orders WHERE id = " .$config->orderid;
    
-    $db = new PDO('sqlite:' . $database);    
-    $sql = "SELECT state FROM orders WHERE state < 3";
-    
-
     $orderState = 0;
     
-    if(is_array($db->query($sql)) || is_object($db->query($sql))){
-        foreach ($db->query($sql) as $row) {
+    if(is_array($config->db->query($sql)) || is_object($config->db->query($sql))){
+        foreach ($config->db->query($sql) as $row) {
             $orderState = $row['state'];
         }                
     }
-    
+
     return $orderState;
 }
 
 function getCurrentOrderId()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-   
-    $db = new PDO('sqlite:' . $database);    
+    global $config;
+ 
     $sql = "SELECT id, state FROM orders WHERE state < 3";
-    
+	
     $orderId = 0;
-    if(is_array($db->query($sql)) || is_object($db->query($sql))){
-        foreach ($db->query($sql) as $row) {
+	if(is_array($config->db->query($sql)) || is_object($config->db->query($sql))){
+        foreach ($config->db->query($sql) as $row) {
             $orderId = $row['id'];
         }
     }
-    
     return $orderId;
 }
 
+
+
 function eventButtonSetCurrentOrderer(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+	global $config;
 	
     if(isset($_POST['eventButtonSetCurrentOrderer']))
     {            
-        
-		
 		$newOrdererId = $_POST['newOrderer'];
-			
- 
-        $db = new PDO('sqlite:' . $database);    
-        $sql = "UPDATE orders SET user_ID = ".$newOrdererId ." WHERE ( id = ". getCurrentOrderId() . " )";
-        $db-> exec($sql); 		
+		
+        $sql = "UPDATE orders SET user_ID = ".$newOrdererId ." WHERE ( id = ". $config->orderid . " )";
+        $config->db-> exec($sql); 		
 			
 		//header("Location: setup2.php");	
     }	
 }
 
 function eventButtonOrderArrived(){
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
-	if(isset($_SESSION['userid'])){
-		$userid = $_SESSION['userid'];	
-						
+	if(isset($_SESSION['userid'])){						
 		if(isset($_POST['eventButtonOrderArrived']))
-		{ 
-			
-			
+		{ 	
 			$timestamp = time();
-						   
-			$db = new PDO('sqlite:' . $database);    
-			$sql = "UPDATE orders SET timestampArrival = ".$timestamp .", user_ID_arrival = " . $userid . " WHERE ( id = ". getCurrentOrderId() . " )";
-			$db-> exec($sql); 		
+						 
+			$sql = "UPDATE orders SET timestampArrival = ".$timestamp .", user_ID_arrival = " . $config->userid . " WHERE ( id = ". $config->orderid . " )";
+			$config->db-> exec($sql); 		
 				
 			header("Location: index.php");		
 		}	
@@ -493,18 +512,14 @@ function eventButtonOrderArrived(){
 }
 
 function eventButtonOrderArrivedStorno(){
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
 	if(isset($_SESSION['userid'])){
-		$userid = $_SESSION['userid'];	
 			
 		if(isset($_POST['eventButtonOrderArrivedStorno']))
-		{ 											   
-			$db = new PDO('sqlite:' . $database);    
-			$sql = "UPDATE orders SET timestampArrival = 0, user_ID_arrival = -1 WHERE ( id = ". getCurrentOrderId() . " )";
-			$db-> exec($sql); 		
+		{ 											       
+			$sql = "UPDATE orders SET timestampArrival = 0, user_ID_arrival = -1 WHERE ( id = ". $config->orderid . " )";
+			$config->db-> exec($sql); 		
 				
 			header("Location: index.php");		
 		}	
@@ -512,52 +527,72 @@ function eventButtonOrderArrivedStorno(){
 }
 
 function eventSetUserIsBank(){
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
-    $userid = $_SESSION['userid'];
-	
     if(isset($_POST['eventSetUserIsBank']))
     {            
-        //include 'config.php';
-		
 		$loginId = $_POST['userId'];
 		$value   = $_POST['isBank'];		
 		$value = 1 - intval($value);
 		
- 
-        $db = new PDO('sqlite:' . $database);    
         $sql = "UPDATE user SET isBankTransactor = ".$value ." WHERE ( id = ". $loginId . " )";
-        $db-> exec($sql); 		
+        $config->db-> exec($sql); 		
 			
 		header("Location: setup2.php");	
     }	
 }
 
 function eventSetUserIsAdmin(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+	global $config;
+
 	
     if(isset($_POST['eventSetUserIsAdmin']))
     {            
-        //include 'config.php';
-
         $loginId = $_POST['userId'];
 		$value   = $_POST['isAdmin'];		
 		
 		$value = 1 - intval($value);
-        $db = new PDO('sqlite:' . $database);    
         $sql = "UPDATE user SET isAdmin = ".$value ." WHERE ( id = ". $loginId . " )";
-        $db-> exec($sql); 	
+        $config->db-> exec($sql); 	
 		
 		header("Location: setup2.php");			
     }	
 }
 
+
+function eventCreateResetCode(){
+	global $config;
+
+	
+    if(isset($_POST['eventCreateResetCode']))
+    {     
+		$userId    = $_POST['userId'];	 
+		$bytes     = random_bytes(10);
+		$resetcode = bin2hex($bytes);
+		
+		//$value = 1 - intval($value);
+        $sql = "UPDATE user SET resetcode = '".$resetcode ."' WHERE ( id = ". $userId . " )";
+        $config->db-> exec($sql); 	
+		
+		header("Location: setup2.php");			
+    }	
+}
+
+function eventDeleteResetCode(){
+	global $config;
+
+
+    if(isset($_POST['eventDeleteResetCode']))
+    {     
+	echo "bla";
+		$userId    = $_POST['userId'];	
+		
+        $sql = "UPDATE user SET resetcode = null WHERE ( id = ". $userId . " )";
+        $config->db-> exec($sql); 	
+		
+		header("Location: setup2.php");			
+    }	
+}
 
 function checkDeadLine(){
 	if(getTimeStampFreezingOrder() < time()){
@@ -566,11 +601,8 @@ function checkDeadLine(){
 }
 function eventOrderKill()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
-    $userid = $_SESSION['userid'];
     if(isset($_POST['orderKill']))
     {            
 		checkDeadLine();
@@ -579,16 +611,14 @@ function eventOrderKill()
 		    tooLateMessage();
 		}
 		else{
-			$order_ID = $_POST['orderKill'];
-			$db = new PDO('sqlite:' . $database);    
+			$order_ID = $_POST['orderKill']; 
 			$sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;      
 			
-			$db-> exec($sql);     
+			$config->db-> exec($sql);     
 
-			//$sql = "DELETE FROM bank WHERE orderDetail_id = " . $order_ID;      
 			$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;      
 			
-			$db-> exec($sql); 
+			$config->db-> exec($sql); 
 
 			header("Location: index.php");			
 		}
@@ -596,16 +626,14 @@ function eventOrderKill()
 }
 
 function eventOrderPaid(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    if(isset($_POST['eventButtonPayOrder']))
+	global $config;
+    
+	if(isset($_POST['eventButtonPayOrder']))
     { 
       $order_ID = $_POST['orderId'];
-      $db = new PDO('sqlite:' . $database);              
 
       $sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = ". $order_ID . " )";
-      $db-> exec($sql);   
+      $config->db-> exec($sql);   
 
 	  header("Location: index.php");	  
     } 
@@ -613,19 +641,14 @@ function eventOrderPaid(){
     if(isset($_POST['eventButtonOrderStorno']))
     { 
 
-      $order_ID = $_POST['orderId'];
-      $db = new PDO('sqlite:' . $database);              
+      $order_ID = $_POST['orderId'];            
       $sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = ". $order_ID . " )";
-      $db-> exec($sql);
+      $config->db-> exec($sql);
 	  header("Location: index.php");
     }	
 }
 function eventOrderAdd(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+    global $config;
         
 	if(isset($_POST['eventButtonAddOrder']))
 	{
@@ -636,55 +659,44 @@ function eventOrderAdd(){
 		   
 		}
 		else{
-			$order_ID = $_POST['supplierCard_ID'];
+			$supplierCard_ID = $_POST['supplierCard_ID'];
 
-			$db = new PDO('sqlite:' . $database);    
-			$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $userid;
+			$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $config->userid;
 
 			$counter = 0;
-			foreach ($db->query($sql) as $row) {
+			foreach ($config->db->query($sql) as $row) {
 				$counter++;
 			}
-			
-	 
-			$orderId = getCurrentOrderId();                       
+				                   
 			$price   = $_POST['supplierCard_price'];
 			$supplierID = getCurrentSupplierId();
-			$db-> exec("INSERT INTO orderDetail 
+			$config->db-> exec("INSERT INTO orderDetail 
 						(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
 					   VALUES ( " .
-					   $orderId . ",". $order_ID . ",". $supplierID ." , " .$userid . "," . $price . ")");
+					   $config->orderid . ",". $supplierCard_ID . ",". $supplierID ." , " .$config->userid . "," . $price . ")");
 		   header("Location: index.php");
 		}
 	    
 	}
 }
+
 function eventOrderRestart(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    $userid = $_SESSION['userid'];
+	global $config;
 	
     if(isset($_POST['restart']))
     { 
-		if(getOrderState() != 1){
-			$db = new PDO('sqlite:' . $database);         
-	  
-			$db-> exec("INSERT INTO orders
+		if(getOrderState() != 1){		 
+			$config->db-> exec("INSERT INTO orders
 						  (supplier_ID, user_ID, state)                         
 						   VALUES ( " .
-						   "0, " . $userid . ", 0 )");			   	    		 
+						   "0, " . $config->userid . ", 0 )");			   	    		 
 	   }
 	   header("Location: index.php");
     }
 }
 
 function eventOrderComment(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+	global $config;
 	
     if(isset($_POST['orderUpdateCommentID']))
     {                         
@@ -695,37 +707,28 @@ function eventOrderComment(){
 		else{		
 			$order_ID = $_POST['orderUpdateCommentID'];
 			$comment  = $_POST['orderUpdateCommentTxt'];
-			$db = new PDO('sqlite:' . $database);              
-			
+			      			
 			$comment = str_replace(' ', '#$#', $comment);
 			
 			$sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
-			$db-> exec($sql);
+			$config->db-> exec($sql);
 			header("Location: index.php");
-		}
-		
+		}		
     }
 }
 
 
 function closeCurrentOrder(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-   
-   
-	$db = new PDO('sqlite:' . $database);                     		
+	global $config;          
+	
 	$timeStampArrival = mktime(12, 15, 0, date("m")  , date("d"), date("Y"));
 	
-	$sql = "UPDATE orders SET `state` = 2, timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
-	$db-> exec($sql);			
+	$sql = "UPDATE orders SET `state` = 2, timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". $config->orderid . " )";
+	$config->db-> exec($sql);			
 }
 function eventOrderFinished(){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+	global $config;
+	
     if(isset($_POST['finish']))
     { 
 		closeCurrentOrder();
@@ -735,49 +738,35 @@ function eventOrderFinished(){
 
 function eventBankInput()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];
+	global $config;
     if(isset($_POST['eventButtonBankInput']))
     {       
-        //include 'config.php';
-	
 		$customer_id = $_POST['customer_id'];
 		$amount      = $_POST['amount'];
-	       
-        $db = new PDO('sqlite:' . $database);    
+  
         $sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
-		VALUES 		 (" .$userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
+			    VALUES 		 (" .$config->userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
         	
-        $db-> exec($sql);  
+        $config->db-> exec($sql);  
 		header("Location: bank.php");		
     }	
 }
 
 function eventVirtualPay()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];    						  
+	global $config;
 							   
     if(isset($_POST['eventVirtualPayButton']))
-    {       
-        //include 'config.php';
-	
+    {      
 		$orderDetail_id = $_POST['orderDetail_id'];
 		$price          = $_POST['price'];
-			   
-			$db = new PDO('sqlite:' . $database);    
-			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
-			VALUES 		 (" .$userid .      " , ". $userid ." , " . -$price  . "," . time() ."," . $orderDetail_id .")";        	
-			$db-> exec($sql);        
-				
-			$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
-			$db-> exec($sql);        
+ 
+		$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
+				VALUES 		 (" .$config->userid .      " , ". $config->userid ." , " . -$price  . "," . time() ."," . $orderDetail_id .")";        	
+		$config->db-> exec($sql);        
+			
+		$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
+		$config->db-> exec($sql);        
 			
 		header("Location: index.php");
 	}	
@@ -787,12 +776,9 @@ function eventVirtualPay()
 
 function showOrderStarted()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
 	
 	if(isset($_SESSION['userid'])){	
-		$userid = $_SESSION['userid'];
 		  
 		if(isset($_GET['pollSubmit'])) { 
 			
@@ -804,19 +790,18 @@ function showOrderStarted()
 			//$timestampFreeze = $timestampNow + 3600 * $timeHH + $timeMM * 60;
 			$timestampFreeze = mktime($timeHH, $timeMM, 0, date("m")  , date("d"), date("Y"));
 					
-			// create new order
-			$db = new PDO('sqlite:' . $database);         
+			// create new order      
 			$supplierID = $_POST['supplier'];
-			$orderId = getCurrentOrderId();
+			$orderId    = $config->orderid;
 			
 			$sql = "UPDATE orders SET 
-					supplier_ID = ".$supplierID.",
-					user_ID     = ". $userid."   ,
+					supplier_ID = ". $supplierID.",
+					user_ID     = ". $config->userid."   ,
 					state       = 1,
 					timeStampStarted = ".$timestampNow.",
 					timeStampFreezing = ".$timestampFreeze . " WHERE (id = " .$orderId. ")";
 					   
-			$db-> exec($sql);
+			$config->db-> exec($sql);
 			header("Location: index.php");		  
 		}    
 	}
@@ -824,40 +809,27 @@ function showOrderStarted()
 
 function getSupplierList()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $db = new PDO('sqlite:' . $database);    
+	global $config;
+ 
     $sql = "SELECT id, name FROM supplier";
 
     $string = "<form action='?pollSubmit=1' method='post'>";
 
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $string = $string . "<input type='radio' name='supplier' value='".$row['id']. "' CHECKED />". $row["name"] ."<br>";                            
     }
-    
     return $string;
 }
 
 
 function createOrderTable($page)
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-    $db = new PDO('sqlite:' . $database);        
-	
-	$userid = -1;
-	if(isset($_SESSION['userid'])){
-		$userid = $_SESSION['userid'];
-	}
-	
+	global $config;     	
                    
-    $orderId = getCurrentOrderId();           
+    $orderId = $config->orderid;           
     $sql = "SELECT supplier_ID, supplier.name FROM orders INNER JOIN supplier ON orders.supplier_ID = supplier.id WHERE (orders.id = " . $orderId .")";
       
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
 	    $supplier_ID = $row['supplier_ID'];
 	    $supplierName = $row['name'];               
     }
@@ -867,14 +839,11 @@ function createOrderTable($page)
 	$templateRowOdd  = extractSection("<!-- order items section row odd -->", $page);	
 	$templateRowEven = extractSection("<!-- order items section row even -->", $page);
 	
-	
-	//$templateRow = $page;
-	
 	$page = "";
 	$rowCount = 0;
 	
-	foreach ($db->query($sql) as $row) {
-		if($userid > -1){
+	foreach ($config->db->query($sql) as $row) {
+		if($config->userid > -1){
 			$button = "<input type='submit' value='bestellen'       name='eventButtonAddOrder'/>
 					   <input type='hidden' value=".$row['id']."    name='supplierCard_ID'/>
 					   <input type='hidden' value=".$row['price']." name='supplierCard_price'/>";
@@ -905,35 +874,26 @@ function createOrderTable($page)
 
 
 function getTimeStampFreezingOrder(){
-    if(!isset($database)){
-        include 'config.php';
-    }
-        
-	$db = new PDO('sqlite:' . $database);   
+	global $config; 
 
-	$orderId = getCurrentOrderId()	;
+	$orderId = $config->orderid;
     $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $orderId;
 	
 	$timeStampFreezing = 0;
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $timeStampFreezing = $row['timeStampFreezing'];
-    }
-     
+    }     
 	return $timeStampFreezing;
 }
 
 function getTimeStampArrivalOrder(){
-    if(!isset($database)){
-        include 'config.php';
-    }
-        
-	$db = new PDO('sqlite:' . $database);   
+	global $config;  
 
-	$orderId = getCurrentOrderId()	;
+	$orderId = $config->orderid;
     $sql = "SELECT timeStampReceive FROM orders WHERE id = " . $orderId;
 	
 	$timeStampReceive = 0;
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $timeStampReceive = $row['timeStampReceive'];
     }
      
@@ -942,47 +902,36 @@ function getTimeStampArrivalOrder(){
 
 function createIncomingOrdersTable($page)
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-	$userid = -1;
-	if(isset($_SESSION['userid'])){
-		$userid = $_SESSION['userid'];
-	}
-	
-    $db = new PDO('sqlite:' . $database);   
+	global $config;
+
     $supplierName = getCurrentSupplierName();
 
     $oderstate = getOrderState();
-    
-    $sql = "SELECT user_ID FROM  orders WHERE orders.state < 3";    
+	$sql = "SELECT user_ID, id FROM  orders WHERE orders.state AND id = " .$config->orderid;    
             
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $oderUserId = $row['user_ID'];
     }
 
     $sql = "SELECT login FROM user WHERE id = " . $oderUserId;
 
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $oderUserName = $row['login'];
     }
 
     $orderCounter = 0;
     $priceCounter = 0;
-
-    $orderId = getCurrentOrderId();
     
     $timeStampStarted  = 0;
     $timeStampFreezing = 0;
                 
-    $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $orderId;
-    foreach ($db->query($sql) as $row) {
+    $sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $config->orderid;
+    foreach ($config->db->query($sql) as $row) {
         $timeStampStarted = $row['timeStampStarted'];
         $timeStampFreezing = $row['timeStampFreezing'];
     }
     
-    $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$orderId ;
+    $sql = "SELECT user.id AS user_ID, orderDetail.isPaid, user.login, orderDetail.id AS order_ID, orderDetail.supplierCard_ID, orderDetail.comment, supplierCard.nr, supplierCard.name, orderDetail.price FROM orders, ((orderDetail INNER JOIN user ON orderDetail.user_ID = user.id) INNER JOIN supplierCard ON orderDetail.supplierCard_ID = supplierCard.ID) WHERE orders.id = orderDetail.order_ID AND orders.id = " .$config->orderid ;
     
 	$page = preg_replace("/\[\%supplierName\%\]/" ,  $supplierName, $page);
 	$page = preg_replace("/\[\%orderOwner\%\]/"   ,  $oderUserName, $page);
@@ -1014,7 +963,7 @@ function createIncomingOrdersTable($page)
 	$moneyVirtual = 0;
 	$moneyReal    = 0;
 	
-	foreach ($db->query($sql) as $row) {     
+	foreach ($config->db->query($sql) as $row) {     
 		$orderCounter = $orderCounter + 1;
 		$price = doubleval(str_replace(',','.', $row['price']));
 		$priceCounter = $priceCounter + $price;            
@@ -1052,24 +1001,25 @@ function createIncomingOrdersTable($page)
 		$killButton 	  = "";
 		$virtualPayButton = "";
 		
-		if(($userid == $row['user_ID']) && ($oderstate == 1))
-		{
-			$killButton = "<form action='' method='post'>
-						   <input type='submit' value='stornieren' name='orderKill'/>
-						   <input type='hidden' value=".$row['order_ID']." name='orderKill'/>                        
-						   </form>";						   				
-		}
-		if(($userid == $row['user_ID']) && ($isPaid < 1))
-		{
-			if(countMoney() >= $price){ 
-				$virtualPayButton = "<form action='' method='post'>
-							   <input type='submit' value='virtualPay'name='eventVirtualPayButton'/>
-							   <input type='hidden' value=".$row['order_ID']." name='orderDetail_id'/>                        
-							   <input type='hidden' value=".$price." name='price'/>                        
-						     </form>";							 						
+		if(!$config->isHistory) {
+			if(($config->userid == $row['user_ID']) && ($oderstate == 1))
+			{
+				$killButton = "<form action='' method='post'>
+							   <input type='submit' value='stornieren' name='orderKill'/>
+							   <input type='hidden' value=".$row['order_ID']." name='orderKill'/>                        
+							   </form>";						   				
+			}
+			if(($config->userid == $row['user_ID']) && ($isPaid < 1))
+			{
+				if(countMoney() >= $price){ 
+					$virtualPayButton = "<form action='' method='post'>
+								   <input type='submit' value='virtualPay'name='eventVirtualPayButton'/>
+								   <input type='hidden' value=".$row['order_ID']." name='orderDetail_id'/>                        
+								   <input type='hidden' value=".$price." name='price'/>                        
+								 </form>";							 						
+				}
 			}
 		}
-		
 
 			
 		$newRow = preg_replace("/\[\%killOrder\%\]/"  ,  $killButton	  , $newRow);
@@ -1080,7 +1030,7 @@ function createIncomingOrdersTable($page)
 		$payState = "";
 		
 		//  --- show order control button if allowed ---------------------------------------------------------		
-		if(($userid == getUserWhoIsOrdering()) and ($isPaid < 2)){
+		if(($config->userid == getUserWhoIsOrdering()) and ($isPaid < 2) and (!$config->isHistory)){
 			if($isPaid == 1){
 				$payState = "<form action='' method='post'>
 							    <input type='submit' value='BEZAHLT'name='eventButtonOrderStorno'/>
@@ -1090,6 +1040,7 @@ function createIncomingOrdersTable($page)
 				
 			}
 			else {			
+				
 				$payState = "<form action='' method='post'>
 							  <input type='submit' value='OFFEN'name='eventButtonPayOrder'/>
 							  <input type='hidden' value=".$row['order_ID']." name='orderId'/>
@@ -1117,13 +1068,16 @@ function createIncomingOrdersTable($page)
 
 		
 		//  --- show comment control button if allowed ---------------------------------------------------------		
-		if(($userid == $row['user_ID']) && ($oderstate == 1)){
-				 $comment = "<form action='' method='post'>                   
-								<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
-								<input type='submit' value='speichern'name='updateComment'/>                     
-								<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>
-							 </form>";                     
-	    }			  
+		if(!$config->isHistory) {
+			if(($config->userid == $row['user_ID']) && ($oderstate == 1)){
+					 $comment = "<form action='' method='post'>                   
+									<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
+									<input type='submit' value='speichern'name='updateComment'/>                     
+									<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>
+								 </form>";                     
+			}
+		}
+		
 		$newRow = preg_replace("/\[\%comment\%\]/"        ,  $comment  , $newRow);	
 		$newRow = preg_replace("/\[\%price\%\]/"        ,  number_format($row['price'] , 2) . " €"  , $newRow);	
 		
@@ -1189,15 +1143,10 @@ function createIncomingOrdersTable($page)
 
 function showOrderFinish()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-       
-    
-    $userid = $_SESSION['userid'];
+	global $config;
 
     $string = '';
-    if($userid == getUserWhoIsOrdering())
+    if($config->userid == getUserWhoIsOrdering())
     {
         $string = "<div class=''>
                    form action='?finish' method='post'>
@@ -1213,75 +1162,55 @@ function showOrderFinish()
 
 function isAdmin()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
-       
-    $userid = $_SESSION['userid'];
-    $db = new PDO('sqlite:' . $database);   
+	global $config;
     
-    $sql = "SELECT isAdmin FROM user WHERE user.id = $userid";
+    $sql = "SELECT isAdmin FROM user WHERE user.id = " . $config->userid;
 
     $isAdmin = 0;
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
         $isAdmin = $row['isAdmin'];
-    }
-    
+    }    
     return $isAdmin;
 }
 
 function isBankTransactor()
 {
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
     
 	$isBankTransactor = 0;    
-    if(isset($_SESSION['userid'])){
-      $userid = $_SESSION['userid'];
-      $db = new PDO('sqlite:' . $database);   
-	    
-      $sql = "SELECT isBankTransactor FROM user WHERE user.id = $userid";
+    if($config->userid > -1){
+	
+      $sql = "SELECT isBankTransactor FROM user WHERE user.id = ".$config->userid;
 
-	    
-      foreach ($db->query($sql) as $row) {
-  	$isBankTransactor = $row['isBankTransactor'];
+	  $isBankTransactor  = 0;  
+      foreach ($config->db->query($sql) as $row) {
+		$isBankTransactor = $row['isBankTransactor'];
       }
     }
     return $isBankTransactor;
 }
 
 function addUserIdLogin($item){ 
-   if(!isset($database)){
-        include 'config.php';
-   }
-       
-    $db = new PDO('sqlite:' . $database);   
+	global $config;  
     
     $sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
 
     $comboboxItems = "";
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
 	$newItem = preg_replace("/\[\%bank_customer_user_ID\%\]/" , $row['id']   , $item);
 	$newItem = preg_replace("/\[\%bank_customer_login\%\]/"   , $row['login'], $newItem);
         $comboboxItems = $comboboxItems . $newItem;
-    }
-    
+    }    
     return $comboboxItems;
 }
 
 function countMoney(){
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config; 
     
-    $userid = $_SESSION['userid'];    
-    $db = new PDO('sqlite:' . $database);   
-    
-    $sql = "SELECT amount FROM bank WHERE user_id_customer = " . $userid;
+    $sql = "SELECT amount FROM bank WHERE user_id_customer = " . $config->userid;
 
     $money = 0;
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
 	$money = $money + $row['amount'];	
     }
     
@@ -1290,12 +1219,7 @@ function countMoney(){
  
  
 function adminSetCurrentOrderer($page){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    
-    $userid = $_SESSION['userid'];    
-    $db = new PDO('sqlite:' . $database);   
+	global $config; 
     
     $sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
 	
@@ -1309,7 +1233,7 @@ function adminSetCurrentOrderer($page){
 	
 	$table = "";
 	
-    foreach ($db->query($sql) as $row) {	
+    foreach ($config->db->query($sql) as $row) {	
 			
 		$selected = "";
 		
@@ -1330,13 +1254,9 @@ function adminSetCurrentOrderer($page){
 }
 
 function adminShowUserData($page){
-   if(!isset($database)){
-        include 'config.php';
-   }
-    $userid = $_SESSION['userid'];    
-    $db = new PDO('sqlite:' . $database);   
+	global $config;   
     
-    $sql = "SELECT id, login, created_at, isAdmin, isBankTransactor FROM user ORDER BY UPPER(login) ASC";
+    $sql = "SELECT id, login, created_at, isAdmin, isBankTransactor, resetcode FROM user ORDER BY UPPER(login) ASC";
 	
 	$rowOdd  = extractSection("<!-- admin user section row odd -->", $page);
 	$rowEven = extractSection("<!-- admin user section row even -->", $page);
@@ -1346,8 +1266,8 @@ function adminShowUserData($page){
 	$newRow = "";
 	
 	$table = "";
-    foreach ($db->query($sql) as $row) {
-	
+    foreach ($config->db->query($sql) as $row) {
+		
 		if(($idx % 2) == 0){
 			$newRow = $rowEven;
 		}
@@ -1355,20 +1275,38 @@ function adminShowUserData($page){
 			$newRow = $rowOdd;
 		}
 		
+		
+		$resetcode = $row['resetcode'];
+		
 		$newRow  = preg_replace("/\[\%userLogin\%\]/" , $row['login']   , $newRow);
 		
 		if(intval($row['isAdmin']) == 1){$value = "TRUE" ; $setValue = 1;}
 		else							{$value = "FALSE"; $setValue = 0;}
 		
-		if($userid != $row['id']) {
+		if($config->userid != $row['id']) {
 			$newRow  = preg_replace("/\[\%checkboxAdminrights\%\]/" , "<input type='submit' name='eventSetUserIsAdmin' value='".$value."' />																	
-															   <input type='hidden'  value='".$row['id']."' name='userId'/>
-															   <input type='hidden'  value='".$setValue."' name='isAdmin'/>"   , $newRow);
+																	   <input type='hidden'  value='".$row['id']."' name='userId'/>
+																	   <input type='hidden'  value='".$setValue."' name='isAdmin'/>"   , $newRow);
 		}
 		else{
 			$newRow  = preg_replace("/\[\%checkboxAdminrights\%\]/" , $value    , $newRow);
 		}
 		
+		
+		
+															   
+															   
+		if($resetcode == null){
+			$resetcode = "<input type='submit' name='eventCreateResetCode' value='GENERATE'/>
+						  <input type='hidden'  value='".$row['id']."' name='userId'/>";
+		}
+		else{
+			$resetcode = "<a href='reset_pw.php?resetcode=".$resetcode."'>resetlink</a>
+						  <input type='submit' name='eventDeleteResetCode' value='X'/>
+						  <input type='hidden'  value='".$row['id']."' name='userId'/>";
+		}
+		
+		$newRow  = preg_replace("/\[\%resetcode\%\]/" , $resetcode , $newRow);
 
 	
 		
@@ -1389,17 +1327,10 @@ function adminShowUserData($page){
 
 
 function showBankInfo($page){
-    if(!isset($database)){
-        include 'config.php';
-    }
+	global $config;
   
 	$rowOdd  = extractSection("<!-- bank items section row even -->", $page);
 	$rowEven = extractSection("<!-- bank items section row odd -->" , $page);
-
-    //$userid = $_SESSION['userid'];    
-    $db = new PDO('sqlite:' . $database);   
-    
-    //$sql = "SELECT * FROM bank ORDER BY id DESC";
 	
 	$sql = "SELECT  bank.*, user.login, user1.login AS login1 FROM
 			bank 
@@ -1410,7 +1341,7 @@ function showBankInfo($page){
 	
 	$counter = 1;
 	$table   = "";
-    foreach ($db->query($sql) as $row) {
+    foreach ($config->db->query($sql) as $row) {
 	
 		if(($counter % 2) == 0){
 		   $newRow = $rowEven;
@@ -1419,9 +1350,7 @@ function showBankInfo($page){
 		   $newRow = $rowOdd;
 		}
 		
-		
 		$timestamp = date('d.m.o -  H:i:s' ,$row['timestamp']);
-		//$timestamp = date('H:i:s - m.i:s' ,$row['timestamp']); 
 		 
 		$newRow  = preg_replace("/\[\%bankId\%\]/" 		  , $row['id']    			   , $newRow);
 		$newRow  = preg_replace("/\[\%bankTimestamp\%\]/" , $timestamp		    	   , $newRow);
@@ -1444,6 +1373,26 @@ function showBankInfo($page){
 	return $page;
 }
 
+
+function checkResetCode($code){
+	global $config;
+	
+	$sql = "SELECT  user.id FROM user WHERE resetcode = '".$code . "'";
+	
+	$count = 0;
+	$userId = -1;
+	
+	foreach ($config->db->query($sql) as $row) {
+		$count = $count + 1;
+		$userId = $row['id'];
+	}
+	
+	if($count == 1){
+		return $userId;
+	}
+	
+	return -1;
+}
 
 function getComboboxHH($hour){
 	$htmlTxt = '';
@@ -1483,26 +1432,90 @@ function getComboboxMM($minute){
 
 
 function eventUpdateArrivalInfo(){
-   if(!isset($database)){
-        include 'config.php';
-   }
+	global $config;
 	
 	if(isset($_POST['eventButtonUpdateArrival'])){
 		
-		$db = new PDO('sqlite:' . $database);   	
 		$timeHH = $_POST['timeArrivalHH'];
 		$timeMM = $_POST['timeArrivalMM'];
 		
 		$timeStampArrival = mktime($timeHH, $timeMM, 0, date("m")  , date("d"), date("Y"));
 		
-		$sql = "UPDATE orders SET timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". getCurrentOrderId() . " )";
-		$db-> exec($sql);
+		$sql = "UPDATE orders SET timeStampReceive = ". $timeStampArrival ." WHERE ( id = ". $config->orderid . " )";
+		$config->db-> exec($sql);
 	
 		//header("Location: index.php");			
 	}
 }
 
+function getHistoryOrderList($page){
+	global $config;
+   
+   
+   	$rowOdd  = extractSection("<!-- history items section row odd -->", $page);
+	$rowEven = extractSection("<!-- history items section row even -->" , $page);
+	
+   
+   $sql = "SELECT orders.id, user.login, supplier.name, orders.state, orders.timeStampStarted ".
+          "FROM orders ".
+		  "INNER JOIN user ON user.id = orders.user_ID ".
+		  "INNER JOIN supplier ON supplier.id = orders.supplier_ID ".
+		  "ORDER  BY orders.timeStampStarted DESC";
+	
+   $table = "";	
+   
+   $counter = 0;
+   foreach ($config->db->query($sql) as $row) {
+	
+		if(($counter % 2) == 0){
+		   $newRow = $rowEven;
+		}
+		else{
+		   $newRow = $rowOdd;
+		}
+		
+		$timestamp = date('d.m.o -  H:i:s' ,$row['timeStampStarted']);
+
+		if     ($row['state'] == '2'){$state = "abgeschlossen";}
+		else if($row['state'] == '1'){$state = "offen";}
+		else 						 {$state = "neu erstellt";}
+		
+		$button = "<input value='>> Details' type='submit' name='eventButtonHistoryDetails'> ".						 
+				  "<input type='hidden' value=".$row['id']."    name='order_ID'/>";
+				  
+		 
+		$newRow  = preg_replace("/\[\%historyId\%\]/" 	     , $row['id']    , $newRow);
+		$newRow  = preg_replace("/\[\%historyTimestamp\%\]/" , $timestamp	 , $newRow);
+		$newRow  = preg_replace("/\[\%historyState\%\]/" 	 , $state	     , $newRow);
+		$newRow  = preg_replace("/\[\%historySupplier\%\]/"	 , $row['name']  , $newRow);
+		$newRow  = preg_replace("/\[\%userId\%\]/" 	 		 , $row['login'] , $newRow);
+		$newRow  = preg_replace("/\[\%details\%\]/" 	     , $button		 , $newRow);
+		
+		$table = $table . $newRow;
+		$counter = $counter +1;
+	}
+	
+	$page = replaceSection("<!-- history items section row -->", $table, $page);
+	
+	return $page;
+}
+
+
+function eventShowHistoryDetails(){
+	global $config;
+       
+	if(isset($_POST['eventButtonHistoryDetails']))
+	{
+		$order_ID = $_POST['order_ID'];
+		
+		header("Location: historyDetails.php?id=".$order_ID);
+		echo $order_ID;    
+	}
+}
+
 ?>
+
+
 
 
 

@@ -533,10 +533,10 @@ div.pollQuery            {border:1px; solid: #666;margin: 0px;}
 
 div.orderList            {border:1px; solid: #666;margin: 0px;}
 div.orderItem            {border:1px; solid: #666;margin: 0px;}
-div.orderItemOdd       {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
-div.orderItemOdd:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-div.orderItemEven     {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
-div.orderItemEven:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+div.orderItemOdd         {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
+div.orderItemOdd:hover   {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+div.orderItemEven        {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
+div.orderItemEven:hover  {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
 
 span.orderItemButton      {display: inline-block; width: 80px; border:0px; margin: 0px;}
 span.orderItemNr          {display: inline-block; width: 50px; border:0px; margin: 0px;}
@@ -564,6 +564,21 @@ span.sumUpOrderItem     {display: inline-block; width: 150px; border:0px; margin
 span.sumUpOrderItemCount{display: inline-block; width: 40px; border:0px; margin: 0px; text-align: right}
 span.sumUpOrderItemNr   {display: inline-block; width: 40px; border:0px; margin: 0px; text-align: right}
 
+div.historyList            {border:1px; solid: #666;margin: 0px;}
+div.historyItem            {border:1px; solid: #666;margin: 0px;}
+div.historyItemOdd         {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
+div.historyItemOdd:hover   {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+div.historyItemEven        {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
+div.historyItemEven:hover  {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
+
+span.historyId       {display: inline-block; width: 50px; border:0px; margin: 0px;}
+span.historyTimestamp{display: inline-block; width:150px; border:0px; margin: 0px;}
+span.historyState    {display: inline-block; width:150px; border:0px; margin: 0px;}
+span.historySupplier {display: inline-block; width:100px; border:0px; margin: 0px;}
+span.historyUserId   {display: inline-block; width:150px; border:0px; margin: 0px; text-align: right}
+span.historyDetails  {display: inline-block; width:100px; border:0px; margin: 0px; text-align: right}
+
+
 div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
 
 /*span.currentOrderItem    {display: inline-block; height: 100; width: 80px; border:0px; margin: 0px;}*/
@@ -579,10 +594,10 @@ div.adminItemEven:hover {background-color: lightgray; display: inline-block; wid
 
 
 
-span.adminUserLogin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
-span.adminUserIsAdmin 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
-span.adminUserIsBank 	{display: inline-block; width: 33%; border:0px; margin: 0px; text-align: center}
-
+span.adminUserLogin 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
+span.adminUserIsAdmin 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
+span.adminUserIsBank 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
+span.adminUserResetcode {display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
 
 div.infoMessageYellow   {background-color: #E4FB00;  display: inline-block; width: 100%; border:1px; solid: #E4FB00; margin: 0px; text-align: center;}
 
@@ -606,3 +621,4 @@ span.bankItemTimestamp   {display: inline-block; width: 20%; border:0px; margin:
 span.bankItemCustomer    {display: inline-block; width: 20%; border:0px; margin: 0px;}
 span.bankItemBanker      {display: inline-block; width: 20%; border:0px; margin: 0px;}
 span.bankItemAmount      {display: inline-block; width: 20%; border:0px; margin: 0px; text-align: right}
+

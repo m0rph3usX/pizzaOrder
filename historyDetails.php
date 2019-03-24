@@ -12,8 +12,13 @@ if (!file_exists($database)) {
  die;
 }   
 
+
+if(!isset($_GET['id'])){
+die;
+}
+
 $config->db 	 = new PDO('sqlite:' . $database);
-$config->orderid = getCurrentOrderId();
+$config->orderid = $_GET['id'];
 
 
 #check database version
@@ -25,56 +30,28 @@ if(isset($_SESSION['userid'])){
 }
 
 $config->login   = getLogin($config->userid);
-
+$config->isHistory = true;
 
 
 
 # define templates:
-$template 	    = "template/setup.html";
+$template 	    = "template/historyDetails.html";
 
 #-------------------------------------------
 # load template:
 $page        = file_get_contents($template);
 #-------------------------------------------
 
-#check for existing database
-if (!file_exists($database)) {
- echo "no database found! - run setup.php";       
- die;
-}
-else{
-	$page = removeSection("<!-- create db section -->", $page);
-	
-	#check database version
-	updateDatabase();
-}   
+//$page = getHistoryOrderList($page);
 
+//eventShowHistoryDetails();
 
-
-$userid = -1;
-if(isset($_SESSION['userid'])){
-	$userid = $_SESSION['userid'];
-	
-	if(!isAdmin()){die;}
-}
-else{die;}
-
-// user is admin --->
-eventSetUserIsAdmin();
-eventSetUserIsBank();
-eventButtonSetCurrentOrderer();
-eventCreateResetCode();
-eventDeleteResetCode();
+$table = createIncomingOrdersTable(extractSection("<!-- incoming orders section -->", $page));
+$page = replaceSection("<!-- incoming orders section -->", $table, $page);
+		
 
 $page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
-$page = adminSetCurrentOrderer($page);
-$page = adminShowUserData($page);
-
-
-$template_userpanelTxt = "/\[\%userpanel\%\]/";
-$template_ordersTxt    = "/\[\%orders\%\]/";
-
-
 
 echo $page;
+
 ?>

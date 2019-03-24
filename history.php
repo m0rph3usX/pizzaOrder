@@ -14,7 +14,7 @@ if (!file_exists($database)) {
 
 $config->db 	 = new PDO('sqlite:' . $database);
 $config->orderid = getCurrentOrderId();
-
+$config->isHistory = true;
 
 #check database version
 updateDatabase();
@@ -29,41 +29,20 @@ $config->login   = getLogin($config->userid);
 
 
 
-$template_userpanelTxt = "/\[\%userpanel\%\]/";
-$template_ordersTxt    = "/\[\%orders\%\]/";
-
 # define templates:
-$template 	    = "template/bank.html";
+$template 	    = "template/history.html";
 
 #-------------------------------------------
 # load template:
 $page        = file_get_contents($template);
 #-------------------------------------------
 
+$page = getHistoryOrderList($page);
 
-if(isBankTransactor() == 0){
-  $page = removeSection("<!-- bank section -->", $page);
-}
-else{
-  eventBankInput();
-  $combobox = addUserIdLogin(extractSection("<!-- bank section customer bankInput-->", $page));
-  $page     = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
-}
-
-if($config->userid > -1){
-//if(isset($_SESSION['userid'])){
-	input_logout();
-
-	$page = preg_replace("/\[\%loginName\%\]/" ,  $config->login, $page);	
-	$page = preg_replace("/\[\%money\%\]/"    ,  countMoney(), $page);	
-}
-else{
-	$page = removeSection("<!-- login section -->" , $page);	
-}
-
-$page = showBankInfo($page);
+eventShowHistoryDetails();
 
 $page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
 
 echo $page;
+
 ?>

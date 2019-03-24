@@ -12,8 +12,6 @@ function createNewDB($user, $passwordHash)
 	if(!isset($utilsIncluded)){
 //		include 'utils.php';
 	}
-
-		echo "blaa";
  $db = new PDO('sqlite:' . $database);
  
  $db->beginTransaction();
@@ -142,7 +140,6 @@ function showFirstSetup()
 function showControlGrid()
 {
     include 'config.php';
-//    include 'utils.php';
 
     $userid = $_SESSION['userid'];
     $db = new PDO('sqlite:' . $database);

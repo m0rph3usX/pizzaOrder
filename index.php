@@ -1,7 +1,11 @@
 <?php
 #-------------------------------------------
+
 include_once 'config.php';
 include_once 'utils.php';
+
+$config = new ConfigStruct();
+
 
 #check for existing database
 if (!file_exists($database)) {
@@ -9,13 +13,21 @@ if (!file_exists($database)) {
  die;
 }   
 
+$config->db 	 = new PDO('sqlite:' . $database);
+$config->orderid = getCurrentOrderId();
+
+
 #check database version
 updateDatabase();
 
-$userid = -1;
+$config->userid = -1;
 if(isset($_SESSION['userid'])){
-	$userid = $_SESSION['userid'];
+	$config->userid = $_SESSION['userid'];  
 }
+
+$config->login   = getLogin($config->userid);
+$config->isHistory = false;
+
 
 $template_userpanelTxt = "/\[\%userpanel\%\]/";
 $template_ordersTxt    = "/\[\%orders\%\]/";
@@ -29,17 +41,7 @@ $page        = file_get_contents($template);
 #-------------------------------------------
 
 
-//if(isBankTransactor() == 0){
-//  $page = removeSection("<!-- bank section -->", $page);
-//}
-//else{
-//  eventBankInput();
-//  $combobox = addUserIdLogin(extractSection("<!-- bank section customer bankInput-->", $page));
-//  $page  = replaceSection("<!-- bank section customer bankInput-->", $combobox , $page); 
-//}
-
-
-if($userid == -1){
+if($config->userid == -1){
 	$page = removeSection("<!-- order finished section -->"	, $page);
 }
 if(!isset($_SESSION['userid'])){
@@ -50,12 +52,12 @@ if(!isset($_SESSION['userid'])){
 	$page = removeSection("<!-- new order section -->"	, $page);	
 	$page = removeSection("<!-- finish order section -->", $page);	
 	$page = removeSection("<!-- order arrival info -->"	    , $page);
-} else if($userid != getUserWhoIsOrdering()){
+} else if($config->userid != getUserWhoIsOrdering()){
 	$page = removeSection("<!-- finish order section -->", $page);
 }
 	
 eventUpdateArrivalInfo();
-if(isset($_SESSION['userid'])){
+if($config->userid > -1){
 
 	eventVirtualPay();
 	input_logout();
@@ -68,8 +70,8 @@ if(isset($_SESSION['userid'])){
 	eventOrderRestart ();
 	
 
-	$page = preg_replace("/\[\%loginName\%\]/" ,  getLogin(), $page);	
-	$page = preg_replace("/\[\%money\%\]/" ,  countMoney(), $page);	
+	$page = preg_replace("/\[\%loginName\%\]/" ,  $config->login, $page);	
+	$page = preg_replace("/\[\%money\%\]/" 	   ,  countMoney(), $page);	
 	# load userpanel
 	// hide login / register sections
 	$page = removeSection("<!-- login section -->", $page);
@@ -101,9 +103,9 @@ case 0:
 	$page = removeSection("<!-- incoming orders section -->", $page);
 	$page = removeSection("<!-- order items section -->"    , $page); 
 	$page = removeSection("<!-- order finished section -->"	, $page);
-	$page = removeSection("<!-- order deadline -->"	    , $page);
+	$page = removeSection("<!-- order deadline -->"	        , $page);
 	$page = removeSection("<!-- order arrival info -->"	    , $page);
-	$page = removeSection("<!-- order arrival control -->"	    , $page);
+	$page = removeSection("<!-- order arrival control -->"	, $page);
 	showOrderStarted();
 	//$page = preg_replace($template_ordersTxt   , $layout_startNewOrder, $page);	
 	
@@ -111,26 +113,8 @@ case 0:
 	$page = preg_replace("/\[\%supplierList\%\]/" ,  getSupplierList(), $page);
 	
 	#----------------- fill hours ----------------------------------------------
-	//$htmlTxt = '';
-	//$zero   = '';
-	// write hours to countdown
-	//for ($hh = 0; $hh < 24; $hh++) {
-	//	if($hh < 10){$zero   = '0';} else {$zero   = '';}
-	//	$htmlTxt = $htmlTxt . "<option value='".$hh."'>".$zero .$hh." </option>";                                                                    
-	//}  
-	//$page = preg_replace("/\[\%countDwnHH\%\]/" , $htmlTxt, $page);
 	$page = preg_replace("/\[\%countDwnHH\%\]/" , getComboboxHH(11), $page);
 	#----------------- fill minutes --------------------------------------------
-	//$htmlTxt = '';
-	//$zero   = '';
-	// write minutes to countdown
-	//for ($mm = 0; $mm < 60; $mm = $mm +5) {
-	//	if($mm < 10){$zero   = '0';} else {$zero   = '';}
-	//	$htmlTxt = $htmlTxt . "<option value='".$mm."'>".$zero .$mm." </option>";                                                                    
-	//}  
-	
-	
-	//$page = preg_replace("/\[\%countDwnMM\%\]/" , $htmlTxt, $page);
 	$page = preg_replace("/\[\%countDwnMM\%\]/" , getComboboxMM(0), $page);
 	
 	break;
@@ -172,7 +156,7 @@ case 2:
 	$page = removeSection("<!-- order deadline -->"	    , $page);	
 	$page = preg_replace("/\[\%phoneNumber\%\]/" , getCurrentSupplierPhoneNr(), $page);
 	
-	if(getUserWhoIsOrdering() == $userid){
+	if(getUserWhoIsOrdering() == $config->userid){
 		//$page = removeSection("<!-- order arrival info -->"	    , $page);
 		$page = preg_replace("/\[\%timeArrivalHH\%\]/" , getComboboxHH(12), $page);
 		$page = preg_replace("/\[\%timeArrivalMM\%\]/" , getComboboxMM(15), $page);
@@ -190,7 +174,7 @@ case 2:
 		$page = preg_replace("/\[\%orderArrivalTime\%\]/" , date("d.m.Y - H:i", $arrivalInfo[0]), $page);
 		$page = preg_replace("/\[\%orderArrivalLogin\%\]/" , $arrivalInfo[1], $page);
 		
-		if($userid == $arrivalInfo[2]){
+		if($config->userid == $arrivalInfo[2]){
 			eventButtonOrderArrivedStorno();
 		}
 		else{
@@ -210,7 +194,5 @@ case 2:
 	
 	break;
 }
-
 echo $page;
-
 ?>
