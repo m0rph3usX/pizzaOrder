@@ -13,9 +13,9 @@ if (!file_exists($database)) {
  die;
 }   
 
-$config->db 	 = new PDO('sqlite:' . $database);
-$config->orderid = getCurrentOrderId();
-
+$config->db 	      = new PDO('sqlite:' . $database);
+$config->orderid      = getCurrentOrderId();
+$config->messageCount = 0;
 
 #check database version
 updateDatabase();
@@ -195,4 +195,7 @@ case 2:
 	break;
 }
 echo $page;
+
+showMessages();
+
 ?>

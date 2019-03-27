@@ -7,15 +7,39 @@ class ConfigStruct {
 	public $userid;    
 	public $login;	
 	public $isHistory;
+	public $messageList = array();
+	public $messageCount;
 }
 
 session_start();
 include 'config.php';
 
-function tooLateMessage()
-{
-	echo "<script>alert('Sie sind leider zu spät die Deadline wurde überschritten!');</script>";
+function tooLateMessage(){
+	addMessage('Leider zu spät die Deadline wurde überschritten!');
 }
+
+function addMessage($message){
+	global $config;
+	array_push($config->messageList, $message);
+}
+
+function showMessages()
+{
+	global $config;
+	$messageTxt = '';
+
+	for($i=0; $i< count($config->messageList); $i++){
+		$messageTxt = $messageTxt . $config->messageList[$i]. '<br>';
+	}
+
+	?><script>	
+		var js_messageTxt  = '<?php echo $messageTxt;?>';
+		console.log(document.getElementById("messagetext").innerHTML = js_messageTxt)
+	</script><?php		
+}
+
+
+
 
 function getLogin($userid)
 {
@@ -34,28 +58,27 @@ function input_login()
 {
 	global $config;
    
-    if(isset($_GET['login']))
-    {        
+	if(isset($_POST['eventButtonLogin'])){
       $login    = $_POST['login'];
       $password = $_POST['password'];
 
       $statement = $config->db->prepare("SELECT * FROM user WHERE login = :login");
       $result    = $statement->execute(array('login' => $login));
       $user      = $statement->fetch();
+	
 
-      echo "<br>";
       //Überprüfung des Passworts
       if ($user !== false && password_verify($password, $user['password'])) {
         $_SESSION['userid'] = $user['id'];          
           $loginSucceeded = true;
-          echo "Login erfolgreich.";
-
+          		 
+		  addMessage('Login erfolgreich');  		 
 		  header("Location: index.php");		  
         }
         else
         {
-          $loginSucceeded = false;
-          echo "Login oder Passwort ungültig.";                      
+          $loginSucceeded = false;		     
+		  addMessage('Login fehlgeschlagen. Falscher Benutzername oder falsches Passwort?!');  		 
         }			
     }
 }
@@ -65,20 +88,18 @@ function input_register()
 	global $config;
 	
 	if(isset($_GET['register'])) {
-
 	
-
 	 $error     = false;
 	 $login     = $_POST['login'];
 	 $password  = $_POST['password'];
 	 $password2 = $_POST['password2'];
 	 
 	 if(strlen($password) == 0) {
-			echo 'Bitte ein Passwort angeben<br>';
+			addMessage("Bitte ein Passwort angeben");
 			$error = true;
 		 }
 		 if($password != $password2) {
-			echo 'Die Passwörter müssen übereinstimmen<br>';
+			addMessage("Die Passwörter müssen übereinstimmen");			
 			$error = true;
 		 }
 		 
@@ -89,7 +110,7 @@ function input_register()
 			$user = $statement->fetch();
 		 
 			if($user !== false) {
-				echo 'Login ist bereits vergeben<br>';
+				addMessage("Dieser Login ist bereits vergeben");
 				$error = true;
 			} 
 		 }
@@ -109,10 +130,10 @@ function input_register()
 			$result = $statement->execute(array('login' => $login, 'password' => $password_hash));
 		 
 			if($result) { 
-				echo 'Du wurdest erfolgreich registriert. <a href="login.php">Zum Login</a>';
+				addMessage("Registrierung erfolgreich registriert");
 				header("Location: index.php");		  
 			} else {
-				echo 'Beim Abspeichern ist leider ein Fehler aufgetreten<br>';
+				addMessage("Beim Abspeichern ist leider ein Fehler aufgetreten");
 			}
 		 } 
 	}
@@ -128,15 +149,39 @@ function input_change_pw()
 		$resetcode = $_GET['resetcode'];
 
 		 $error     = false;
+		 $login     = $_POST['login'];		 
 		 $password  = $_POST['password'];
 		 $password2 = $_POST['password2'];
 		 
+		 //check if login is already used
+		 if(!$error) { 
+			$sql = "SELECT id FROM user WHERE (resetcode = '". $resetcode."')";
+
+			$userid = -1;
+			foreach ($config->db->query($sql) as $row) {       
+				$userid = $row['id'];       
+			}
+			
+			$sql = "SELECT id, login FROM user WHERE login = '" . $login . "'";
+			
+			$userid_db = -1;
+			foreach ($config->db->query($sql) as $row) {       
+				$userid_db = $row['id'];       
+			}   
+	
+			if (($userid_db != $userid) && ($userid_db > -1)) {
+				addMessage("Dieser Login ist bereits vergeben");
+				$error = true;
+			}
+
+		 }
+		 
 		 if(strlen($password) == 0) {
-				echo 'Bitte ein Passwort angeben<br>';
+				addMessage("Bitte ein Passwort angeben");
 				$error = true;
 			 }
 			 if($password != $password2) {
-				echo 'Die Passwörter müssen übereinstimmen<br>';
+				addMessage("Die Passwörter müssen übereinstimmen");
 				$error = true;
 			 }
 					 
@@ -146,11 +191,14 @@ function input_change_pw()
 				
 				$sql = "UPDATE user SET password = '".$password_hash."' WHERE resetcode = '". $resetcode . "'" ;
 				$config->db-> exec($sql); 
-		
+
+				$sql = "UPDATE user SET login = '".$login."' WHERE resetcode = '". $resetcode . "'" ;
+				$config->db-> exec($sql); 
+				
 				$sql = "UPDATE user SET resetcode = null WHERE resetcode = '". $resetcode . "'" ;
 				$config->db-> exec($sql);		
 											
-				echo 'Passwort erfolgreich geändert';
+				//echo 'Passwort erfolgreich geändert';
 				header("Location: index.php");		  
 			 } 
 		}
@@ -521,6 +569,7 @@ function eventButtonOrderArrivedStorno(){
 			$sql = "UPDATE orders SET timestampArrival = 0, user_ID_arrival = -1 WHERE ( id = ". $config->orderid . " )";
 			$config->db-> exec($sql); 		
 				
+			addMessage("Bestellung storniert");
 			header("Location: index.php");		
 		}	
 	}
@@ -620,6 +669,7 @@ function eventOrderKill()
 			
 			$config->db-> exec($sql); 
 
+			addMessage("Bestellung storniert");
 			header("Location: index.php");			
 		}
     }	
@@ -635,6 +685,7 @@ function eventOrderPaid(){
       $sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = ". $order_ID . " )";
       $config->db-> exec($sql);   
 
+	  addMessage("Bestellung als bezahlt markiert");
 	  header("Location: index.php");	  
     } 
 	
@@ -644,6 +695,8 @@ function eventOrderPaid(){
       $order_ID = $_POST['orderId'];            
       $sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = ". $order_ID . " )";
       $config->db-> exec($sql);
+	  
+	  addMessage("Bestellung als offen markiert");
 	  header("Location: index.php");
     }	
 }
@@ -674,6 +727,8 @@ function eventOrderAdd(){
 						(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
 					   VALUES ( " .
 					   $config->orderid . ",". $supplierCard_ID . ",". $supplierID ." , " .$config->userid . "," . $price . ")");
+					   
+		   addMessage("Bestellung hinzugefügt");
 		   header("Location: index.php");
 		}
 	    
@@ -691,6 +746,7 @@ function eventOrderRestart(){
 						   VALUES ( " .
 						   "0, " . $config->userid . ", 0 )");			   	    		 
 	   }
+	   addMessage("Neue Bestellung gestartet");
 	   header("Location: index.php");
     }
 }
@@ -712,6 +768,8 @@ function eventOrderComment(){
 			
 			$sql = "UPDATE orderDetail SET comment = '". $comment ."' WHERE ( orderDetail.id = ". $order_ID . " )";
 			$config->db-> exec($sql);
+			
+			addMessage("Kommentar gespeichert");
 			header("Location: index.php");
 		}		
     }
@@ -732,6 +790,7 @@ function eventOrderFinished(){
     if(isset($_POST['finish']))
     { 
 		closeCurrentOrder();
+		addMessage("Bestellung abgeschlossen");
 		header("Location: index.php");
     }
 }
@@ -748,6 +807,8 @@ function eventBankInput()
 			    VALUES 		 (" .$config->userid .      " , ". $customer_id ." , " . $amount  . "," . time() ." )";
         	
         $config->db-> exec($sql);  
+		
+		addMessage("Betrag virtuell einbezahlt");
 		header("Location: bank.php");		
     }	
 }
@@ -768,6 +829,7 @@ function eventVirtualPay()
 		$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = ".$orderDetail_id;
 		$config->db-> exec($sql);        
 			
+		addMessage("Bestellung virtuell bezahlt");
 		header("Location: index.php");
 	}	
 		
@@ -1512,7 +1574,6 @@ function eventShowHistoryDetails(){
 		echo $order_ID;    
 	}
 }
-
 ?>
 
 

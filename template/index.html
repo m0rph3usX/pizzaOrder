@@ -12,24 +12,24 @@
   <!-- Navigation -->
   <header>
   </header>
+	
+  <!-- InfoMessage -->
+  <section class="hero"> 
+    <p id="messagetext" class="messageline"></p>
+  </section>
+  <!-- InfoMessage -->
+	
   <!-- Hero Section -->
   <section class="hero">    
     <p class="tagline">PIZZA ORDER SCRIPT</p>
-  </section>
-  
-
-	
-  <!-- InfoMessage -->
-  <!-- InfoMessage -->
-	
-  
+  </section>  	
 
 	
   <!-- login section -->
   
   <div class="loginRegister">
     <span class ='login'>
-    <form action="?login=1" method="post">
+	<form action="" method="post">
 		<div class="text_row">			
 			<p class="text_column">Login</p>
 			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
@@ -37,7 +37,7 @@
 		<div class="text_row">
 			<p class="text_column">Passwort </p>
 			<p class="text_column"><input size="25" maxlength="250" name="password" type="password"></p>
-			<p class="text_column"><input type='submit' value='einloggen'></p>
+			<p class="text_column"><input type='submit' value='einloggen' name="eventButtonLogin"></p>				   
 		</div>	 	
  	 </form>
    </span>
@@ -221,7 +221,7 @@
 		  
 			  Falls Bestellung schon da ist, hier melden:
 		  <form action="" method="post">  
-					<input value="Lieferung ist da!" type="submit" name="eventButtonOrderArrived">		 		
+				<input value="Lieferung ist da!" type="submit" name="eventButtonOrderArrived">		 		
 		  </form>
 		  <br>
 		  </div>

@@ -59,4 +59,6 @@ $page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
 
 echo $page;
 
+showMessages();
+
 ?>
