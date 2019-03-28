@@ -72,6 +72,7 @@ if($config->userid > -1){
 
 	$page = preg_replace("/\[\%loginName\%\]/" ,  $config->login, $page);	
 	$page = preg_replace("/\[\%money\%\]/" 	   ,  countMoney(), $page);	
+	$page = preg_replace("/\[\%moneySpent\%\]/",  getOverallSpentMoneyFromLogin($config->userid), $page);	
 	# load userpanel
 	// hide login / register sections
 	$page = removeSection("<!-- login section -->", $page);

@@ -87,12 +87,16 @@ function input_register()
 {	
 	global $config;
 	
-	if(isset($_GET['register'])) {
+	if(isset($_POST['eventButtonRegister'])){
+	//if(isset($_GET['register'])) {
 	
 	 $error     = false;
 	 $login     = $_POST['login'];
 	 $password  = $_POST['password'];
 	 $password2 = $_POST['password2'];
+	 
+	 
+	 $error = !isLoginNameValid($login);
 	 
 	 if(strlen($password) == 0) {
 			addMessage("Bitte ein Passwort angeben");
@@ -130,8 +134,8 @@ function input_register()
 			$result = $statement->execute(array('login' => $login, 'password' => $password_hash));
 		 
 			if($result) { 
-				addMessage("Registrierung erfolgreich registriert");
-				header("Location: index.php");		  
+				addMessage("Login erfolgreich registriert");
+				//header("Location: index.php");		  
 			} else {
 				addMessage("Beim Abspeichern ist leider ein Fehler aufgetreten");
 			}
@@ -153,6 +157,10 @@ function input_change_pw()
 		 $password  = $_POST['password'];
 		 $password2 = $_POST['password2'];
 		 
+		 
+		 if(!isLoginNameValid($login)){
+			$error = true;					
+		 }
 		 //check if login is already used
 		 if(!$error) { 
 			$sql = "SELECT id FROM user WHERE (resetcode = '". $resetcode."')";
@@ -162,7 +170,9 @@ function input_change_pw()
 				$userid = $row['id'];       
 			}
 			
-			$sql = "SELECT id, login FROM user WHERE login = '" . $login . "'";
+			
+			//$sql = "SELECT id, login FROM user WHERE login = '" . $login . "'";
+			$sql = "SELECT id, login FROM user WHERE login LIKE '" . $login . "'";
 			
 			$userid_db = -1;
 			foreach ($config->db->query($sql) as $row) {       
@@ -1574,6 +1584,33 @@ function eventShowHistoryDetails(){
 		echo $order_ID;    
 	}
 }
+
+function isLoginNameValid($login) {
+	if(!preg_match('/[^A-Za-z0-9.#\\-$]/', $login)){
+		return true;
+	}
+	else{
+		addMessage("Login enthält unerlaubte Zeichen! Gültige Zeichen: A-Z, 0-9");
+		return false;
+	}
+    
+}
+
+
+ function getOverallSpentMoneyFromLogin($userId) {
+   global $config;
+	
+   $sql = "SELECT SUM(price) FROM orderDetail WHERE user_ID = " . $userId;
+   
+   $sum = 0;	
+   foreach ($config->db->query($sql) as $row) {
+    $sum = $row[0];
+   }
+   return $sum;
+}
+
+
+ 
 ?>
 
 

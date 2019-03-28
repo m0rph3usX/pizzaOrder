@@ -42,7 +42,7 @@
  	 </form>
    </span>
  <span class ='register'>   
-    <form action="?register=1" method="post">
+    <form action="" method="post">
 		<div class="text_row">
 			<p class="text_column">Login</p>
 			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
@@ -56,7 +56,7 @@
 			<p class="text_column"><input size="25" maxlength="250" name="password2" type="password"></p>
 		</div>	
 		<div class="text_row">
-			<input type="submit" value="registrieren">
+			<input type="submit" value="registrieren" name="eventButtonRegister">
 		</div>
   	</form>
   </span>
@@ -72,6 +72,7 @@
 	<form action='?logout=1' method='post'>            
       <span class ='userCntrlInfo'>Angemeldet als: [%loginName%]</span>
 	  <span class ='userCntrlInfo'>Guthaben: [%money%] €</span>
+	  <span class ='userCntrlInfo'>bisher ausgegebenes Geld: [%moneySpent%] €</span>
       <span class ='userCntrlOptions'>
          <input type='submit' value='ausloggen'>
 	  </span>
