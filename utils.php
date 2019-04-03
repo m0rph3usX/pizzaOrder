@@ -158,9 +158,9 @@ function input_change_pw()
 		 $password2 = $_POST['password2'];
 		 
 		 
-		 if(!isLoginNameValid($login)){
-			$error = true;					
-		 }
+		 
+		 $error = !isLoginNameValid($login);
+		 
 		 //check if login is already used
 		 if(!$error) { 
 			$sql = "SELECT id FROM user WHERE (resetcode = '". $resetcode."')";
@@ -208,7 +208,6 @@ function input_change_pw()
 				$sql = "UPDATE user SET resetcode = null WHERE resetcode = '". $resetcode . "'" ;
 				$config->db-> exec($sql);		
 											
-				//echo 'Passwort erfolgreich geändert';
 				header("Location: index.php");		  
 			 } 
 		}
@@ -420,6 +419,22 @@ function updateDatabaseToV0_8_0(){
 }
 
 
+function dbInitialized(){
+    global $config;
+
+    $sql = "SELECT count(*) FROM sqlite_master WHERE type = 'table'";
+
+    $tableCount = 0;
+    foreach ($config->db->query($sql) as $row) {
+        $tableCount = $row[0];
+    }
+    
+	if($tableCount > 0){
+		return 1;
+	}
+	
+	return 0;
+}
 
 function getVersion(){
     global $config;
@@ -435,26 +450,32 @@ function getVersion(){
 }
 function updateDatabase()
 {
-    $version = getVersion();
-    if($version == 0){    
-       updateDatabaseToV0_6();
-       $version = getVersion();
-    }
-    
-    if($version == 0.6){
-		updateDatabaseToV0_7();
+	if(!isset($database)){
+		include 'config.php';
+	}
+	 
+	if(file_exists($database)){
 		$version = getVersion();
-    }
+		if($version == 0){    
+		   updateDatabaseToV0_6();
+		   $version = getVersion();
+		}
+		
+		if($version == 0.6){
+			updateDatabaseToV0_7();
+			$version = getVersion();
+		}
 
-    if($version == 0.7){
-		updateDatabaseToV0_7_5();
-		$version = getVersion();
-    }
+		if($version == 0.7){
+			updateDatabaseToV0_7_5();
+			$version = getVersion();
+		}
 
-    if($version == 0.75){
-		updateDatabaseToV0_8_0();
-		$version = getVersion();
-    }	
+		if($version == 0.75){
+			updateDatabaseToV0_8_0();
+			$version = getVersion();
+		}	
+	}
 	
 }
 
@@ -643,7 +664,6 @@ function eventDeleteResetCode(){
 
     if(isset($_POST['eventDeleteResetCode']))
     {     
-	echo "bla";
 		$userId    = $_POST['userId'];	
 		
         $sql = "UPDATE user SET resetcode = null WHERE ( id = ". $userId . " )";
@@ -745,19 +765,24 @@ function eventOrderAdd(){
 	}
 }
 
-function eventOrderRestart(){
+
+function createNewOrder(){
 	global $config;
 	
-    if(isset($_POST['restart']))
-    { 
-		if(getOrderState() != 1){		 
-			$config->db-> exec("INSERT INTO orders
-						  (supplier_ID, user_ID, state)                         
-						   VALUES ( " .
-						   "0, " . $config->userid . ", 0 )");			   	    		 
-	   }
-	   addMessage("Neue Bestellung gestartet");
-	   header("Location: index.php");
+	if(getOrderState() != 1){		 
+		$config->db-> exec("INSERT INTO orders
+					  (supplier_ID, user_ID, state)                         
+					   VALUES ( " .
+					   "0, " . $config->userid . ", 0 )");			   	    		 
+   }
+   addMessage("Neue Bestellung gestartet");
+   header("Location: index.php");
+	   
+}
+
+function eventOrderRestart(){
+    if(isset($_POST['eventButtonRestartOrder'])){
+		createNewOrder();
     }
 }
 
@@ -846,13 +871,12 @@ function eventVirtualPay()
 }
 
 
-function showOrderStarted()
+function eventButtonStartNewOrder()
 {
 	global $config;
+
+		if(isset($_POST['eventButtonStartNewOrder'])){
 	
-	if(isset($_SESSION['userid'])){	
-		  
-		if(isset($_GET['pollSubmit'])) { 
 			
 			$timeHH = $_POST['timeFreezeHH'];
 			$timeMM = $_POST['timeFreezeMM'];
@@ -864,6 +888,23 @@ function showOrderStarted()
 					
 			// create new order      
 			$supplierID = $_POST['supplier'];
+			
+			
+			
+			// check if already one order has been started (specially after first setup)
+			
+			$sql = 'SELECT COUNT(*) FROM orders';
+
+			$counter = 0;
+			foreach ($config->db->query($sql) as $row) {
+				$counter = $row[0];
+			}
+			
+			if($counter == 0){
+				createNewOrder();
+				$config->orderid = getCurrentOrderId();
+			}
+			
 			$orderId    = $config->orderid;
 			
 			$sql = "UPDATE orders SET 
@@ -872,11 +913,11 @@ function showOrderStarted()
 					state       = 1,
 					timeStampStarted = ".$timestampNow.",
 					timeStampFreezing = ".$timestampFreeze . " WHERE (id = " .$orderId. ")";
-					   
+						
 			$config->db-> exec($sql);
-			header("Location: index.php");		  
+			//header("Location: index.php");		  
 		}    
-	}
+	//}
 }
 
 function getSupplierList()
@@ -1581,11 +1622,16 @@ function eventShowHistoryDetails(){
 		$order_ID = $_POST['order_ID'];
 		
 		header("Location: historyDetails.php?id=".$order_ID);
-		echo $order_ID;    
 	}
 }
 
 function isLoginNameValid($login) {
+
+	if(strlen($login) < 5){
+		addMessage("Login zu kurz, mind. 5 Zeichen!");
+		return false;
+	}
+	
 	if(!preg_match('/[^A-Za-z0-9.#\\-$]/', $login)){
 		return true;
 	}
@@ -1610,7 +1656,153 @@ function isLoginNameValid($login) {
 }
 
 
+
+function eventButtonCreateDatabase(){
+	global $config;
+
+	if(isset($_POST['eventButtonCreateDatabase'])){	
+	
+		$login     = $_POST['login'];
+		$password  = $_POST['password'];
+		$password2 = $_POST['password2'];
+		
+	
+		$error = !isLoginNameValid($login);
+		
+		
+		
+		if(strlen($password) == 0) {
+			addMessage("Bitte ein Passwort angeben");
+			$error = true;
+        }
+        if($password != $password2) {
+			addMessage("Die Passwörter müssen übereinstimmen");
+			$error = true;
+        }
+
+        //no error
+        if(!$error) {
+			$password_hash = password_hash($password, PASSWORD_DEFAULT);
+			createNewDB($login, $password_hash);			
+		}				
+	}
+	
+}
+
+
+
+function createNewDB($user, $passwordHash)
+{
+	 if(!isset($database)){
+		include 'config.php';
+	 }
  
+	global $config;
+	$config->db->beginTransaction();
+ 
+	$config->db->exec("CREATE TABLE `user` (      
+					  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+					  `login` varchar(255) NOT NULL,
+					  `password` varchar(255) NOT NULL,      
+					  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					  `updated_at` timestamp NULL DEFAULT NULL,
+					  `isAdmin`	INTEGER DEFAULT 0,
+					   UNIQUE (`login`))");  
+   
+    $config->db->exec("CREATE TABLE `supplier` (      
+				       `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+					   `name` varchar(255) NOT NULL,
+					   `active` INTEGER)");
+  
+	$config->db->exec("CREATE TABLE `orders` (      
+					   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+						`order_ID` INTEGER,
+						`supplier_ID` INTEGER,
+						`user_ID` INTEGER,
+					    FOREIGN KEY(supplier_ID) REFERENCES supplier(id),
+						FOREIGN KEY(user_ID) REFERENCES user(id))"); 
+  
+	$config->db->exec("CREATE TABLE `supplierCard` (      
+						`id` INTEGER PRIMARY KEY AUTOINCREMENT,
+					    `supplier_ID` INTEGER,            
+					    `nr` INTEGER,
+					    `name` varchar(255),
+					    `ingredients` varchar(255),
+					    `price` DOUBLE,
+					    FOREIGN KEY(supplier_ID) REFERENCES supplier(id))"); 
+             
+	$config->db->exec("CREATE TABLE `cntrl` (      
+						`id` INTEGER PRIMARY KEY AUTOINCREMENT,
+						`type` varchar(255),            
+						`value` TEXT)"); 
+  
+    $config->db->exec("INSERT INTO `cntrl` (type, value) VALUES (
+					  'orderState',0)"); 
+  
+	$config->db->exec("INSERT INTO `cntrl` (type, value) VALUES (
+					  'regIsAllowed',1)");
+        
+   $config->db->exec("INSERT INTO `cntrl` (type, value) VALUES (
+					'userWhoIsOrdering',0)");
+   
+   $config->db-> exec("INSERT INTO `cntrl` (type, value) VALUES (
+              'arrivalInfo',' ')");
+   
+   
+   $config->db->exec("INSERT INTO user (login, password, isAdmin) VALUES ('$user', '$passwordHash', 1)");
+ 
+   $supplierID = 1;
+    // open folder "src"
+    if ( $handle = opendir('./src/') ){                
+        // read folder
+        while (($file = readdir($handle)) !== false){    
+            flush();
+            usleep(1);
+            
+            // read only files
+            if($file != "." AND $file != ".."){                                
+                 
+                // create supplier
+                $supplier = str_replace(".txt", "", $file);
+                $config->db-> exec("INSERT INTO `supplier` (name, active)
+                            VALUES ('".$supplier."', 0)");                              
+  
+                // read meal(s)
+                $handleFile = fopen("src/" . $file, "r");
+                if ($handleFile) {
+                    while (($line = fgets($handleFile)) !== false) {                        
+                        
+                        flush();
+                        usleep(1);                                
+                        // process the line read.
+                        $line = utf8_encode($line);                         
+                        $splitted = explode(";", $line);
+                            
+                        $config->db-> exec("INSERT INTO `supplierCard` (      
+                            supplier_ID,
+                            nr,
+                            name,
+                            ingredients,
+                            price) 
+                            VALUES(" . $supplierID.  "," . $splitted[0]. ",'" . $splitted[1]. "','" . $splitted[2]. "','" . $splitted[3]. "')");                                                                                                 
+                    }
+
+                    fclose($handleFile);
+                    $supplierID++;
+                } 
+            }
+        }
+        closedir($handle);
+    }       
+    $config->db->commit();    
+ // check chmod 
+ chmod($database, 0777);
+ 
+ updateDatabase();
+ 
+ addMessage('Datenbank erfolgreich erstellt <a href="index.php"> >>>weiter</a>');
+
+}
 ?>
 
 

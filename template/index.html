@@ -96,7 +96,7 @@
   <!-- new order section -->
   <section class=startNewOrder>
 	  <div class="startNewOrder">
-		<form action="?pollSubmit=1" method="post">
+		<form method='post'>
 		<!-- HEADER -->
 		<div class="text_row">Bestellung starten:</div>
 		<p class="text_row">
@@ -110,7 +110,7 @@
 				<select name='timeFreezeMM' width='100'>[%countDwnMM%]</select> Uhr
 			</div>
 
-			<div class="text_row"><input value="Bestellung starten" type="submit"></div>
+			<div class="text_row"><input type='submit' value='Bestellung starten' name='eventButtonStartNewOrder'></div>
 
 		</div>		
 		</form>
@@ -121,9 +121,9 @@
   <!-- order finished section -->
   <section class=orderFinished> 
 	    <div class=''>
-        <form action='?restart' method='post'>
+        <form action='' method='post'>
 			<input type='submit' value='neue Bestellung starten'  name='restart'/>
-			<input type='hidden' value='' name='restart'/>
+			<input type='hidden' value='' name='eventButtonRestartOrder'/>
         </form>
     </div>
   </section>

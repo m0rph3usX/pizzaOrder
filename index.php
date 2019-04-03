@@ -9,7 +9,7 @@ $config = new ConfigStruct();
 
 #check for existing database
 if (!file_exists($database)) {
- echo "no database found! - run setup.php";       
+ header("Location: setup.php");
  die;
 }   
 
@@ -94,7 +94,7 @@ else{
 $page = preg_replace("/\[\%version\%\]/" , getVersion(), $page);
 
 
-
+eventButtonStartNewOrder();	
 # load orders
 switch (getOrderState()) {
 case 0:
@@ -107,7 +107,7 @@ case 0:
 	$page = removeSection("<!-- order deadline -->"	        , $page);
 	$page = removeSection("<!-- order arrival info -->"	    , $page);
 	$page = removeSection("<!-- order arrival control -->"	, $page);
-	showOrderStarted();
+	
 	//$page = preg_replace($template_ordersTxt   , $layout_startNewOrder, $page);	
 	
 	#----------------- create supplier list ------------------------------------
