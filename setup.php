@@ -56,9 +56,7 @@ else{
 		
 		$page = adminSetCurrentOrderer($page);
 		$page = adminShowUserData($page);
-
-		$template_userpanelTxt = "/\[\%userpanel\%\]/";
-		$template_ordersTxt    = "/\[\%orders\%\]/";
+		
 		
 		echo $page;
 		showMessages();

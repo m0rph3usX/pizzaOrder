@@ -3,7 +3,7 @@
 body {
 	//font-family: source-sans-pro;
 	font-family: verdana;
-	background-color: #14007E;
+	background-color: #363537;
 	margin-top: 0px;
 	margin-right: 0px;
 	margin-bottom: 0px;
@@ -11,24 +11,24 @@ body {
 	font-style: normal;
 	font-weight: 200;
 	font-size: 12px;
+	:;
 }
-/* Container */
+/**/
 .container {
 	width: 90%;
 	margin-left: auto;
 	margin-right: auto;
-	
 	background-color: #FFFFFF;
 }
 /* Navigation */
 header {
 	width: 100%;
 	height: 5%;
-	background-color: #52bad5;
+	background-color: #52BAD5;
 	border-bottom: 1px solid #2C9AB7;
 }
 .logo {
-	color: #fff;
+	color: #FFF;
 	font-weight: bold;
 	text-align: undefined;
 	width: 10%;
@@ -75,7 +75,7 @@ ul li:hover a {
 }
 /* Hero Section */
 .hero {
-	background-color: #B3B3B3;
+	background-color: #000000;
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
@@ -91,7 +91,6 @@ ul li:hover a {
 	text-transform: uppercase;
 	letter-spacing: 1px;
 }
-
 .messageline {
 	text-align: center;
 	color: ##FFFFFF;
@@ -104,44 +103,32 @@ ul li:hover a {
 /* About Section */
 .text_column {
 	width: 50%;
-	text-align: justify;
 	font-weight: lighter;
-	
 	float: left;
-
-	color: #A3A3A3;
+	color: ;
 }
 .login {
-
 	display: inline-block;
-	width: 45%;
-
+	width: 32%;
 }
-
 .register {
-
 	display: inline-block;
-	width: 45%;
-	
+	width: 32%;
 }
-
 .copyright {
 	padding-left: 25px;
 	padding-right: 25px;
-	
 	background-color: #5B5B5B;
 	margin-top: 0px;
 }
-
 .startNewOrder {
 	padding-left: 25px;
 	padding-right: 25px;
 	padding-top: 35px;
-	
-	background-color: #5B5B5B;
+	background-color: lime;
 	margin-top: 0px;
+	color: black;
 }
-
 .about {
 	padding-left: 25px;
 	padding-right: 25px;
@@ -161,7 +148,7 @@ ul li:hover a {
 	width: 100%;
 	background-color: #FFFFFF;
 	/* [disabled]min-width: 400px;
-*/
+	*/
 	padding-bottom: 35px;
 	padding-top: 0px;
 	margin-top: -5px;
@@ -290,7 +277,7 @@ footer .footer_column p {
 .footer_banner {
 	background-color: #B3B3B3;
 	padding-top: 60px;
-	padding-bottom: 60PX;
+	padding-bottom: 60px;
 	margin-bottom: 0px;
 	background-image: url(../images/pattern.png);
 	background-repeat: repeat;
@@ -301,334 +288,780 @@ footer {
 .hidden {
 	display: none;
 }
-
 /* Mobile */
 @media (max-width: 320px) {
-.logo {
-	width: 100%;
-	text-align: center;
-	margin-top: 13px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
+	.logo {
+		width: 100%;
+		text-align: center;
+		margin-top: 13px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+	}
+	.container header nav {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		width: 100%;
+		float: none;
+		display: none;
+	}
+	header nav ul {
+	}
+	nav ul li {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		width: 100%;
+		text-align: center;
+	}
+	.text_column {
+		width: 200px;
+		text-align: justify;
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+	}
+	.text_row {
+		text-align: justify;
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+	}
+	.thumbnail {
+		width: 100%;
+	}
+	.footer_column {
+		width: 100%;
+		margin-top: 0px;
+	}
+	.parallax {
+		text-align: center;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		padding-top: 40%;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+		width: 100%;
+		font-size: 18px;
+	}
+	.parallax_description {
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+		width: 90%;
+		margin-top: 25px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 12px;
+		float: none;
+		text-align: center;
+	}
+	.banner {
+		background-color: #2D9AB7;
+		background-image: none;
+	}
+	.tagline {
+		margin-top: 20px;
+		line-height: 22px;
+	}
+	.hero_header {
+		padding-left: 10px;
+		padding-right: 10px;
+		line-height: 22px;
+		text-align: center;
+	}
 }
-.container header nav {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	width: 100%;
-	float: none;
-	display: none;
-}
-header nav ul {
-}
-nav ul li {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	width: 100%;
-	text-align: center;
-}
-.text_column {
-	width: 200px;
-	text-align: justify;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	
-}
-.text_row {	
-	text-align: justify;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-.thumbnail {
-	width: 100%;
-}
-.footer_column {
-	width: 100%;
-	margin-top: 0px;
-}
-.parallax {
-	text-align: center;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	padding-top: 40%;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	width: 100%;
-	font-size: 18px;
-}
-.parallax_description {
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	width: 90%;
-	margin-top: 25px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 12px;
-	float: none;
-	text-align: center;
-}
-.banner {
-	background-color: #2D9AB7;
-	background-image: none;
-}
-.tagline {
-	margin-top: 20px;
-	line-height: 22px;
-}
-.hero_header {
-	padding-left: 10px;
-	padding-right: 10px;
-	line-height: 22px;
-	text-align: center;
-}
-}
-
 /* Small Tablets */
-@media (min-width: 321px)and (max-width: 767px) {
-.logo {
-	width: 100%;
-	text-align: center;
-	margin-top: 13px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	color: #043745;
+@media (min-width: 321px) and (max-width: 767px) {
+	.logo {
+		width: 100%;
+		text-align: center;
+		margin-top: 13px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		color: #043745;
+	}
+	.container header nav {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		width: 100%;
+		float: none;
+		overflow: auto;
+		display: inline-block;
+		background: #52BAD5;
+	}
+	header nav ul {
+		padding: 0px;
+		float: none;
+	}
+	nav ul li {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		width: 100%;
+		text-align: center;
+		padding-top: 8px;
+		padding-bottom: 8px;
+	}
+	.text_column {
+		width: 100%;
+		text-align: left;
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+	}
+	.thumbnail {
+		width: 100%;
+	}
+	.footer_column {
+		width: 100%;
+		margin-top: 0px;
+	}
+	.parallax {
+		text-align: center;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		padding-top: 40%;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+		width: 100%;
+		font-size: 18px;
+	}
+	.parallax_description {
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+		margin-top: 30%;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		float: none;
+		width: 100%;
+		text-align: center;
+	}
+	.thumbnail {
+		width: 50%;
+	}
+	.parallax {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+		padding-top: 20%;
+	}
+	.parallax_description {
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		width: 100%;
+		padding-top: 30px;
+	}
+	.banner {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+	.footer_column {
+		width: 100%;
+	}
 }
-.container header nav {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	width: 100%;
-	float: none;
-	overflow: auto;
-	display: inline-block;
-	background: #52bad5;
-}
-header nav ul {
-	padding: 0px;
-	float: none;
-}
-nav ul li {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	width: 100%;
-	text-align: center;
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-.text_column {
-	width: 100%;
-	text-align: left;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-
-.thumbnail {
-	width: 100%;
-}
-.footer_column {
-	width: 100%;
-	margin-top: 0px;
-}
-.parallax {
-	text-align: center;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	padding-top: 40%;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	width: 100%;
-	font-size: 18px;
-}
-.parallax_description {
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	margin-top: 30%;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	float: none;
-	width: 100%;
-	text-align: center;
-}
-.thumbnail {
-	width: 50%;
-}
-.parallax {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	padding-top: 20%;
-}
-.parallax_description {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	width: 100%;
-	padding-top: 30px;
-}
-.banner {
-	padding-left: 20px;
-	padding-right: 20px;
-}
-.footer_column {
-	width: 100%;
-}
-}
-
 /* Small Desktops */
 @media (min-width: 768px) and (max-width: 1096px) {
-.text_column {
-	width: 100%;
+	.text_column {
+		width: 100%;
+	}
+	.thumbnail {
+		width: 50%;
+	}
+	.text_column {
+		width: 90%;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		margin-left: 0px;
+		padding-top: 0px;
+		padding-right: 0px;
+		padding-bottom: 0px;
+		padding-left: 0px;
+	}
+	.banner {
+		margin-top: 0px;
+		padding-top: 0px;
+	}
 }
-.thumbnail {
+div.loginRegister {
+	background-color: #3E2E2F;
+	width: 100%;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
+}
+div.currentOrder {
+	background-color: yellow;
+	border: 1px;
+	margin: 0px 0px 0px 0;
+	color: ;
+}
+div.currentOrderRow {
+	background-color: lime;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.currentOrderRowOdd {
+	background-color: #36FF02;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.currentOrderRowEven {
+	background-color: #63FF5A;
+	border: 1px;
+	solid: #555;
+	margin: 0px;
+}
+div.pollQuery {
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.orderList {
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.orderItem {
+	border: 1px rgba(131, 223, 90, 0.265);
+	background: lime;
+	solid: #666;
+	margin: 0px;
+}
+div.orderItemOdd {
+	background-color: #00F90A;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+	height: ;
+	width: ;
+}
+div.orderItemOdd:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+div.orderItemEven {
+	background-color: #26FB47;
+	border: 1px rgba(91, 81, 120, 0.265);
+	solid: #666;
+	margin: 0px;
+}
+div.orderItemEven:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+span.orderItemButton {
+	display: inline-block;
+	width: 12%;
+	border: 0px;
+	margin: 0px;
+	height: 100%;
+}
+span.orderItemNr {
+	display: inline-block;
+	width: 3%;
+	border: 0px;
+	margin: 0px;
+}
+span.orderItemName {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+}
+span.orderItemIngredients {
+	display: inline-block;
 	width: 50%;
+	border: 0px;
+	margin: 0px;
 }
-.text_column {
+span.orderItemPrice {
+	display: inline-block;
+	width: 10%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.currentOrderBlank {
+	display: inline-flex;
+	width: 15%;
+	border: 0px;
+	margin: 0px 0px 0px 8%;
+}
+span.currentOrderNr {
+	display: inline-block;
+	width: 2%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.currentOrderName {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+}
+span.currentOrderComment {
+	display: inline-block;
+	width: 30%;
+	border: 0px;
+	margin: 0px;
+}
+div.currentOrderCommentTextfield {
+	display: inline-block;
+	width: 57%;
+	border: 0px;
+	margin: 0px;
+}
+div.currentOrderCommentButton {
+	display: inline-block;
+	width: 40%;
+	border: 0px;
+	margin: 0px;
+}
+span.currentOrderLogin {
+	display: inline-block;
+	width: 10%;
+	border: 0px;
+	margin: 0px;
+}
+span.currentOrderPrice {
+	display: inline-block;
+	width: 5%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.orderIsPaid {
+	display: inline-block;
+	width: 10%;
+	border: 0px;
+	margin: 0px;
+}
+div.sumUpOrderHeader {
+	background-color: #0BC60B;
+	display: inline-block;
+	width: 50%;
+	border: 0px;
+	margin: 0px 25%;
+	text-align: center;
+}
+div.sumUpOrderOdd {
+	background-color: #43FF02;
+	display: inline-block;
+	width: 50%;
+	border: 0px;
+	margin: 0px 25%;
+	text-align: center;
+}
+div.sumUpOrderEven {
+	background-color: #7EFF66;
+	display: inline-block;
+	width: 50%;
+	border: 0px;
+	margin: 0px 25%;
+	text-align: center;
+}
+span.sumUpTxt {
+	display: inline-block;
+	width: 80%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.sumUpPrice {
+	display: inline-block;
+	width: 10%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.sumUpOrder {
+	display: inline-block;
 	width: 100%;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	padding-top: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
 }
-.banner {
-	margin-top: 0px;
-	padding-top: 0px;
+span.sumUpOrderItem {
+	display: inline-block;
+	width: 150px;
+	border: 0px;
+	margin: 0px;
+	text-align: left;
 }
+span.sumUpOrderItemCount {
+	display: inline-block;
+	width: 16px;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
 }
-
-div.loginRegister {background-color:#3E2E2F; width:100%; border:0px; margin: 0px; text-align: center}
-
-div.currentOrder         {background-color: lightgray; border:1px; margin: 0px;}
-div.currentOrderRow      {background-color: lightgray; border:1px; solid: #666;margin: 0px;}
-div.currentOrderRowOdd   {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
-div.currentOrderRowEven  {background-color: #B5A8FD; border:1px; solid: #555;margin: 0px;}
-
-
-
-
-div.pollQuery            {border:1px; solid: #666;margin: 0px;}
-
-div.orderList            {border:1px; solid: #666;margin: 0px;}
-div.orderItem            {border:1px; solid: #666;margin: 0px;}
-div.orderItemOdd         {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
-div.orderItemOdd:hover   {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-div.orderItemEven        {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
-div.orderItemEven:hover  {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-
-span.orderItemButton      {display: inline-block; width: 80px; border:0px; margin: 0px;}
-span.orderItemNr          {display: inline-block; width: 50px; border:0px; margin: 0px;}
-span.orderItemName        {display: inline-block; width:200px; border:0px; margin: 0px;}
-span.orderItemIngredients {display: inline-block; width:500px; border:0px; margin: 0px;}
-span.orderItemPrice       {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
-
-
-span.currentOrderBlank  {display: inline-block; width: 80px; border:0px; margin: 0px;}
-span.currentOrderNr     {display: inline-block; width: 30px; border:0px; margin: 0px; text-align: right}
-span.currentOrderName   {display: inline-block; width:200px; border:0px; margin: 0px;}
-span.currentOrderComment{display: inline-block; width:300px; border:0px; margin: 0px;}
-span.currentOrderLogin  {display: inline-block; width:100px; border:0px; margin: 0px;}
-span.currentOrderPrice  {display: inline-block; width: 80px; border:0px; margin: 0px; text-align: right}
-span.orderIsPaid        {display: inline-block; width: 80px; border:0px; margin: 0px;}
-
-div.sumUpOrderHeader    {background-color:#939393; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
-div.sumUpOrderOdd    {background-color: #BBBBBB; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
-div.sumUpOrderEven   {background-color:#DDDDDD; display: inline-block; width: 70%; border:0px; margin: 0px; text-align: center}
-
-span.sumUpTxt           {display: inline-block; width: 80%; border:0px; margin: 0px; text-align: right}
-span.sumUpPrice         {display: inline-block; width:  10%; border:0px; margin: 0px; text-align: right}
-span.sumUpOrder         {display: inline-block; width: 100%; border:0px; margin: 0px; text-align: center}
-span.sumUpOrderItem     {display: inline-block; width: 150px; border:0px; margin: 0px; text-align: left}
-span.sumUpOrderItemCount{display: inline-block; width: 40px; border:0px; margin: 0px; text-align: right}
-span.sumUpOrderItemNr   {display: inline-block; width: 40px; border:0px; margin: 0px; text-align: right}
-
-div.historyList            {border:1px; solid: #666;margin: 0px;}
-div.historyItem            {border:1px; solid: #666;margin: 0px;}
-div.historyItemOdd         {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
-div.historyItemOdd:hover   {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-div.historyItemEven        {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
-div.historyItemEven:hover  {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-
-span.historyId       {display: inline-block; width: 50px; border:0px; margin: 0px;}
-span.historyTimestamp{display: inline-block; width:150px; border:0px; margin: 0px;}
-span.historyState    {display: inline-block; width:150px; border:0px; margin: 0px;}
-span.historySupplier {display: inline-block; width:100px; border:0px; margin: 0px;}
-span.historyUserId   {display: inline-block; width:150px; border:0px; margin: 0px; text-align: right}
-span.historyDetails  {display: inline-block; width:100px; border:0px; margin: 0px; text-align: right}
-
-
-div.orderRefreshed     {background-color: greenyellow; border:2px; margin: 0px;}
-
+span.sumUpOrderItemNr {
+	display: inline-block;
+	width: 40px;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+div.historyList {
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.historyItem {
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.historyItemOdd {
+	background-color: #26FB47;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.historyItemOdd:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+div.historyItemEven {
+	background-color: lime;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.historyItemEven:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+span.historyId {
+	display: inline-block;
+	width: 50px;
+	border: 0px;
+	margin: 0px;
+}
+span.historyTimestamp {
+	display: inline-block;
+	width: 150px;
+	border: 0px;
+	margin: 0px;
+}
+span.historyState {
+	display: inline-block;
+	width: 150px;
+	border: 0px;
+	margin: 0px;
+}
+span.historySupplier {
+	display: inline-block;
+	width: 100px;
+	border: 0px;
+	margin: 0px;
+}
+span.historyUserId {
+	display: inline-block;
+	width: 150px;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+span.historyDetails {
+	display: inline-block;
+	width: 100px;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+div.orderRefreshed {
+	background-color: greenyellow;
+	border: 2px;
+	margin: 0px;
+}
 /*span.currentOrderItem    {display: inline-block; height: 100; width: 80px; border:0px; margin: 0px;}*/
-
-div.adminCntrlRow     {background-color: greenyellow; border:2px; margin: 0px;}
-span.adminCntrlItem   {display: inline-block; width:200px; border:0px; margin: 0px;}
-
-
-div.adminItemOdd        {background-color: #C4BCEF;   display: inline-block; width: 100%; border:1px; solid: #666;margin: 0px;}
-div.adminItemOdd:hover  {background-color: lightgray; display: inline-block; width: 100%; border:1px; solid: #777;margin: 0px;}
-div.adminItemEven       {background-color: #B5A8FD; display: inline-block; width: 100%; border:1px; solid: #666;margin: 0px;}
-div.adminItemEven:hover {background-color: lightgray; display: inline-block; width: 100%; border:1px; solid: #777;margin: 0px;}
-
-
-
-span.adminUserLogin 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
-span.adminUserIsAdmin 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
-span.adminUserIsBank 	{display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
-span.adminUserResetcode {display: inline-block; width: 24%; border:0px; margin: 0px; text-align: center}
-
-div.infoMessageYellow   {background-color: #E4FB00;  display: inline-block; width: 100%; border:1px; solid: #E4FB00; margin: 0px; text-align: center;}
-
-div.infoMessageGreen   {background-color: #00C003;  display: inline-block; width: 100%; border:1px; solid: #00C003; margin: 0px; text-align: center;}
-
-div.infoMessageRed   {background-color: #FF0004;  display: inline-block; width: 100%; border:1px; solid: #FF0004; margin: 0px; text-align: center;}
-
-
-div.bankItemOdd       {background-color: #C4BCEF; border:1px; solid: #666;margin: 0px;}
-div.bankItemOdd:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-div.bankItemEven     {background-color: #B5A8FD; border:1px; solid: #666;margin: 0px;}
-div.bankItemEven:hover {background-color: lightgray; border:1px; solid: #777;margin: 0px;}
-
-div.orderDeadline    {background-color: #F8FF00; border:1px; solid: #F8FF00;margin: 0px; font-size: 15px; text-align: center}
-
-div.orderArrival       {background-color: greenyellow; border:2px; margin: 0px; font-size: 15px; text-align: center}
-
-
-span.bankItemId      	 {display: inline-block; width: 10%; border:0px; margin: 0px;}
-span.bankItemTimestamp   {display: inline-block; width: 20%; border:0px; margin: 0px;}
-span.bankItemCustomer    {display: inline-block; width: 20%; border:0px; margin: 0px;}
-span.bankItemBanker      {display: inline-block; width: 20%; border:0px; margin: 0px;}
-span.bankItemAmount      {display: inline-block; width: 20%; border:0px; margin: 0px; text-align: right}
-
+div.adminCntrlRow {
+	background-color: greenyellow;
+	border: 2px;
+	margin: 0px;
+}
+span.adminCntrlItem {
+	display: inline-block;
+	width: 200px;
+	border: 0px;
+	margin: 0px;
+}
+div.adminItemOdd {
+	background-color: lime;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.adminItemOdd:hover {
+	background-color: #EAFD00;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+div.adminItemEven {
+	background-color: #26FB47;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.adminItemEven:hover {
+	background-color: #EAFD00;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+span.adminUserLogin {
+	display: inline-block;
+	width: 24%;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
+}
+span.adminUserIsAdmin {
+	display: inline-block;
+	width: 8%;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
+}
+span.adminUserIsBank {
+	display: inline-block;
+	width: 7%;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
+}
+span.adminUserResetcode {
+	display: inline-block;
+	width: 12%;
+	border: 0px;
+	margin: 0px;
+	text-align: center;
+}
+div.infoMessageYellow {
+	background-color: #E4FB00;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #E4FB00;
+	margin: 0px;
+	text-align: center;
+}
+div.infoMessageGreen {
+	background-color: #00C003;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #00C003;
+	margin: 0px;
+	text-align: center;
+}
+div.infoMessageRed {
+	background-color: #FF0004;
+	display: inline-block;
+	width: 100%;
+	border: 1px;
+	solid: #FF0004;
+	margin: 0px;
+	text-align: center;
+}
+div.bankItemOdd {
+	background-color: #26FB47;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.bankItemOdd:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+#EAFD00 {
+}
+div.bankItemEven {
+	background-color: lime;
+	border: 1px;
+	solid: #666;
+	margin: 0px;
+}
+div.bankItemEven:hover {
+	background-color: #EAFD00;
+	border: 1px;
+	solid: #777;
+	margin: 0px;
+}
+div.orderDeadline {
+	background-color: #F8FF00;
+	border: 1px;
+	solid: #F8FF00;
+	margin: 0px;
+	font-size: 15px;
+	text-align: center;
+}
+div.orderArrival {
+	background-color: greenyellow;
+	border: 2px;
+	margin: 0px;
+	font-size: 15px;
+	text-align: center;
+}
+div.orderDeadlineProgressBar {
+	background-color: #C3C3C3;
+	width: 75%;
+	margin: auto;
+}
+div.orderDeadlineProgressBarPosition {
+	background-color: black;
+	width: 50%;
+	color: white;
+	text-align: center;
+}
+span.bankItemId {
+	display: inline-block;
+	width: 10%;
+	border: 0px;
+	margin: 0px;
+}
+span.bankItemTimestamp {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+}
+span.bankItemCustomer {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+}
+span.bankItemBanker {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+}
+span.bankItemAmount {
+	display: inline-block;
+	width: 20%;
+	border: 0px;
+	margin: 0px;
+	text-align: right;
+}
+input[type=button], input[type=submit], input[type=reset] {
+	background-color: rgba(247, 203, 203, 0.949);
+	border: 1px inset;
+	color: black;
+	padding: 0px 0px;
+	text-decoration: none;
+	margin: 4px 2px;
+	cursor: pointer;
+	height: 100%;
+	width: 100%;
+}
+input[type=text] {
+	background-color: #FFFFFF;
+	background-image: url('searchicon.png');
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	padding-left: 0px;
+	height: ;
+	width: 80%;
+}
+.btnDelete {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/delete.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnBuy {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/buy.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnvPay {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/vpay.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnPay {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/pay.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnSave {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/save.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnPaid {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/paid.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.btnvPaid {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/vpaid.svg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}

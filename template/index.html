@@ -142,11 +142,8 @@
 		  
 
             <div class='currentOrderRow'>                                       
-              <span class='currentOrderBlank'></span>
-			  <span class='currentOrderBlank'></span>
-              <span class='orderIsPaid'>Status</span>                
-              <span class='currentOrderNr'>Nr.</span>
-              <span class='currentOrderBlank'></span>              
+              <span class='currentOrderBlank'>Status</span>                         
+              <span class='currentOrderNr'>Nr.</span>             
               <span class='currentOrderName'>Beschreibung</span>  
               <span class='currentOrderLogin'>Besteller</span>
               <span class='currentOrderComment'>Kommentar</span>                
@@ -155,11 +152,10 @@
 			
 			<!-- incoming orders section row odd -->
 			<div class='currentOrderRowOdd'>
-                <span class='currentOrderBlank'>[%killOrder%]</span>
-				<span class='currentOrderBlank'>[%virtualPay%]</span>
-				<span class='orderIsPaid'>[%payState%]</span>
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>
-                <span class='currentOrderBlank'></span>              
+                <span class='currentOrderBlank'>[%killOrder%]
+												[%virtualPay%]
+												[%payState%]</span>			
+                <span class='currentOrderNr'>[%supplierCardNr%]</span>         
                 <span class='currentOrderName'>[%orderName%]</span>                  
                 <span class='currentOrderLogin'>[%login%]</span>
                 <span class='currentOrderComment'>[%comment%]</span>                  
@@ -168,11 +164,10 @@
 			<!-- incoming orders section row odd -->
 			<!-- incoming orders section row even -->
 		  	<div class='currentOrderRowEven'>
-                <span class='currentOrderBlank'>[%killOrder%]</span>
-				<span class='currentOrderBlank'>[%virtualPay%]</span>
-				<span class='orderIsPaid'>[%payState%]</span>
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>
-                <span class='currentOrderBlank'></span>              
+                <span class='currentOrderBlank'>[%killOrder%]
+												[%virtualPay%]
+												[%payState%]</span>			
+                <span class='currentOrderNr'>[%supplierCardNr%]</span>         
                 <span class='currentOrderName'>[%orderName%]</span>                  
                 <span class='currentOrderLogin'>[%login%]</span>
                 <span class='currentOrderComment'>[%comment%]</span>                  
@@ -209,6 +204,11 @@
 	      <div class='orderDeadline'>
 		  	Deadline dieser Sammelbestellung:  [%orderDeadline%]
 		  </div>
+		  <div class='orderDeadlineProgressBar' id='progressbar'>
+			  <div class='orderDeadlineProgressBarPosition' id='progressbarPosition'>
+			  </div>
+		  </div>
+		  <br>
 		  <!-- order deadline -->
 		  
 		  <!-- order arrival info -->
@@ -283,7 +283,8 @@
 					</div>
 					<!-- incoming orders final even row-->
 					<!-- incoming orders final -->
-            </div>           
+            </div>    
+			<br>
 			</center>                
 		</div>
 	  	<!-- incoming orders sumup -->

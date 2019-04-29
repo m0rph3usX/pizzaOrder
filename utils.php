@@ -569,7 +569,7 @@ function eventButtonSetCurrentOrderer(){
         $sql = "UPDATE orders SET user_ID = ".$newOrdererId ." WHERE ( id = ". $config->orderid . " )";
         $config->db-> exec($sql); 		
 			
-		//header("Location: setup2.php");	
+		//header("Location: setup.php");	
     }	
 }
 
@@ -618,7 +618,7 @@ function eventSetUserIsBank(){
         $sql = "UPDATE user SET isBankTransactor = ".$value ." WHERE ( id = ". $loginId . " )";
         $config->db-> exec($sql); 		
 			
-		header("Location: setup2.php");	
+		header("Location: setup.php");	
     }	
 }
 
@@ -635,7 +635,7 @@ function eventSetUserIsAdmin(){
         $sql = "UPDATE user SET isAdmin = ".$value ." WHERE ( id = ". $loginId . " )";
         $config->db-> exec($sql); 	
 		
-		header("Location: setup2.php");			
+		header("Location: setup.php");			
     }	
 }
 
@@ -654,7 +654,7 @@ function eventCreateResetCode(){
         $sql = "UPDATE user SET resetcode = '".$resetcode ."' WHERE ( id = ". $userId . " )";
         $config->db-> exec($sql); 	
 		
-		header("Location: setup2.php");			
+		header("Location: setup.php");			
     }	
 }
 
@@ -669,7 +669,7 @@ function eventDeleteResetCode(){
         $sql = "UPDATE user SET resetcode = null WHERE ( id = ". $userId . " )";
         $config->db-> exec($sql); 	
 		
-		header("Location: setup2.php");			
+		header("Location: setup.php");			
     }	
 }
 
@@ -957,7 +957,7 @@ function createOrderTable($page)
 	
 	foreach ($config->db->query($sql) as $row) {
 		if($config->userid > -1){
-			$button = "<input type='submit' value='bestellen'       name='eventButtonAddOrder'/>
+			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder'></button>								   					   
 					   <input type='hidden' value=".$row['id']."    name='supplierCard_ID'/>
 					   <input type='hidden' value=".$row['price']." name='supplierCard_price'/>";
 	    }
@@ -1011,6 +1011,17 @@ function getTimeStampArrivalOrder(){
     }
      
 	return $timeStampReceive;
+}
+
+function getOrderTimestampStart(){
+	global $config;
+	
+	$sql = "SELECT timeStampStarted, timeStampFreezing FROM orders WHERE id = " . $config->orderid;
+    foreach ($config->db->query($sql) as $row) {
+        $timeStampStarted = $row['timeStampStarted'];        
+    }
+	
+	return $timeStampStarted;
 }
 
 function createIncomingOrdersTable($page)
@@ -1118,7 +1129,7 @@ function createIncomingOrdersTable($page)
 			if(($config->userid == $row['user_ID']) && ($oderstate == 1))
 			{
 				$killButton = "<form action='' method='post'>
-							   <input type='submit' value='stornieren' name='orderKill'/>
+							   <button type='submit' class='btnDelete' name='orderKill'></button>								   
 							   <input type='hidden' value=".$row['order_ID']." name='orderKill'/>                        
 							   </form>";						   				
 			}
@@ -1126,7 +1137,7 @@ function createIncomingOrdersTable($page)
 			{
 				if(countMoney() >= $price){ 
 					$virtualPayButton = "<form action='' method='post'>
-								   <input type='submit' value='virtualPay'name='eventVirtualPayButton'/>
+								   <button type='submit' class='btnvPay' name='eventVirtualPayButton'></button>								   								   
 								   <input type='hidden' value=".$row['order_ID']." name='orderDetail_id'/>                        
 								   <input type='hidden' value=".$price." name='price'/>                        
 								 </form>";							 						
@@ -1145,8 +1156,8 @@ function createIncomingOrdersTable($page)
 		//  --- show order control button if allowed ---------------------------------------------------------		
 		if(($config->userid == getUserWhoIsOrdering()) and ($isPaid < 2) and (!$config->isHistory)){
 			if($isPaid == 1){
-				$payState = "<form action='' method='post'>
-							    <input type='submit' value='BEZAHLT'name='eventButtonOrderStorno'/>
+				$payState = "<form action='' method='post'>							    
+								<button type='submit' class='btnPaid' name='eventButtonOrderStorno'></button>
 							    <input type='hidden' value=".$row['order_ID']." name='orderId'/>                       
 							    </form>";
 				$moneyReal = $moneyReal + $price;
@@ -1154,15 +1165,17 @@ function createIncomingOrdersTable($page)
 			}
 			else {			
 				
-				$payState = "<form action='' method='post'>
-							  <input type='submit' value='OFFEN'name='eventButtonPayOrder'/>
+				$payState = "<form action='' method='post'>							  
+							  <button type='submit' class='btnPay' name='eventButtonPayOrder'></button>								   								   
 							  <input type='hidden' value=".$row['order_ID']." name='orderId'/>
 							  </form>";				
 			}                        
 		}
 		else{
 			if($isPaid     ==  2){
-				$payState = "VIRTUELL BEZAHLT";
+				//$payState = "VIRTUELL BEZAHLT";
+				$payState = "<button type='submit' class='btnvPaid'></button>";
+				
 				$moneyVirtual = $moneyVirtual + $price;
 			}
 			else if($isPaid == 1){
@@ -1183,10 +1196,14 @@ function createIncomingOrdersTable($page)
 		//  --- show comment control button if allowed ---------------------------------------------------------		
 		if(!$config->isHistory) {
 			if(($config->userid == $row['user_ID']) && ($oderstate == 1)){
-					 $comment = "<form action='' method='post'>                   
-									<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
-									<input type='submit' value='speichern'name='updateComment'/>                     
-									<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>
+					 $comment = "<form action='' method='post'>         
+									<div class='currentOrderCommentTextfield'>									
+										<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
+									</div>
+									<div class='currentOrderCommentButton'>  
+										<button type='submit' class='btnSave' name='updateComment'></button>										
+										<input type='hidden' value=".$row['order_ID'] ." name='orderUpdateCommentID'/>
+									</div>
 								 </form>";                     
 			}
 		}
@@ -1388,7 +1405,7 @@ function adminShowUserData($page){
 			$newRow = $rowOdd;
 		}
 		
-		
+			
 		$resetcode = $row['resetcode'];
 		
 		$newRow  = preg_replace("/\[\%userLogin\%\]/" , $row['login']   , $newRow);
@@ -1434,7 +1451,10 @@ function adminShowUserData($page){
 		$idx++;
     }
 	
-	$page = replaceSection("<!-- admin user section row -->", $table, $page);
+	$page = replaceSection("<!-- admin user section table -->", $table, $page);
+	
+	
+	
 	return $page;
 }
 
@@ -1802,6 +1822,40 @@ function createNewDB($user, $passwordHash)
  
  addMessage('Datenbank erfolgreich erstellt <a href="index.php"> >>>weiter</a>');
 
+}
+
+
+function showDeadline(){
+	?>
+	<script>
+	var countDownDate    ="<?php echo getTimeStampFreezingOrder() ?>" * 1000;
+	var countDownStarted ="<?php echo getOrderTimestampStart() ?>" * 1000;
+
+	var x = setInterval(function() {
+	  var now = new Date().getTime();
+	  var distance = countDownDate - now;
+
+	  var hours   = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+	  var deltaMax  = countDownDate - countDownStarted;
+	  var deltaCurr = countDownDate - now;
+	  
+	  var position = deltaCurr/deltaMax * 100;
+	  // Display the result in the element with id="demo"
+	  document.getElementById("progressbarPosition").innerHTML = hours + "h "+ minutes + "m " + seconds + "s ";
+	  //document.getElementById("progressbarPosition").innerHTML = position;
+	  document.getElementById("progressbarPosition").setAttribute("style","width:"+ position+"%");
+
+	  // If the count down is finished, write some text
+	  if (distance < 0) {
+		clearInterval(x);
+		document.getElementById("progressbarPosition").innerHTML = "EXPIRED";
+	  }
+	}, 1000);
+	</script>
+	<?php
 }
 ?>
 
