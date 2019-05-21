@@ -4,75 +4,59 @@
 <title>Pizzabestellskript</title>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="template/css/style.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 <!-- Main Container -->
 <div class="container"> 
   <!-- Navigation -->
-  <header>
-  </header>
+  <header> </header>
   <!-- Hero Section -->
   <section class="hero">
     <p class="tagline">PIZZA ORDER SCRIPT</p>
     <p class="tagline">BEstellVERLAUF </p>
   </section>
   
-
-	
-  <!-- InfoMessage -->
-  <!-- InfoMessage -->
+  <!-- InfoMessage --> 
+  <!-- InfoMessage --> 
+  <!-- login section -->
+  <section class="logout">
+    <div class="userControlpanel"> <span class ='userCntrlLogin'>[%loginName%]</span> <span class ='userCntrlMoney'>Guthaben: [%money%] €</span> </div>
+    <div class="userControlpanel"> <span class ='userCntrlLink'> <a href="index.php"><<< zurück</a> </span><span class ='userCntrlLink'> <a href="?logout=1">Logout</a> </span> <span class ='userCntrlLink'> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ='userCntrlLink'> <a href="history.php">letzte Bestellungen anzeigen</a> </span>  </div>
+  </section>
+  <!-- login section -->
+	  
+  <!-- history items section -->   
+  <section class=historyItems>
+    <div class='historyItem'>
+      <div class='historyList'>
+        <div class='tableHeader'> <span class='historyId'>ID</span> <span class='historyTimestamp'>Datum</span> <span class='historyState'>Status</span> <span class='historySupplier'>Lieferrant</span> <span class='historyUserId'>Besteller</span> <span class='historyDetails'></span> </div>
+        
+        <!-- history items section row --> 
+        <!-- history items section row odd -->
+        <div class='tableRowOdd'>
+          <form action='' method='post'>
+            <span class='historyId'>[%historyId%]</span> <span class='historyTimestamp'>[%historyTimestamp%]</span> <span class='historyState'>[%historyState%]</span> <span class='historySupplier'>[%historySupplier%]</span> <span class='historyUserId'>[%userId%]</span> <span class='historyDetails'>[%details%]</span>
+          </form>
+        </div>
+        <!-- history items section row odd --> 
+        <!-- history items section row even -->
+        <div class='tableRowEven'>
+          <form action='' method='post'>
+            <span class='historyId'>[%historyId%]</span> <span class='historyTimestamp'>[%historyTimestamp%]</span> <span class='historyState'>[%historyState%]</span> <span class='historySupplier'>[%historySupplier%]</span> <span class='historyUserId'>[%userId%]</span> <span class='historyDetails'>[%details%]</span>
+          </form>
+        </div>
+        <!-- history items section row even --> 
+        
+        <!-- history items section row --> 
+      </div>
+    </div>
+  </section>
+  <!-- history items section -->
   
-  <!-- history items section -->
-	<a href="index.php"><<< zurück</a>
-  <section class=historyItems>  
-    <div class='historyItem'>           
-        <div class='historyList'>           
-           <div class='historyItem'>
-               <span class='historyId'>ID</span>                       
-               <span class='historyTimestamp'>Datum</span>                     
-			   <span class='historyState'>Status</span>
-               <span class='historySupplier'>Lieferrant</span>
-               <span class='historyUserId'>Besteller</span>	
-			   <span class='historyDetails'></span>
-           </div>
-
-		   <!-- history items section row -->
-		   <!-- history items section row odd -->
-           <div class='historyItemOdd'>			   
-			   <form action='' method='post'>
-			     <span class='historyId'>[%historyId%]</span>
-				   <span class='historyTimestamp'>[%historyTimestamp%]</span>                   
-				   <span class='historyState'>[%historyState%]</span>
-				   <span class='historySupplier'>[%historySupplier%]</span>	
-				   <span class='historyUserId'>[%userId%]</span>
-				   <span class='historyDetails'>[%details%]</span>				   
-			   </form>
-          </div>
-		   <!-- history items section row odd -->
-		   <!-- history items section row even -->
-           <div class='historyItemEven'>			   
-			   <form action='' method='post'>
-				   <span class='historyId'>[%historyId%]</span>
-				   <span class='historyTimestamp'>[%historyTimestamp%]</span>                   
-				   <span class='historyState'>[%historyState%]</span>
-				   <span class='historySupplier'>[%historySupplier%]</span>	
-				   <span class='historyUserId'>[%userId%]</span>
-				   <span class='historyDetails'>[%details%]</span>
-			   </form>
-            </div>
-			<!-- history items section row even -->			
-			
-			<!-- history items section row -->			
-		</div>
-	</div>
-  </section>	
-  <!-- history items section -->
-
   <section class=copyright>
-	<div class="copyright">		
-		<p>PIZZA ORDER SCRIPT v. [%version%]</p>
-	</div>	 	  
+    <div class="copyright">
+      <p>PIZZA ORDER SCRIPT v. [%version%]</p>
+    </div>
   </section>
 </div>
 <!-- Main Container Ends -->

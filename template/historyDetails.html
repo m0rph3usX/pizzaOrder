@@ -4,143 +4,77 @@
 <title>Pizzabestellskript</title>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="template/css/style.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 <!-- Main Container -->
 <div class="container"> 
   <!-- Navigation -->
-  <header>
-  </header>
+  <header> </header>
   <!-- Hero Section -->
   <section class="hero">
     <p class="tagline">PIZZA ORDER SCRIPT</p>
     <p class="tagline">BEstellVERLAUF </p>
+  </section>     
+  <!-- InfoMessage --> 
+  <!-- InfoMessage --> 
+  <!-- login section -->
+  <section class="logout">
+    <div class="userControlpanel"> <span class ='userCntrlLogin'>[%loginName%]</span> <span class ='userCntrlMoney'>Guthaben: [%money%] €</span> </div>
+    <div class="userControlpanel"> <span class ='userCntrlLink'> <a href="history.php"><<< zurück</a> </span><span class ='userCntrlLink'> <a href="?logout=1">Logout</a> </span> <span class ='userCntrlLink'> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ='userCntrlLink'> <a href="history.php">letzte Bestellungen anzeigen</a> </span>  </div>
   </section>
-  <a href="history.php"><<< zurück</a>
-
-	
-  <!-- InfoMessage -->
-  <!-- InfoMessage -->
-  
+  <!-- login section -->
   <!-- incoming orders section -->
   <section class=orderRunning>
-	  <div class='currentOrder'>
-	    <div class='currentOrderRow'>                 				
-		<center>		
-			<div id='countdownFreeze'>
-			</div>
-			Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
-			aktuelle Bestellungen: </center>                
-		</div>
-		  
-
-            <div class='currentOrderRow'>                                       
-              <span class='currentOrderBlank'></span>
-			  <span class='currentOrderBlank'></span>
-              <span class='orderIsPaid'>Status</span>                
-              <span class='currentOrderNr'>Nr.</span>
-              <span class='currentOrderBlank'></span>              
-              <span class='currentOrderName'>Beschreibung</span>  
-              <span class='currentOrderLogin'>Besteller</span>
-              <span class='currentOrderComment'>Kommentar</span>                
-              <span class='currentOrderPrice'>Preis</span>
-			</div>							
-			
-			<!-- incoming orders section row odd -->
-			<div class='currentOrderRowOdd'>
-                <span class='currentOrderBlank'>[%killOrder%]</span>
-				<span class='currentOrderBlank'>[%virtualPay%]</span>
-				<span class='orderIsPaid'>[%payState%]</span>
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>
-                <span class='currentOrderBlank'></span>              
-                <span class='currentOrderName'>[%orderName%]</span>                  
-                <span class='currentOrderLogin'>[%login%]</span>
-                <span class='currentOrderComment'>[%comment%]</span>                  
-                <span class='currentOrderPrice'>[%price%]</span>             
-            </div>
-			<!-- incoming orders section row odd -->
-			<!-- incoming orders section row even -->
-		  	<div class='currentOrderRowEven'>
-                <span class='currentOrderBlank'>[%killOrder%]</span>
-				<span class='currentOrderBlank'>[%virtualPay%]</span>
-				<span class='orderIsPaid'>[%payState%]</span>
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>
-                <span class='currentOrderBlank'></span>              
-                <span class='currentOrderName'>[%orderName%]</span>                  
-                <span class='currentOrderLogin'>[%login%]</span>
-                <span class='currentOrderComment'>[%comment%]</span>                  
-                <span class='currentOrderPrice'>[%price%]</span>             
-            </div>
-			<!-- incoming orders section row even -->
-			
-			<br>
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span>            
-				<span class='sumUpPrice'>[%orderSum%] € </span>
-			</div>
-		  
-		  	<div class='currentOrder'>
-				<span class='sumUpTxt'></span>            
-				<span class='sumUpPrice'>__________ </span>
-			</div>
-		  
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>...davon bar bezahlt =</span>            
-				<span class='sumUpPrice'>[%orderSumRealMoney%] € </span>
-			</div>
-		
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>...davon virtuell bezahlt =</span>            
-				<span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span>
-			</div>
-		  
-		    <div class='currentOrder'>
-				<span class='sumUpTxt'>...davon noch ausstehend =</span>            
-				<span class='sumUpPrice'>[%orderSumToGet%] € </span>
-			</div>
-
-		  
-		<!-- incoming orders sumup -->
-			<center>        
-			<br> Zusammenfassung der Bestellung: <br>                      
-			<div class='currentOrder'>
-					<div class='sumUpOrderHeader'>
-						<span class='sumUpOrderItemCount'>Anzahl</span>
-						<span class='sumUpOrderItemNr'>Nr.</span>
-						<span class='sumUpOrderItem'>Bestellung</span>
-						<span class='sumUpOrderItem'>Kommentar</span>				
-					</div>			
-					<!-- incoming orders final -->
-					<!-- incoming orders final odd row-->
-					<div class='sumUpOrderOdd'>
-						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
-						<span class='sumUpOrderItem'>[%finalName%]  </span>
-						<span class='sumUpOrderItem'>[%finalComment%]</span>				
-					</div>
-					<!-- incoming orders final odd row-->
-					<!-- incoming orders final even row-->
-					<div class='sumUpOrderEven'>
-						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
-						<span class='sumUpOrderItem'>[%finalName%]  </span>
-						<span class='sumUpOrderItem'>[%finalComment%]</span>				
-					</div>
-					<!-- incoming orders final even row-->
-					<!-- incoming orders final -->
-            </div>           
-			</center>                
-		</div>
-	  	<!-- incoming orders sumup -->
-		
-  </section>	
+    <div class='currentOrder'>
+      <div class='currentOrderRow'>
+        <center>
+          <div id='countdownFreeze'> </div>
+          Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
+          aktuelle Bestellungen:
+        </center>
+      </div>
+      <div class='tableHeader'> <span class='currentOrderBlank'></span> <span class='currentOrderBlank'></span> <span class='orderIsPaid'>Status</span> <span class='currentOrderNr'>Nr.</span> <span class='currentOrderBlank'></span> <span class='currentOrderName'>Beschreibung</span> <span class='currentOrderLogin'>Besteller</span> <span class='currentOrderComment'>Kommentar</span> <span class='currentOrderPrice'>Preis</span> </div>
+      
+      <!-- incoming orders section row odd -->
+      <div class='tableRowOdd'> <span class='currentOrderBlank'>[%killOrder%]</span> <span class='currentOrderBlank'>[%virtualPay%]</span> <span class='orderIsPaid'>[%payState%]</span> <span class='currentOrderNr'>[%supplierCardNr%]</span> <span class='currentOrderBlank'></span> <span class='currentOrderName'>[%orderName%]</span> <span class='currentOrderLogin'>[%login%]</span> <span class='currentOrderComment'>[%comment%]</span> <span class='currentOrderPrice'>[%price%]</span> </div>
+      <!-- incoming orders section row odd --> 
+      <!-- incoming orders section row even -->
+      <div class='tableRowEven'> <span class='currentOrderBlank'>[%killOrder%]</span> <span class='currentOrderBlank'>[%virtualPay%]</span> <span class='orderIsPaid'>[%payState%]</span> <span class='currentOrderNr'>[%supplierCardNr%]</span> <span class='currentOrderBlank'></span> <span class='currentOrderName'>[%orderName%]</span> <span class='currentOrderLogin'>[%login%]</span> <span class='currentOrderComment'>[%comment%]</span> <span class='currentOrderPrice'>[%price%]</span> </div>
+      <!-- incoming orders section row even --> 
+      
+      <br>
+      <div class='currentOrder'> <span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span> <span class='sumUpPrice'>[%orderSum%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'></span> <span class='sumUpPrice'>__________ </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon bar bezahlt =</span> <span class='sumUpPrice'>[%orderSumRealMoney%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon virtuell bezahlt =</span> <span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon noch ausstehend =</span> <span class='sumUpPrice'>[%orderSumToGet%] € </span> </div>
+      
+      <!-- incoming orders sumup -->
+      <center>
+        <br>
+        Zusammenfassung der Bestellung: <br>
+        <div class='currentOrder'>
+          <div class='sumUpOrderHeader'> <span class='sumUpOrderItemCount'>Anzahl</span> <span class='sumUpOrderItemNr'>Nr.</span> <span class='sumUpOrderItem'>Bestellung</span> <span class='sumUpOrderItem'>Kommentar</span> </div>
+          <!-- incoming orders final --> 
+          <!-- incoming orders final odd row-->
+          <div class='sumUpOrderOdd'> <span class='sumUpOrderItemCount'>[%finalCount%]x</span> <span class='sumUpOrderItemNr'>[%finalNumber%]</span> <span class='sumUpOrderItem'>[%finalName%] </span> <span class='sumUpOrderItem'>[%finalComment%]</span> </div>
+          <!-- incoming orders final odd row--> 
+          <!-- incoming orders final even row-->
+          <div class='sumUpOrderEven'> <span class='sumUpOrderItemCount'>[%finalCount%]x</span> <span class='sumUpOrderItemNr'>[%finalNumber%]</span> <span class='sumUpOrderItem'>[%finalName%] </span> <span class='sumUpOrderItem'>[%finalComment%]</span> </div>
+          <!-- incoming orders final even row--> 
+          <!-- incoming orders final --> 
+        </div>
+      </center>
+    </div>
+    <!-- incoming orders sumup --> 
+    
+  </section>
   <!-- incoming orders section -->
-
+  
   <section class=copyright>
-	<div class="copyright">		
-		<p>PIZZA ORDER SCRIPT v. [%version%]</p>
-	</div>	 	  
+    <div class="copyright">
+      <p>PIZZA ORDER SCRIPT v. [%version%]</p>
+    </div>
   </section>
 </div>
 <!-- Main Container Ends -->

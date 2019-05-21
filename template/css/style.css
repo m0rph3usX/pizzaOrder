@@ -1,9 +1,8 @@
 @charset "UTF-8";
 /* Body */
 body {
-	//font-family: source-sans-pro;
 	font-family: verdana;
-	background-color: #363537;
+	background-color: #212121;
 	margin-top: 0px;
 	margin-right: 0px;
 	margin-bottom: 0px;
@@ -11,16 +10,26 @@ body {
 	font-style: normal;
 	font-weight: 200;
 	font-size: 12px;
-	:;
+	padding: 0;
 }
-/**/
+.userControlpanel {
+	width:x;
+}
+.userCntrlLogout {
+	width: 156px;
+	float: top;
+}
 .container {
 	width: 90%;
 	margin-left: auto;
 	margin-right: auto;
-	background-color: #FFFFFF;
+	background-color: #4D0404;
 }
-/* Navigation */
+h1 {
+	text-align: center;
+}
+input {
+}
 header {
 	width: 100%;
 	height: 5%;
@@ -30,7 +39,6 @@ header {
 .logo {
 	color: #FFF;
 	font-weight: bold;
-	text-align: undefined;
 	width: 10%;
 	float: left;
 	margin-top: 15px;
@@ -73,7 +81,6 @@ ul li:hover a {
 	margin-left: 0px;
 	letter-spacing: 4px;
 }
-/* Hero Section */
 .hero {
 	background-color: #000000;
 	padding-top: 10px;
@@ -93,14 +100,25 @@ ul li:hover a {
 }
 .messageline {
 	text-align: center;
-	color: ##FFFFFF;
+	color: #000000;
 	background-color: #FFF500;
 	margin-top: 4px;
 	font-weight: lighter;
 	text-transform: uppercase;
 	letter-spacing: 1px;
+	font-weight: bold;
 }
-/* About Section */
+.change_link {
+	color: #C50000;
+}
+.loginUsr {
+	float: left;
+	color: white;
+	width: 100%;
+	padding: 0 0 0 10px;
+}
+.change_link a {
+}
 .text_column {
 	width: 50%;
 	font-weight: lighter;
@@ -108,7 +126,7 @@ ul li:hover a {
 	color: ;
 }
 .login {
-	display: inline-block;
+	display: normal;
 	width: 32%;
 }
 .register {
@@ -121,13 +139,13 @@ ul li:hover a {
 	background-color: #5B5B5B;
 	margin-top: 0px;
 }
-.startNewOrder {
-	padding-left: 25px;
-	padding-right: 25px;
-	padding-top: 35px;
-	background-color: lime;
-	margin-top: 0px;
-	color: black;
+.actionBox {
+	background-color: #7E7E7E;
+	border-radius: 11px;
+	width: 400px;
+	height: 100%;
+	margin: auto;
+	padding: 0 20px 0px;
 }
 .about {
 	padding-left: 25px;
@@ -137,106 +155,13 @@ ul li:hover a {
 	background-color: #FFFFFF;
 	margin-top: 0px;
 }
-/* Stats Gallery */
-.stats {
-	color: #717070;
-	margin-bottom: 5px;
-}
-.gallery {
-	clear: both;
-	display: inline-block;
-	width: 100%;
-	background-color: #FFFFFF;
-	/* [disabled]min-width: 400px;
-	*/
-	padding-bottom: 35px;
-	padding-top: 0px;
-	margin-top: -5px;
-	margin-bottom: 0px;
-}
-.thumbnail {
-	width: 25%;
-	text-align: center;
-	float: left;
-	margin-top: 35px;
-}
-.gallery .thumbnail h4 {
-	margin-top: 5px;
-	margin-right: 5px;
-	margin-bottom: 5px;
-	margin-left: 5px;
-	color: #52BAD5;
-}
-.gallery .thumbnail p {
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-	color: #A3A3A3;
-}
-/* Parallax Section */
-.banner {
-	background-color: #2D9AB7;
-	background-image: url(../images/parallax.png);
-	height: 400px;
-	background-attachment: fixed;
-	background-size: cover;
-	background-repeat: no-repeat;
-}
-.parallax {
-	color: #FFFFFF;
-	text-align: right;
-	padding-right: 100px;
-	padding-top: 110px;
-	letter-spacing: 2px;
-	margin-top: 0px;
-}
-.parallax_description {
-	color: #FFFFFF;
-	text-align: right;
-	padding-right: 100px;
-	width: 30%;
-	float: right;
-	font-weight: lighter;
-	line-height: 23px;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 0px;
-	margin-left: 0px;
-}
-/* More info */
 footer {
 	background-color: #FFFFFF;
 	padding-bottom: 35px;
 }
-.footer_column {
-	width: 50%;
-	text-align: center;
-	padding-top: 30px;
+.loginUsernameField {
+	width: 95px;
 	float: left;
-}
-footer .footer_column h3 {
-	color: #B3B3B3;
-	text-align: center;
-}
-footer .footer_column p {
-	color: #717070;
-	background-color: #FFFFFF;
-}
-.cards {
-	width: 100%;
-	height: auto;
-	max-width: 400px;
-	max-height: 200px;
-}
-footer .footer_column p {
-	padding-left: 30px;
-	padding-right: 30px;
-	text-align: justify;
-	line-height: 25px;
-	font-weight: lighter;
-	margin-left: 20px;
-	margin-right: 20px;
 }
 .button {
 	width: 200px;
@@ -244,24 +169,52 @@ footer .footer_column p {
 	margin-right: auto;
 	margin-bottom: auto;
 	margin-left: auto;
-	padding-top: 20px;
-	padding-right: 10px;
-	padding-bottom: 20px;
-	padding-left: 10px;
+	padding-top: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
 	text-align: center;
 	vertical-align: middle;
-	border-radius: 0px;
+	border-radius: 10px;
 	text-transform: uppercase;
 	font-weight: bold;
 	letter-spacing: 2px;
-	border: 3px solid #FFFFFF;
-	color: #FFFFFF;
+	border: 3px solid #8C8C8C;
 	transition: all 0.3s linear;
 }
 .button:hover {
 	background-color: #FEFEFE;
 	color: #C4C4C4;
 	cursor: pointer;
+}
+.loginUser {
+	padding: 0 0 0 49px;
+}
+.loginPassword {
+	width: 75px;
+	color: #FFFFFF;
+	float: left;
+	padding: 0 0px 0 18px;
+}
+.loginButton {
+	width: 81px;
+	float: left;
+	padding: 0 0 0 10px;
+}
+.userCntrlLogin {
+	font-size: 26px;
+	color: #FFFFFF;
+	font-family: Impact;
+}
+.userCntrlMoney {
+	color: #FFFFFF;
+	font-family: Impact;
+	font-size: 26px;
+	float: right;
+}
+.loginPasswordField {
+	width: 95px;
+	float: left;
 }
 .copyright {
 	text-align: center;
@@ -288,228 +241,6 @@ footer {
 .hidden {
 	display: none;
 }
-/* Mobile */
-@media (max-width: 320px) {
-	.logo {
-		width: 100%;
-		text-align: center;
-		margin-top: 13px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-	}
-	.container header nav {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		width: 100%;
-		float: none;
-		display: none;
-	}
-	header nav ul {
-	}
-	nav ul li {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		width: 100%;
-		text-align: center;
-	}
-	.text_column {
-		width: 200px;
-		text-align: justify;
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-	}
-	.text_row {
-		text-align: justify;
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-	}
-	.thumbnail {
-		width: 100%;
-	}
-	.footer_column {
-		width: 100%;
-		margin-top: 0px;
-	}
-	.parallax {
-		text-align: center;
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		padding-top: 40%;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-		width: 100%;
-		font-size: 18px;
-	}
-	.parallax_description {
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-		width: 90%;
-		margin-top: 25px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 12px;
-		float: none;
-		text-align: center;
-	}
-	.banner {
-		background-color: #2D9AB7;
-		background-image: none;
-	}
-	.tagline {
-		margin-top: 20px;
-		line-height: 22px;
-	}
-	.hero_header {
-		padding-left: 10px;
-		padding-right: 10px;
-		line-height: 22px;
-		text-align: center;
-	}
-}
-/* Small Tablets */
-@media (min-width: 321px) and (max-width: 767px) {
-	.logo {
-		width: 100%;
-		text-align: center;
-		margin-top: 13px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		color: #043745;
-	}
-	.container header nav {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		width: 100%;
-		float: none;
-		overflow: auto;
-		display: inline-block;
-		background: #52BAD5;
-	}
-	header nav ul {
-		padding: 0px;
-		float: none;
-	}
-	nav ul li {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		width: 100%;
-		text-align: center;
-		padding-top: 8px;
-		padding-bottom: 8px;
-	}
-	.text_column {
-		width: 100%;
-		text-align: left;
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-	}
-	.thumbnail {
-		width: 100%;
-	}
-	.footer_column {
-		width: 100%;
-		margin-top: 0px;
-	}
-	.parallax {
-		text-align: center;
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		padding-top: 40%;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-		width: 100%;
-		font-size: 18px;
-	}
-	.parallax_description {
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-		margin-top: 30%;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		float: none;
-		width: 100%;
-		text-align: center;
-	}
-	.thumbnail {
-		width: 50%;
-	}
-	.parallax {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-		padding-top: 20%;
-	}
-	.parallax_description {
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		width: 100%;
-		padding-top: 30px;
-	}
-	.banner {
-		padding-left: 20px;
-		padding-right: 20px;
-	}
-	.footer_column {
-		width: 100%;
-	}
-}
-/* Small Desktops */
-@media (min-width: 768px) and (max-width: 1096px) {
-	.text_column {
-		width: 100%;
-	}
-	.thumbnail {
-		width: 50%;
-	}
-	.text_column {
-		width: 90%;
-		margin-top: 0px;
-		margin-right: 0px;
-		margin-bottom: 0px;
-		margin-left: 0px;
-		padding-top: 0px;
-		padding-right: 0px;
-		padding-bottom: 0px;
-		padding-left: 0px;
-	}
-	.banner {
-		margin-top: 0px;
-		padding-top: 0px;
-	}
-}
 div.loginRegister {
 	background-color: #3E2E2F;
 	width: 100%;
@@ -517,75 +248,50 @@ div.loginRegister {
 	margin: 0px;
 	text-align: center;
 }
-div.currentOrder {
-	background-color: yellow;
+div.tableHeader {
+	background-color: #5E5E5E;
 	border: 1px;
 	margin: 0px 0px 0px 0;
-	color: ;
+	border-radius: 7px;
+	padding: 10px;
+	font-family: arial black;
+	color: #000000;
 }
-div.currentOrderRow {
-	background-color: lime;
+div.tableRowEven {
+	background-color: #090909;
 	border: 1px;
-	solid: #666;
 	margin: 0px;
+	color: #B30000;
+	vertical-align: text-top;
 }
-div.currentOrderRowOdd {
-	background-color: #36FF02;
+div.tableRowOdd {
+	background-color: #000000;
 	border: 1px;
-	solid: #666;
 	margin: 0px;
-}
-div.currentOrderRowEven {
-	background-color: #63FF5A;
-	border: 1px;
-	solid: #555;
-	margin: 0px;
+	color: #B30000;
+	vertical-align: text-top;
 }
 div.pollQuery {
 	border: 1px;
-	solid: #666;
 	margin: 0px;
 }
 div.orderList {
 	border: 1px;
-	solid: #666;
-	margin: 0px;
+	margin: auto;
 }
-div.orderItem {
-	border: 1px rgba(131, 223, 90, 0.265);
-	background: lime;
-	solid: #666;
-	margin: 0px;
-}
-div.orderItemOdd {
-	background-color: #00F90A;
+div.tableRowOdd:hover {
+	background-color: rgba(191, 191, 191, 0.681);
 	border: 1px;
-	solid: #666;
-	margin: 0px;
-	height: ;
-	width: ;
-}
-div.orderItemOdd:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
 	margin: 0px;
 }
-div.orderItemEven {
-	background-color: #26FB47;
-	border: 1px rgba(91, 81, 120, 0.265);
-	solid: #666;
-	margin: 0px;
-}
-div.orderItemEven:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
+div.tableRowEven:hover {
+	background-color: rgba(191, 191, 191, 0.681);
+	border: 0px;
 	margin: 0px;
 }
 span.orderItemButton {
 	display: inline-block;
-	width: 12%;
+	width: 5%;
 	border: 0px;
 	margin: 0px;
 	height: 100%;
@@ -595,10 +301,12 @@ span.orderItemNr {
 	width: 3%;
 	border: 0px;
 	margin: 0px;
+	padding-top: 0;
+	padding: 0 13px 0 0;
 }
 span.orderItemName {
 	display: inline-block;
-	width: 20%;
+	width: 27%;
 	border: 0px;
 	margin: 0px;
 }
@@ -607,6 +315,7 @@ span.orderItemIngredients {
 	width: 50%;
 	border: 0px;
 	margin: 0px;
+	font-size: 11px;
 }
 span.orderItemPrice {
 	display: inline-block;
@@ -625,7 +334,7 @@ span.currentOrderNr {
 	display: inline-block;
 	width: 2%;
 	border: 0px;
-	margin: 0px;
+	margin: 0px 20px 0px 0px;
 	text-align: right;
 }
 span.currentOrderName {
@@ -679,22 +388,6 @@ div.sumUpOrderHeader {
 	margin: 0px 25%;
 	text-align: center;
 }
-div.sumUpOrderOdd {
-	background-color: #43FF02;
-	display: inline-block;
-	width: 50%;
-	border: 0px;
-	margin: 0px 25%;
-	text-align: center;
-}
-div.sumUpOrderEven {
-	background-color: #7EFF66;
-	display: inline-block;
-	width: 50%;
-	border: 0px;
-	margin: 0px 25%;
-	text-align: center;
-}
 span.sumUpTxt {
 	display: inline-block;
 	width: 80%;
@@ -720,15 +413,16 @@ span.sumUpOrderItem {
 	display: inline-block;
 	width: 150px;
 	border: 0px;
-	margin: 0px;
+	margin: 0px 0px 0px 24px;
 	text-align: left;
 }
 span.sumUpOrderItemCount {
 	display: inline-block;
 	width: 16px;
 	border: 0px;
-	margin: 0px;
+	margin: 0px 22px 0px 0px;
 	text-align: right;
+	padding: 0;
 }
 span.sumUpOrderItemNr {
 	display: inline-block;
@@ -739,36 +433,10 @@ span.sumUpOrderItemNr {
 }
 div.historyList {
 	border: 1px;
-	solid: #666;
 	margin: 0px;
 }
 div.historyItem {
 	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.historyItemOdd {
-	background-color: #26FB47;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.historyItemOdd:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
-	margin: 0px;
-}
-div.historyItemEven {
-	background-color: lime;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.historyItemEven:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
 	margin: 0px;
 }
 span.historyId {
@@ -814,7 +482,6 @@ div.orderRefreshed {
 	border: 2px;
 	margin: 0px;
 }
-/*span.currentOrderItem    {display: inline-block; height: 100; width: 80px; border:0px; margin: 0px;}*/
 div.adminCntrlRow {
 	background-color: greenyellow;
 	border: 2px;
@@ -824,38 +491,6 @@ span.adminCntrlItem {
 	display: inline-block;
 	width: 200px;
 	border: 0px;
-	margin: 0px;
-}
-div.adminItemOdd {
-	background-color: lime;
-	display: inline-block;
-	width: 100%;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.adminItemOdd:hover {
-	background-color: #EAFD00;
-	display: inline-block;
-	width: 100%;
-	border: 1px;
-	solid: #777;
-	margin: 0px;
-}
-div.adminItemEven {
-	background-color: #26FB47;
-	display: inline-block;
-	width: 100%;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.adminItemEven:hover {
-	background-color: #EAFD00;
-	display: inline-block;
-	width: 100%;
-	border: 1px;
-	solid: #777;
 	margin: 0px;
 }
 span.adminUserLogin {
@@ -891,7 +526,6 @@ div.infoMessageYellow {
 	display: inline-block;
 	width: 100%;
 	border: 1px;
-	solid: #E4FB00;
 	margin: 0px;
 	text-align: center;
 }
@@ -900,7 +534,6 @@ div.infoMessageGreen {
 	display: inline-block;
 	width: 100%;
 	border: 1px;
-	solid: #00C003;
 	margin: 0px;
 	text-align: center;
 }
@@ -909,43 +542,18 @@ div.infoMessageRed {
 	display: inline-block;
 	width: 100%;
 	border: 1px;
-	solid: #FF0004;
 	margin: 0px;
 	text-align: center;
-}
-div.bankItemOdd {
-	background-color: #26FB47;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.bankItemOdd:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
-	margin: 0px;
-}
-#EAFD00 {
-}
-div.bankItemEven {
-	background-color: lime;
-	border: 1px;
-	solid: #666;
-	margin: 0px;
-}
-div.bankItemEven:hover {
-	background-color: #EAFD00;
-	border: 1px;
-	solid: #777;
-	margin: 0px;
 }
 div.orderDeadline {
-	background-color: #F8FF00;
+	background-color: #5E5E5E;
 	border: 1px;
-	solid: #F8FF00;
-	margin: 0px;
+	margin: auto;
+	padding: 0 10px;
 	font-size: 15px;
 	text-align: center;
+	width: 80%;
+	border-radius: 8px;
 }
 div.orderArrival {
 	background-color: greenyellow;
@@ -958,12 +566,14 @@ div.orderDeadlineProgressBar {
 	background-color: #C3C3C3;
 	width: 75%;
 	margin: auto;
+	border-radius: 32px;
 }
 div.orderDeadlineProgressBarPosition {
 	background-color: black;
 	width: 50%;
 	color: white;
 	text-align: center;
+	border-radius: 7px;
 }
 span.bankItemId {
 	display: inline-block;
@@ -997,15 +607,13 @@ span.bankItemAmount {
 	text-align: right;
 }
 input[type=button], input[type=submit], input[type=reset] {
-	background-color: rgba(247, 203, 203, 0.949);
-	border: 1px inset;
-	color: black;
-	padding: 0px 0px;
-	text-decoration: none;
-	margin: 4px 2px;
 	cursor: pointer;
-	height: 100%;
+}
+.userControlpanel {
 	width: 100%;
+	background: #000000;
+}
+.userCntrlLink {
 }
 input[type=text] {
 	background-color: #FFFFFF;
@@ -1029,6 +637,35 @@ input[type=text] {
 	background-image: url('../images/buy.svg');
 	background-repeat: no-repeat;
 	background-size: cover;
+}
+.bank {
+	width: 85%;
+	background: #F7E402;
+	border-radius: 7px;
+	margin: auto;
+}
+.discountInfo {
+	background: #1DAE03;
+	border-radius: 5px;
+	text-align: center;
+	width: 82%;
+	margin: auto;
+	font-size: 15px;
+}
+.discountPayoutInfo {
+	font-size: 26px;
+}
+.bankTransfer {
+	font-family: Impact;
+	font-size: 22px;
+	text-align: center;
+}
+.bankHeader {
+	background: #000000;
+	color: #FFFFFF;
+	text-align: right;
+	font-family: Verdana;
+	font-size: 16px;
 }
 .btnvPay {
 	height: 32px;
@@ -1064,4 +701,31 @@ input[type=text] {
 	background-image: url('../images/vpaid.svg');
 	background-repeat: no-repeat;
 	background-size: cover;
+}
+input[type=text] {
+	padding: 0px;
+	border: 1px solid #CCC;
+	border-radius: 2px;
+	width: 100%;
+}
+.userInfo {
+	width: 100px;
+}
+.loginUsername {
+	width: 50px;
+	float: left;
+	color: #FFFFFF;
+}
+.loginUsernameField {
+	float: inside;
+}
+input[type=password] {
+	padding: 0px;
+	border: 1px solid #CCC;
+	border-radius: 2px;
+	width: 100%;
+}
+div.sumUpOrder {
+	width: 80%;
+	margin: auto;
 }

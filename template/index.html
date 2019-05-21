@@ -4,340 +4,274 @@
 <title>Pizzabestellskript</title>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="template/css/style.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 <!-- Main Container -->
 <div class="container"> 
-  <!-- Navigation -->
-  <header>
-  </header>
-	
+  <!-- Navigation --> 
   <!-- InfoMessage -->
-  <section class="hero"> 
+  <section class="hero">
     <p id="messagetext" class="messageline"></p>
   </section>
   <!-- InfoMessage -->
-	
-  <!-- Hero Section -->
-  <section class="hero">    
+  
+  <section class="hero">
     <p class="tagline">PIZZA ORDER SCRIPT</p>
-  </section>  	
-
-	
-  <!-- login section -->
-  
-  <div class="loginRegister">
-    <span class ='login'>
-	<form action="" method="post">
-		<div class="text_row">			
-			<p class="text_column">Login</p>
-			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
-		</div>
-		<div class="text_row">
-			<p class="text_column">Passwort </p>
-			<p class="text_column"><input size="25" maxlength="250" name="password" type="password"></p>
-			<p class="text_column"><input type='submit' value='einloggen' name="eventButtonLogin"></p>				   
-		</div>	 	
- 	 </form>
-   </span>
- <span class ='register'>   
-    <form action="" method="post">
-		<div class="text_row">
-			<p class="text_column">Login</p>
-			<p class="text_column"><input size="25" maxlength="250" name="login" type="text"></p>
-		</div>
-		<div class="text_row">
-			<p class="text_column">Passwort </p>
-			<p class="text_column"><input size="25" maxlength="250" name="password" type="password"></p>
-		</div>
-		<div class="text_row">
-			<p class="text_column">Passwort wiederholen</p>
-			<p class="text_column"><input size="25" maxlength="250" name="password2" type="password"></p>
-		</div>	
-		<div class="text_row">
-			<input type="submit" value="registrieren" name="eventButtonRegister">
-		</div>
-  	</form>
-  </span>
-
-  </div>
-
-  <!-- login section -->
-  <!-- register section -->
-  <!-- register section -->
+    <!-- login section -->
+    <div class="loginUsr" id="login" style="display:normal">
+      <form action="" method="post">
+        <span class="loginUsername"> Login: </span> <span class="loginUsernameField">
+        <input id="username" name="login" required="required" type="text" maxlength="20" />
+        </span> <span class="loginPassword"> Passwort: </span> <span class="loginPasswordField">
+        <input id="password" name="password" required="required" type="password" maxlength="30"/>
+        </span> <span class="loginButton">
+        <input type='submit' value='einloggen' name="eventButtonLogin">
+        </span>
+        <p class="change_link"> noch nicht registriert? <a href="#" onclick=" toggle_visibility('register');">registrieren</a> </p>
+      </form>
+    </div>
+    <div class="loginUsr" id="register" style="display:none">
+      <form action="" method="post">
+        <span class="loginUsername"> Login: </span> <span class="loginUsernameField">
+        <input id="username" name="login" required="required" type="text" placeholder="" />
+        </span> <span class="loginPassword"> Passwort: </span> <span class="loginPasswordField">
+        <input id="passwordsignup" name="password" required="required" type="password" placeholder=""/>
+        </span> <span class="loginPassword"> Passwort wiederh.: </span> <span class="loginPasswordField">
+        <input id="passwordsignup_confirm" name="password2" required="required" type="password" placeholder=""/>
+        </span> <span class="loginButton">
+        <input type="submit" value="registrieren" name="eventButtonRegister"/>
+        </span>
+        <p class="change_link"> bereits registriert? <a href="#" onclick="toggle_visibility('login');">einloggen</a> </p>
+      </form>
+    </div>
+    <!-- login section --> 
+    
+  </section>
+  <!-- register section --> 
+  <!-- register section --> 
   
   <!-- logout section -->
-  <section class="logout">	
-	<form action='?logout=1' method='post'>            
-      <span class ='userCntrlInfo'>Angemeldet als: [%loginName%]</span>
-	  <span class ='userCntrlInfo'>Guthaben: [%money%] €</span>
-	  <span class ='userCntrlInfo'>bisher ausgegebenes Geld: [%moneySpent%] €</span>
-      <span class ='userCntrlOptions'>
-         <input type='submit' value='ausloggen'>
-	  </span>
- 	</form>		
-	  
-    <a href="bank.php">Zahlungsverlauf anzeigen</a>
-	<br><a href="history.php">letzte Bestellungen anzeigen</a>
+  <section class="logout">
+    <div class="userControlpanel"> <span class ='userCntrlLogin'>[%loginName%]</span> <span class ='userCntrlMoney'>Guthaben: [%money%] €</span> </div>
+    <div class="userControlpanel"> <span class ='userCntrlLink'> <a href="?logout=1">Logout</a> </span> <span class ='userCntrlLink'> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ='userCntrlLink'> <a href="history.php">letzte Bestellungen anzeigen</a> </span> </div>
   </section>
-  <!-- logout section -->
-  <!-- finish order section -->
-  <section class="finishOrder">
-  	<div class=''>
-		<form action='?finish' method='post'>
-		<input type='submit' value='Bestellung abschließen'  name='finish'/>
-		<input type='hidden' value='' name='supplierCard_ID'/>
-		</form>
-	</div>
-  </section>
-  <!-- finish order section -->
+  <!-- logout section --> 
   
   <!-- new order section -->
   <section class=startNewOrder>
-	  <div class="startNewOrder">
-		<form method='post'>
-		<!-- HEADER -->
-		<div class="text_row">Bestellung starten:</div>
-		<p class="text_row">
-		  <div class="text_column">Lieferant</div>
-			<div class="text_column">[%supplierList%]</div>
-		</p>		
-
-		<div class="text_row">
-			<div class="text_column">Deadline für eingehende Bestellungen</div>
-			<div class="text_column"><select name='timeFreezeHH' width='100'>[%countDwnHH%]</select>:
-				<select name='timeFreezeMM' width='100'>[%countDwnMM%]</select> Uhr
-			</div>
-
-			<div class="text_row"><input type='submit' value='Bestellung starten' name='eventButtonStartNewOrder'></div>
-
-		</div>		
-		</form>
-	  </div>
-  </section>
-  <!-- new order section -->
-	
-  <!-- order finished section -->
-  <section class=orderFinished> 
-	    <div class=''>
-        <form action='' method='post'>
-			<input type='submit' value='neue Bestellung starten'  name='restart'/>
-			<input type='hidden' value='' name='eventButtonRestartOrder'/>
-        </form>
+    <div class="actionBox">
+      <form method='post'>
+        <!-- HEADER -->
+        <div class="text_row">Bestellung starten:</div>
+        <p class="text_row">
+        <div class="text_column">Lieferant</div>
+        <div class="text_column">[%supplierList%]</div>
+        </p>
+        <div class="text_row">
+          <div class="text_column">Deadline für eingehende Bestellungen</div>
+          <div class="text_column">
+            <select name='timeFreezeHH' width='100'>
+              [%countDwnHH%]
+            </select>
+            :
+            <select name='timeFreezeMM' width='100'>
+              [%countDwnMM%]
+            </select>
+            Uhr </div>
+          <div class="text_row">
+            <input type='submit' value='Bestellung starten' name='eventButtonStartNewOrder'>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
-  <!-- order finished section -->
-	
+  <!-- new order section --> 
+  
   <!-- incoming orders section -->
   <section class=orderRunning>
-	  <div class='currentOrder'>
-	    <div class='currentOrderRow'>                 				
-		<center>		
-			<div id='countdownFreeze'>
-			</div>
-			Bestellung bei [%supplierName%] wurde von [%orderOwner%] am [%timestamp%] Uhr gestartet<br>
-			aktuelle Bestellungen: </center>                
-		</div>
-		  
-
-            <div class='currentOrderRow'>                                       
-              <span class='currentOrderBlank'>Status</span>                         
-              <span class='currentOrderNr'>Nr.</span>             
-              <span class='currentOrderName'>Beschreibung</span>  
-              <span class='currentOrderLogin'>Besteller</span>
-              <span class='currentOrderComment'>Kommentar</span>                
-              <span class='currentOrderPrice'>Preis</span>
-			</div>							
+    <div class='currentOrder'>
+      <h1>
+        <center>
+          Bestellübersicht
+        </center>
+      </h1>
+		<!-- order discount info -->
+		<div class="discountInfo">
 			
-			<!-- incoming orders section row odd -->
-			<div class='currentOrderRowOdd'>
-                <span class='currentOrderBlank'>[%killOrder%]
-												[%virtualPay%]
-												[%payState%]</span>			
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>         
-                <span class='currentOrderName'>[%orderName%]</span>                  
-                <span class='currentOrderLogin'>[%login%]</span>
-                <span class='currentOrderComment'>[%comment%]</span>                  
-                <span class='currentOrderPrice'>[%price%]</span>             
-            </div>
-			<!-- incoming orders section row odd -->
-			<!-- incoming orders section row even -->
-		  	<div class='currentOrderRowEven'>
-                <span class='currentOrderBlank'>[%killOrder%]
-												[%virtualPay%]
-												[%payState%]</span>			
-                <span class='currentOrderNr'>[%supplierCardNr%]</span>         
-                <span class='currentOrderName'>[%orderName%]</span>                  
-                <span class='currentOrderLogin'>[%login%]</span>
-                <span class='currentOrderComment'>[%comment%]</span>                  
-                <span class='currentOrderPrice'>[%price%]</span>             
-            </div>
-			<!-- incoming orders section row even -->
-			
-			<br>
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span>            
-				<span class='sumUpPrice'>[%orderSum%] € </span>
-			</div>
-		  
-		  	<div class='currentOrder'>
-				<span class='sumUpTxt'></span>            
-				<span class='sumUpPrice'>__________ </span>
-			</div>
-		  
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>...davon bar bezahlt =</span>            
-				<span class='sumUpPrice'>[%orderSumRealMoney%] € </span>
-			</div>
-		
-			<div class='currentOrder'>
-				<span class='sumUpTxt'>...davon virtuell bezahlt =</span>            
-				<span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span>
-			</div>
-		  
-		    <div class='currentOrder'>
-				<span class='sumUpTxt'>...davon noch ausstehend =</span>            
-				<span class='sumUpPrice'>[%orderSumToGet%] € </span>
-			</div>
-		  <!-- order deadline -->
-	      <div class='orderDeadline'>
-		  	Deadline dieser Sammelbestellung:  [%orderDeadline%]
-		  </div>
-		  <div class='orderDeadlineProgressBar' id='progressbar'>
-			  <div class='orderDeadlineProgressBarPosition' id='progressbarPosition'>
-			  </div>
-		  </div>
-		  <br>
-		  <!-- order deadline -->
-		  
-		  <!-- order arrival info -->
-		  <div class='orderArrival'>
-			  Telefon: [%phoneNumber%]
-		  </div>
-		  
-	      <div class='orderArrival'>
-		    Ankuft der Bestellung voraussichtlich: [%orderArrival%] h
-		  <br>
-		  
-			  Falls Bestellung schon da ist, hier melden:
-		  <form action="" method="post">  
-				<input value="Lieferung ist da!" type="submit" name="eventButtonOrderArrived">		 		
-		  </form>
-		  <br>
-		  </div>
-		  <!-- order arrival info -->
-		  
-		  <!-- order arrival info storno-->
-		  <div class='orderArrival'>
-		  <form action="" method="post">  
-		  		<input value="Sorry Falschalarm" type="submit" name="eventButtonOrderArrivedStorno">		 		
-		  </form>
-		  </div>
-		  <!-- order arrival info storno-->
-		  
-		  <!-- order arrival control -->
-		  <div class='orderArrival'>
-			  <form action="" method="post">
-
-					Ankuftszeit anpassen:  
-					<select name='timeArrivalHH' width='100'>[%timeArrivalHH%]</select> :
-					<select name='timeArrivalMM' width='100'>[%timeArrivalMM%]</select> Uhr			
-					<input value="übernehmen" type="submit" name="eventButtonUpdateArrival">		 		
-			  </form>
-		  </div>
-	      <!-- order arrival control -->
-		  
-		  <!-- order arrived -->
-		  <div class='orderArrival'>
-		  [%orderArrivalLogin%] @ [%orderArrivalTime%] h <br>
-		  Lieferung ist da!!!
-		  </div>
-		  <!-- order arrived -->
-		  
-		<!-- incoming orders sumup -->
-			<center>        
-			<br> Zusammenfassung der Bestellung: <br>                      
-			<div class='currentOrder'>
-					<div class='sumUpOrderHeader'>
-						<span class='sumUpOrderItemCount'>Anzahl</span>
-						<span class='sumUpOrderItemNr'>Nr.</span>
-						<span class='sumUpOrderItem'>Bestellung</span>
-						<span class='sumUpOrderItem'>Kommentar</span>				
-					</div>			
-					<!-- incoming orders final -->
-					<!-- incoming orders final odd row-->
-					<div class='sumUpOrderOdd'>
-						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
-						<span class='sumUpOrderItem'>[%finalName%]  </span>
-						<span class='sumUpOrderItem'>[%finalComment%]</span>				
-					</div>
-					<!-- incoming orders final odd row-->
-					<!-- incoming orders final even row-->
-					<div class='sumUpOrderEven'>
-						<span class='sumUpOrderItemCount'>[%finalCount%]x</span>
-						<span class='sumUpOrderItemNr'>[%finalNumber%]</span>
-						<span class='sumUpOrderItem'>[%finalName%]  </span>
-						<span class='sumUpOrderItem'>[%finalComment%]</span>				
-					</div>
-					<!-- incoming orders final even row-->
-					<!-- incoming orders final -->
-            </div>    
-			<br>
-			</center>                
+			Aktueller Bestellwert >= [%discountThreshold%] € gewährt [%discountPercent%] % Rabatt auf alle Bestellungen.
+			<!-- order discount control -->
+			<form action='' method='post'>
+          		<input type='submit' value='Discount virtuell ausbezahlen'  name='eventButtonDiscountPayout'/>
+          		<input type='hidden' value=". $config->orderid" name='orderId'/>			
+        	</form>
+			<!-- order discount control -->
+			<!-- order discount paid -->
+			<p class="discountPayoutInfo">Rabatt wurde ausbezahlt</p>
+			<!-- order discount paid -->
 		</div>
-	  	<!-- incoming orders sumup -->
+		<!-- order discount info -->
 		
-  </section>	
-  <!-- incoming orders section -->
+		
+      <!-- order deadline -->
+      <div class='orderDeadline'> Deadline dieser Sammelbestellung:  [%orderDeadline%]
+        <div class='orderDeadlineProgressBar' id='progressbar'>
+          <div class='orderDeadlineProgressBarPosition' id='progressbarPosition'> </div>
+        </div>
+        <p> Lieferant: [%supplierName%]<br>
+          Besteller: [%orderOwner%]<br>
+          gestartet: [%timestamp%] Uhr</p>
+        <!-- finish order section -->
+        
+        <form action='?finish' method='post'>
+          <input type='submit' value='Bestellung abschließen'  name='finish'/>
+          <input type='hidden' value='' name='supplierCard_ID'/>
+        </form>
+        
+        <!-- finish order section -->
+      </div>
+      <br>
+      <!-- order deadline -->
+      
+      <div class='tableHeader'> <span class='currentOrderBlank'>Status</span> <span class='currentOrderNr'>Nr.</span> <span class='currentOrderName'>Beschreibung</span> <span class='currentOrderLogin'>Besteller</span> <span class='currentOrderComment'>Kommentar</span> <span class='currentOrderPrice'>Preis</span> </div>
+      
+      <!-- incoming orders section row odd -->
+      <div class='tableRowOdd'> <span class='currentOrderBlank'>[%killOrder%]
+        [%virtualPay%]
+        [%payState%]</span> <span class='currentOrderNr'>[%supplierCardNr%]</span> <span class='currentOrderName'>[%orderName%]</span> <span class='currentOrderLogin'>[%login%]</span> <span class='currentOrderComment'>[%comment%]</span> <span class='currentOrderPrice'>[%price%]</span> </div>
+      <!-- incoming orders section row odd --> 
+      <!-- incoming orders section row even -->
+      <div class='tableRowEven'> <span class='currentOrderBlank'>[%killOrder%]
+        [%virtualPay%]
+        [%payState%]</span> <span class='currentOrderNr'>[%supplierCardNr%]</span> <span class='currentOrderName'>[%orderName%]</span> <span class='currentOrderLogin'>[%login%]</span> <span class='currentOrderComment'>[%comment%]</span> <span class='currentOrderPrice'>[%price%]</span> </div>
+      <!-- incoming orders section row even --> 
+      
+      <br>
+      <div class='currentOrder'> <span class='sumUpTxt'>[%orderCount%] Bestellung(en), Summe gesamt =</span> <span class='sumUpPrice'>[%orderSum%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'></span> <span class='sumUpPrice'>__________ </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon bar bezahlt =</span> <span class='sumUpPrice'>[%orderSumRealMoney%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon virtuell bezahlt =</span> <span class='sumUpPrice'>[%orderSumVirtualMoney%] € </span> </div>
+      <div class='currentOrder'> <span class='sumUpTxt'>...davon noch ausstehend =</span> <span class='sumUpPrice'>[%orderSumToGet%] € </span> </div>
+		
+
+      <div class="actionBox">  
+        <!-- order arrival info -->
+        
+        <div class='orderDeadlineProgressBar' id='progressbar'>
+          <div class='orderDeadlineProgressBarPosition' id='progressbarPosition'> </div>
+        </div>
+        Telefon: [%phoneNumber%]
+        
+        
+        
+        Ankuft der Bestellung voraussichtlich: [%orderArrival%] h <br>
+        Falls Bestellung schon da ist, hier melden:
+        <form action="" method="post">
+          <input value="Lieferung ist da!" type="submit" name="eventButtonOrderArrived">
+        </form>
+        <br>
+        
+        <!-- order arrival info --> 
+        
+        <!-- order arrival info storno-->
+        <form action="" method="post">
+          <input value="Sorry Falschalarm" type="submit" name="eventButtonOrderArrivedStorno">
+        </form>
+        <!-- order arrival info storno--> 
+        
+        <!-- order arrival control -->
+        <form action="" method="post">
+          Ankuftszeit anpassen:
+          <select name='timeArrivalHH' width='100'>
+            [%timeArrivalHH%]
+          </select>
+          :
+          <select name='timeArrivalMM' width='100'>
+            [%timeArrivalMM%]
+          </select>
+          Uhr
+          <input value="übernehmen" type="submit" name="eventButtonUpdateArrival">
+        </form>
+	    <form action="" method="post">
+		  <input value="Bestellung wieder öffnen" type="submit" name="eventButtonReopenOrder">
+		</form>
+        <!-- order arrival control --> 
+        
+        <!-- order arrived --> 
+        [%orderArrivalLogin%] @ [%orderArrivalTime%] h <br>
+        Lieferung ist da!!! 
+        <!-- order arrived --> 
+        
+        <!-- order finished section -->
+        <form action='' method='post'>
+          <input type='submit' value='neue Bestellung starten'  name='eventButtonNewOrder'/>
+        </form>
+	    <form action='' method='post'>
+          <input type='hidden' value='' name='eventButtonRestartOrder'/>
+        </form>
+        <!-- order finished section --> 
+      </div>
+      <!-- incoming orders sumup -->
+      
+      <div class="sumUpOrder">
+        <h1>
+          <center>
+            Zusammenfassung
+          </center>
+        </h1>
+        <div class='currentOrder'>
+          <div class='tableHeader'> <span class='sumUpOrderItemCount'>Anzahl</span> <span class='sumUpOrderItemNr'>Nr.</span> <span class='sumUpOrderItem'>Bestellung</span> <span class='sumUpOrderItem'>Kommentar</span> </div>
+          <!-- incoming orders final --> 
+          <!-- incoming orders final odd row-->
+          <div class='tableRowOdd'> <span class='sumUpOrderItemCount'>[%finalCount%]x</span> <span class='sumUpOrderItemNr'>[%finalNumber%]</span> <span class='sumUpOrderItem'>[%finalName%] </span> <span class='sumUpOrderItem'>[%finalComment%]</span> </div>
+          <!-- incoming orders final odd row--> 
+          <!-- incoming orders final even row-->
+          <div class='tableRowEven'> <span class='sumUpOrderItemCount'>[%finalCount%]x</span> <span class='sumUpOrderItemNr'>[%finalNumber%]</span> <span class='sumUpOrderItem'>[%finalName%] </span> <span class='sumUpOrderItem'>[%finalComment%]</span> </div>
+          <!-- incoming orders final even row--> 
+          <!-- incoming orders final --> 
+        </div>
+        <br>
+      </div>
+    </div>
+    <!-- incoming orders sumup --> 
+    
+  </section>
+  <!-- incoming orders section --> 
   
   <!-- order items section -->
-  <section class=orderItems>  
-    <div class='orderItem'>           
-        <div class='orderList'>           
-           <div class='orderItem'>
-               <span class='orderItemButton'></span>                       
-               <span class='orderItemNr'>Nr</span>                     
-               <span class='orderItemName'>Beschreibung</span>
-               <span class='orderItemIngredients'>Zutaten</span>
-			   <span class='orderItemPrice'>Preis</span>
-           </div>
-
-		   <!-- order items section row -->
-		   <!-- order items section row odd -->
-           <div class='orderItemOdd'>			   
-			   <form action='' method='post'>
-				   <span class='orderItemButton'>[%orderButton%]</span>
-				   <span class='orderItemNr'>[%orderNr%]</span>                   
-				   <span class='orderItemName'>[%orderName%]</span>
-				   <span class='orderItemIngredients'>[%orderIngredients%]</span>	
-				   <span class='orderItemPrice'>[%price%] €</span>
-			   </form>
-            </div>
-		   <!-- order items section row odd -->
-		   <!-- order items section row even -->
-           <div class='orderItemEven'>			   
-			   <form action='' method='post'>
-				   <span class='orderItemButton'>[%orderButton%]</span>
-				   <span class='orderItemNr'>[%orderNr%]</span>                   
-				   <span class='orderItemName'>[%orderName%]</span>
-				   <span class='orderItemIngredients'>[%orderIngredients%]</span>	
-				   <span class='orderItemPrice'>[%price%] €</span>
-			   </form>
-            </div>
-			<!-- order items section row even -->			
-			
-			<!-- order items section row -->			
-		</div>
-	</div>
-  </section>	
+  <section class=orderItems>
+    <div class='orderList'>
+      <h1>
+        <center>
+          Speisekarte
+        </center>
+      </h1>
+      <div class='tableHeader'> <span class='orderItemButton'></span> <span class='orderItemNr'>Nr</span> <span class='orderItemName'>Beschreibung</span> <span class='orderItemIngredients'>Zutaten</span> <span class='orderItemPrice'>Preis</span> </div>
+      
+      <!-- order items section row --> 
+      <!-- order items section row odd -->
+      <div class='tableRowOdd'>
+        <form action='' method='post'>
+          <span class='orderItemButton'>[%orderButton%]</span> <span class='orderItemNr'>[%orderNr%]</span> <span class='orderItemName'>[%orderName%]</span> <span class='orderItemIngredients'>[%orderIngredients%]</span> <span class='orderItemPrice'>[%price%] €</span>
+        </form>
+      </div>
+      <!-- order items section row odd --> 
+      <!-- order items section row even -->
+      <div class='tableRowEven'>
+        <form action='' method='post'>
+          <span class='orderItemButton'>[%orderButton%]</span> <span class='orderItemNr'>[%orderNr%]</span> <span class='orderItemName'>[%orderName%]</span> <span class='orderItemIngredients'>[%orderIngredients%]</span> <span class='orderItemPrice'>[%price%] €</span>
+        </form>
+      </div>
+      <!-- order items section row even --> 
+      
+      <!-- order items section row --> 
+    </div>
+  </section>
   <!-- order items section -->
-
+  
   <section class=copyright>
-	<div class="copyright">		
-		<p>PIZZA ORDER SCRIPT v. [%version%]</p>
-	</div>	 	  
+    <div class="copyright">
+      <p>PIZZA ORDER SCRIPT v. [%version%]</p>
+    </div>
   </section>
 </div>
 <!-- Main Container Ends -->
