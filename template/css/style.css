@@ -11,6 +11,7 @@ body {
 	font-weight: 200;
 	font-size: 12px;
 	padding: 0;
+	color: #FFFFFF;
 }
 .userControlpanel {
 	width:x;
@@ -24,6 +25,27 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #4D0404;
+}
+a {
+	color: #FFFFFF;
+}
+/* unvisited link */
+a:link {
+	color: #FFFFFF;
+}
+/* visited link */
+a:visited {
+	color: #8B8B8B;
+}
+/* mouse over link */
+a:hover {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+/* selected link */
+a:active {
+	color: #FFFFFF;
+	font-weight: bold;
 }
 h1 {
 	text-align: center;
@@ -109,15 +131,13 @@ ul li:hover a {
 	font-weight: bold;
 }
 .change_link {
-	color: #C50000;
+	color: #E7DFDF;
 }
 .loginUsr {
 	float: left;
 	color: white;
 	width: 100%;
 	padding: 0 0 0 10px;
-}
-.change_link a {
 }
 .text_column {
 	width: 50%;
@@ -146,6 +166,7 @@ ul li:hover a {
 	height: 100%;
 	margin: auto;
 	padding: 0 20px 0px;
+	color: #000000;
 }
 .about {
 	padding-left: 25px;
@@ -261,14 +282,14 @@ div.tableRowEven {
 	background-color: #090909;
 	border: 1px;
 	margin: 0px;
-	color: #B30000;
+	color: #FFFFFF;
 	vertical-align: text-top;
 }
 div.tableRowOdd {
 	background-color: #000000;
 	border: 1px;
 	margin: 0px;
-	color: #B30000;
+	color: #FFFFFF;
 	vertical-align: text-top;
 }
 div.pollQuery {
@@ -277,7 +298,6 @@ div.pollQuery {
 }
 div.orderList {
 	border: 1px;
-	margin: auto;
 }
 div.tableRowOdd:hover {
 	background-color: rgba(191, 191, 191, 0.681);
@@ -554,6 +574,10 @@ div.orderDeadline {
 	text-align: center;
 	width: 80%;
 	border-radius: 8px;
+	color: #000000;
+}
+.orderEndingInfo {
+	text-align: center;
 }
 div.orderArrival {
 	background-color: greenyellow;
@@ -651,6 +675,7 @@ input[type=text] {
 	width: 82%;
 	margin: auto;
 	font-size: 15px;
+	color: #000000;
 }
 .discountPayoutInfo {
 	font-size: 26px;
