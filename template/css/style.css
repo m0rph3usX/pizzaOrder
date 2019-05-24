@@ -750,6 +750,15 @@ input[type=text] {
 	border: none;
 	background-size: cover;
 }
+.btnPaidNfo {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/paid.svg');
+	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
+	background-size: cover;
+}
 .btnvPaid {
 	height: 32px;
 	width: 32px;
