@@ -221,26 +221,3 @@ showDeadline();
 //check4arrival();
 
 ?>
-
-<script type="text/javascript">
-	<!--
-	function toggle_visibility( id ) {
-
-		var login = document.getElementById( 'login' );
-		var register = document.getElementById( 'register' );
-
-		if ( id == 'register' ) {
-			login.style.display = 'none';
-			register.style.display = 'block';
-		} else {
-			register.style.display = 'none';
-			login.style.display = 'block';
-		}
-
-	}
-
-	function playSound() {
-		document.getElementById( 'play' ).play();
-	}
-	//-->
-</script>
