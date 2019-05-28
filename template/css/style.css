@@ -300,12 +300,12 @@ div.orderList {
 	border: 1px;
 }
 div.tableRowOdd:hover {
-	background-color: rgba(191, 191, 191, 0.681);
+	background-color: rgba(191, 191, 191, 0.222);
 	border: 1px;
 	margin: 0px;
 }
 div.tableRowEven:hover {
-	background-color: rgba(191, 191, 191, 0.681);
+	background-color: rgba(191, 191, 191, 0.222);
 	border: 0px;
 	margin: 0px;
 }
@@ -653,7 +653,16 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/delete.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+}
+.btnDelete:hover {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/delete_hover.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
@@ -662,7 +671,16 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/buy.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+}
+.btnBuy:hover {
+	height: 35px;
+	width: 35px;
+	background-image: url('../images/buy_hover.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
@@ -701,43 +719,52 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/vpay.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
 .btnvPay:hover {
 	height: 32px;
 	width: 32px;
-	background-image: url('../images/vpay_hover.svg');
+	background-image: url('../images/vpaid.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;
-	background-size: cover;
 }
 .btnPay {
 	height: 32px;
 	width: 32px;
 	background-image: url('../images/pay.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
 .btnPay:hover {
 	height: 32px;
 	width: 32px;
-	background-image: url('../images/pay_hover.svg');
+	background-image: url('../images/paid.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: rgba(0, 0, 0, 0);
 	border: none;
 	background-size: cover;
+	color: rgba(27, 255, 2, 0.957);
 }
 .btnSave {
 	height: 32px;
 	width: 32px;
 	background-image: url('../images/save.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+}
+.btnSave:hover {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/save_hover.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
@@ -746,7 +773,16 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/paid.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+}
+.btnPaid:hover {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/pay.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
@@ -755,7 +791,7 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/paid.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
@@ -764,7 +800,7 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/vpaid.svg');
 	background-repeat: no-repeat;
-	background-color: Transparent;
+	background-color: transparent;
 	border: none;
 	background-size: cover;
 }
