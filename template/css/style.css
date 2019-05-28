@@ -653,6 +653,8 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/delete.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .btnBuy {
@@ -660,6 +662,8 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/buy.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .bank {
@@ -697,6 +701,17 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/vpay.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
+	background-size: cover;
+}
+.btnvPay:hover {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/vpay_hover.svg');
+	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .btnPay {
@@ -704,6 +719,17 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/pay.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
+	background-size: cover;
+}
+.btnPay:hover {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/pay_hover.svg');
+	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .btnSave {
@@ -711,6 +737,8 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/save.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .btnPaid {
@@ -718,6 +746,17 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/paid.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
+	background-size: cover;
+}
+.btnPaidNfo {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/paid.svg');
+	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 .btnvPaid {
@@ -725,6 +764,8 @@ input[type=text] {
 	width: 32px;
 	background-image: url('../images/vpaid.svg');
 	background-repeat: no-repeat;
+	background-color: Transparent;
+	border: none;
 	background-size: cover;
 }
 input[type=text] {

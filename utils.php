@@ -1264,13 +1264,13 @@ function createIncomingOrdersTable( $page ) {
 
 				$moneyVirtual = $moneyVirtual + $price;
 			} else if ( $isPaid == 1 ) {
-				$payState = "BEZAHLT";
-				//$payState = "<button class='btnPaidNfo'></button>";
+				//$payState = "BEZAHLT";
+				$payState = "<button class='btnPaidNfo'></button>";
 					
 				$moneyReal = $moneyReal + $price;
 			} else {
-				$payState = "OFFEN";
-				//$payState = "<button class='btnPay'></button>";
+				//$payState = "OFFEN";
+				$payState = "<button class='btnPay'></button>";
 			}
 		}
 
