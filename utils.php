@@ -801,6 +801,7 @@ function eventOrderKill() {
 			$config->db->exec( $sql );
 
 			addMessage( "Bestellung storniert" );
+			usleep(500000);
 			header( "Location: index.php" );
 		}
 	}
@@ -816,6 +817,7 @@ function eventOrderPaid() {
 		$config->db->exec( $sql );
 
 		addMessage( "Bestellung als bezahlt markiert" );
+		usleep(500000);
 		header( "Location: index.php" );
 	}
 
@@ -826,6 +828,7 @@ function eventOrderPaid() {
 		$config->db->exec( $sql );
 
 		addMessage( "Bestellung als offen markiert" );
+		usleep(500000);
 		header( "Location: index.php" );
 	}
 }
@@ -856,6 +859,7 @@ function eventOrderAdd() {
 					   VALUES ( " . $config->orderid . "," . $supplierCard_ID . "," . $supplierID . " , " . $config->userid . "," . $price . ")" );
 
 			addMessage( "Bestellung hinzugefügt" );
+			usleep(500000);
 			header( "Location: index.php" );
 		}
 
@@ -900,6 +904,8 @@ function eventOrderComment() {
 			$config->db->exec( $sql );
 
 			addMessage( "Kommentar gespeichert" );
+			
+			usleep(1000000);
 			header( "Location: index.php" );
 		}
 	}
@@ -937,6 +943,7 @@ function eventBankInput() {
 		$config->db->exec( $sql );
 
 		addMessage( "Betrag virtuell einbezahlt" );
+		usleep(1000000);
 		header( "Location: bank.php" );
 	}
 }
@@ -956,6 +963,7 @@ function eventVirtualPay() {
 		$config->db->exec( $sql );
 
 		addMessage( "Bestellung virtuell bezahlt" );
+		usleep(500000);
 		header( "Location: index.php" );
 	}
 
@@ -1045,7 +1053,7 @@ function createOrderTable( $page ) {
 
 	foreach ( $config->db->query( $sql ) as $row ) {
 		if ( $config->userid > -1 ) {
-			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder'></button>								   					   
+			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' onclick='playAudio(`order.wav`)'></button>								   					   
 					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>
 					   <input type='hidden' value=" . $row[ 'price' ] . " name='supplierCard_price'/>";
 		} else {
@@ -1216,14 +1224,14 @@ function createIncomingOrdersTable( $page ) {
 		if ( !$config->isHistory ) {
 			if ( ( $config->userid == $row[ 'user_ID' ] ) && ( $oderstate == 1 ) ) {
 				$killButton = "<form action='' method='post'>
-							   <button type='submit' class='btnDelete' name='orderKill'></button>								   
+							   <button type='submit' class='btnDelete' name='orderKill' onclick='playAudio(`storno.wav`)'></button>								   
 							   <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderKill'/>                        
 							   </form>";
 			}
 			if ( ( $config->userid == $row[ 'user_ID' ] ) && ( $isPaid < 1 ) ) {
 				if ( countMoney() >= $price ) {
 					$virtualPayButton = "<form action='' method='post'>
-								   <button type='submit' class='btnvPay' name='eventVirtualPayButton'></button>								   								   
+								   <button type='submit' class='btnvPay' name='eventVirtualPayButton' onclick='playAudio(`pay.wav`)'></button>								   								   
 								   <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderDetail_id'/>                        
 								   <input type='hidden' value=" . $price . " name='price'/>                        
 								 </form>";
@@ -1243,7 +1251,7 @@ function createIncomingOrdersTable( $page ) {
 		if ( ( $config->userid == getUserWhoIsOrdering() )and( $isPaid < 2 )and( !$config->isHistory ) ) {
 			if ( $isPaid == 1 ) {
 				$payState = "<form action='' method='post'>							    
-								<button type='submit' class='btnPaid' name='eventButtonOrderStorno'></button>
+								<button type='submit' class='btnPaid' name='eventButtonOrderStorno' onclick='playAudio(`storno.wav`)' ></button>
 							    <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderId'/>                       
 							    </form>";
 				$moneyReal = $moneyReal + $price;
@@ -1252,7 +1260,7 @@ function createIncomingOrdersTable( $page ) {
 
 
 				$payState = "<form action='' method='post'>							  
-							  <button type='submit' class='btnPay' name='eventButtonPayOrder'></button>							  
+							  <button type='submit' class='btnPay' name='eventButtonPayOrder' onclick='playAudio(`pay.wav`)'></button>							  
 							  <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderId'/>
 							  </form>";
 
@@ -1288,7 +1296,7 @@ function createIncomingOrdersTable( $page ) {
 										<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
 									</div>
 									<div class='currentOrderCommentButton'>  
-										<button type='submit' class='btnSave' name='updateComment'></button>										
+										<button type='submit' class='btnSave' name='updateComment' onclick='playAudio(`save.wav`)'></button>										
 										<input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderUpdateCommentID'/>
 									</div>
 								 </form>";

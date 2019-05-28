@@ -4,6 +4,7 @@
 <title>Pizzabestellskript</title>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="template/css/style.css" rel="stylesheet" type="text/css">
+<script src="script.js"></script>
 </head>
 <body>
 <!-- Main Container -->
@@ -43,7 +44,7 @@
           <option value="[%bank_customer_user_ID%]">[%bank_customer_login%]</option>
           <!-- bank section customer bankInput-->
         </select>
-        <input type='submit' value='einbezahlen'   name='eventButtonBankInput'/>
+        <input type='submit' value='einbezahlen'   name='eventButtonBankInput' onclick='playAudio(`payin.wav`)' />
       </form>
     </div>
   </section>
