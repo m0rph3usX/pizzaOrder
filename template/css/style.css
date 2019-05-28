@@ -283,7 +283,7 @@ div.tableRowEven {
 	border: 1px;
 	margin: 0px;
 	color: #FFFFFF;
-	vertical-align: text-top;
+	vertical-align: middle;
 }
 div.tableRowOdd {
 	background-color: #000000;
@@ -323,12 +323,14 @@ span.orderItemNr {
 	margin: 0px;
 	padding-top: 0;
 	padding: 0 13px 0 0;
+	vertical-align: middle;
 }
 span.orderItemName {
 	display: inline-block;
 	width: 27%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 span.orderItemIngredients {
 	display: inline-block;
@@ -336,6 +338,7 @@ span.orderItemIngredients {
 	border: 0px;
 	margin: 0px;
 	font-size: 11px;
+	vertical-align: middle;
 }
 span.orderItemPrice {
 	display: inline-block;
@@ -349,6 +352,7 @@ span.currentOrderBlank {
 	width: 15%;
 	border: 0px;
 	margin: 0px 0px 0px 8%;
+	vertical-align: middle;
 }
 span.currentOrderNr {
 	display: inline-block;
@@ -356,36 +360,42 @@ span.currentOrderNr {
 	border: 0px;
 	margin: 0px 20px 0px 0px;
 	text-align: right;
+	vertical-align: middle;
 }
 span.currentOrderName {
 	display: inline-block;
 	width: 20%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 span.currentOrderComment {
 	display: inline-block;
 	width: 30%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 div.currentOrderCommentTextfield {
 	display: inline-block;
 	width: 57%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 div.currentOrderCommentButton {
 	display: inline-block;
 	width: 40%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 span.currentOrderLogin {
 	display: inline-block;
 	width: 10%;
 	border: 0px;
 	margin: 0px;
+	vertical-align: middle;
 }
 span.currentOrderPrice {
 	display: inline-block;
@@ -393,6 +403,7 @@ span.currentOrderPrice {
 	border: 0px;
 	margin: 0px;
 	text-align: right;
+	vertical-align: middle;
 }
 span.orderIsPaid {
 	display: inline-block;
@@ -656,6 +667,7 @@ input[type=text] {
 	background-color: transparent;
 	border: none;
 	background-size: cover;
+	vertical-align: middle;
 }
 .btnDelete:hover {
 	height: 32px;
@@ -674,6 +686,7 @@ input[type=text] {
 	background-color: transparent;
 	border: none;
 	background-size: cover;
+	vertical-align: middle;
 }
 .btnBuy:hover {
 	height: 35px;
@@ -722,6 +735,7 @@ input[type=text] {
 	background-color: transparent;
 	border: none;
 	background-size: cover;
+	vertical-align: middle;
 }
 .btnvPay:hover {
 	height: 32px;
