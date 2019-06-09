@@ -765,6 +765,17 @@ input[type=text] {
 	background-size: cover;
 	color: rgba(27, 255, 2, 0.957);
 }
+
+.btnPayNfo {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/pay.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+}
+
 .btnSave {
 	height: 32px;
 	width: 32px;

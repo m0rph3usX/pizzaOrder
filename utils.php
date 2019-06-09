@@ -1278,7 +1278,7 @@ function createIncomingOrdersTable( $page ) {
 				$moneyReal = $moneyReal + $price;
 			} else {
 				//$payState = "OFFEN";
-				$payState = "<button class='btnPay'></button>";
+				$payState = "<button class='btnPayNfo'></button>";
 			}
 		}
 
