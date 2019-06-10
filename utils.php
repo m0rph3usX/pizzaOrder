@@ -948,6 +948,33 @@ function eventBankInput() {
 	}
 }
 
+function eventBankTransfer() {
+	global $config;
+	if ( isset( $_POST[ 'eventButtonBankTransfer' ] ) ) {
+		$customer_id = $_POST[ 'customer_id' ];
+		$amount = $_POST[ 'amount' ];
+		
+		
+		if($amount > 0){
+			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, 			  `timeStamp`)
+			    VALUES 		 (" . $config->userid . " , " . $config->userid . " , " . -$amount . "," . time() . " )";
+
+			$config->db->exec( $sql );
+
+			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
+					VALUES 		 (" . $config->userid . " , " . $customer_id . " , " . $amount . "," . time() . " )";
+
+			$config->db->exec( $sql );
+
+			addMessage( "Betrag virtuell überwiesen" );
+			usleep(1000000);
+			header( "Location: bank.php" );
+		}
+
+
+	}
+}
+
 function eventVirtualPay() {
 	global $config;
 
@@ -1224,14 +1251,14 @@ function createIncomingOrdersTable( $page ) {
 		if ( !$config->isHistory ) {
 			if ( ( $config->userid == $row[ 'user_ID' ] ) && ( $oderstate == 1 ) ) {
 				$killButton = "<form action='' method='post'>
-							   <button type='submit' class='btnDelete' name='orderKill' onclick='playAudio(`storno.wav`)'></button>								   
+							   <button title='stornieren' type='submit' class='btnDelete' name='orderKill' onclick='playAudio(`storno.wav`)'></button>								   
 							   <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderKill'/>                        
 							   </form>";
 			}
 			if ( ( $config->userid == $row[ 'user_ID' ] ) && ( $isPaid < 1 ) ) {
 				if ( countMoney() >= $price ) {
 					$virtualPayButton = "<form action='' method='post'>
-								   <button type='submit' class='btnvPay' name='eventVirtualPayButton' onclick='playAudio(`pay.wav`)'></button>								   								   
+								   <button title='virtuell bezahlen' type='submit' class='btnvPay' name='eventVirtualPayButton' onclick='playAudio(`pay.wav`)'></button>								   								   
 								   <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderDetail_id'/>                        
 								   <input type='hidden' value=" . $price . " name='price'/>                        
 								 </form>";
@@ -1251,7 +1278,7 @@ function createIncomingOrdersTable( $page ) {
 		if ( ( $config->userid == getUserWhoIsOrdering() )and( $isPaid < 2 )and( !$config->isHistory ) ) {
 			if ( $isPaid == 1 ) {
 				$payState = "<form action='' method='post'>							    
-								<button type='submit' class='btnPaid' name='eventButtonOrderStorno' onclick='playAudio(`storno.wav`)' ></button>
+								<button title='als nicht bezahlt markieren' type='submit' class='btnPaid' name='eventButtonOrderStorno' onclick='playAudio(`storno.wav`)' ></button>
 							    <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderId'/>                       
 							    </form>";
 				$moneyReal = $moneyReal + $price;
@@ -1260,7 +1287,7 @@ function createIncomingOrdersTable( $page ) {
 
 
 				$payState = "<form action='' method='post'>							  
-							  <button type='submit' class='btnPay' name='eventButtonPayOrder' onclick='playAudio(`pay.wav`)'></button>							  
+							  <button title='als bezahlt markieren' type='submit' class='btnPay' name='eventButtonPayOrder' onclick='playAudio(`pay.wav`)'></button>							  
 							  <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderId'/>
 							  </form>";
 
@@ -1268,17 +1295,17 @@ function createIncomingOrdersTable( $page ) {
 		} else {
 			if ( $isPaid == 2 ) {
 				//$payState = "VIRTUELL BEZAHLT";
-				$payState = "<button type='submit' class='btnvPaid'></button>";
+				$payState = "<button title='VIRTUELL BEZAHLT' type='submit' class='btnvPaid'></button>";
 
 				$moneyVirtual = $moneyVirtual + $price;
 			} else if ( $isPaid == 1 ) {
 				//$payState = "BEZAHLT";
-				$payState = "<button class='btnPaidNfo'></button>";
+				$payState = "<button title='BEZAHLT' class='btnPaidNfo'></button>";
 					
 				$moneyReal = $moneyReal + $price;
 			} else {
 				//$payState = "OFFEN";
-				$payState = "<button class='btnPayNfo'></button>";
+				$payState = "<button title='OFFEN' class='btnPayNfo'></button>";
 			}
 		}
 
@@ -1296,7 +1323,7 @@ function createIncomingOrdersTable( $page ) {
 										<input type='text' name='orderUpdateCommentTxt' value='" . $comment . "' >
 									</div>
 									<div class='currentOrderCommentButton'>  
-										<button type='submit' class='btnSave' name='updateComment' onclick='playAudio(`save.wav`)'></button>										
+										<button title='Kommentar speichern' type='submit' class='btnSave' name='updateComment' onclick='playAudio(`save.wav`)'></button>										
 										<input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderUpdateCommentID'/>
 									</div>
 								 </form>";
@@ -1411,16 +1438,19 @@ function isBankTransactor() {
 	return $isBankTransactor;
 }
 
-function addUserIdLogin( $item ) {
+function addUserIdLogin( $item , $filtered) {
 	global $config;
 
 	$sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
 
 	$comboboxItems = "";
 	foreach ( $config->db->query( $sql ) as $row ) {
-		$newItem = preg_replace( "/\[\%bank_customer_user_ID\%\]/", $row[ 'id' ], $item );
-		$newItem = preg_replace( "/\[\%bank_customer_login\%\]/", $row[ 'login' ], $newItem );
-		$comboboxItems = $comboboxItems . $newItem;
+		if((($row[ 'id' ] != $config->userid) && $filtered) || ($filtered == 0)){
+			$newItem = preg_replace( "/\[\%bank_customer_user_ID\%\]/", $row[ 'id' ], $item );
+			$newItem = preg_replace( "/\[\%bank_customer_login\%\]/", $row[ 'login' ], $newItem );
+			$comboboxItems = $comboboxItems . $newItem;	
+		}
+		
 	}
 	return $comboboxItems;
 }

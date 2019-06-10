@@ -41,11 +41,16 @@ $page = file_get_contents( $template );
 #-------------------------------------------
 
 
+$combobox = addUserIdLogin( extractSection( "<!-- customer section transfer -->", $page ),1 );
+$page = replaceSection( "<!-- customer section transfer -->", $combobox, $page );
+eventBankTransfer();
+
 if ( isBankTransactor() == 0 ) {
 	$page = removeSection( "<!-- bank section -->", $page );
+	
 } else {
 	eventBankInput();
-	$combobox = addUserIdLogin( extractSection( "<!-- bank section customer bankInput-->", $page ) );
+	$combobox = addUserIdLogin( extractSection( "<!-- bank section customer bankInput-->", $page ),0 );
 	$page = replaceSection( "<!-- bank section customer bankInput-->", $combobox, $page );
 }
 

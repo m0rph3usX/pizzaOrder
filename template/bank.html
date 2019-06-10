@@ -34,11 +34,11 @@
   <!-- bank section -->
   <section class=bank>
     <div class="bank">
-		<p class="bankTransfer">Geldtransfer</p>
+	  <p class="bankTransfer">Geld einbezahlen</p>
       <form method='post'>
         Geldbetrag wählen :
         <input type='number' min="0.50" max="50.00" step="0.50" value="10.00" name='amount'/>
-        €
+        €, Kontoinhaber
         <select name="customer_id">
           <!-- bank section customer bankInput-->
           <option value="[%bank_customer_user_ID%]">[%bank_customer_login%]</option>
@@ -50,6 +50,25 @@
   </section>
   <!-- bank section -->
   
+  <!-- customer section -->
+  <section class=bank>
+    <div class="bank">
+	  <p class="bankTransfer">Geld an Freund überweisen</p>
+      <form method='post'>
+        Geldbetrag wählen :
+        <input type='number' min="0.01" max="[%money%]" step="0.01" value="[%money%]" name='amount'/>
+        €, Kontoinhaber
+        <select name="customer_id">
+          <!-- customer section transfer -->
+          <option value="[%bank_customer_user_ID%]">[%bank_customer_login%]</option>
+          <!-- customer section transfer -->
+        </select>
+        <input type='submit' value='überweisen'   name='eventButtonBankTransfer' onclick='playAudio(`transfer.wav`)' />
+      </form>
+    </div>
+  </section>
+  <!-- customer section -->
+	  
  
   <!-- bank protocol section -->
   <section class=orderItems>
