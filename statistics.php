@@ -48,6 +48,7 @@ if ( $config->userid > -1 ) {
 
 $page = showRankBySpentMoney($page);
 $page = showRankByOrderCount($page);
+$page = showRankingBySupplier($page);
 	
 //eventShowHistoryDetails();
 

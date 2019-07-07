@@ -26,6 +26,53 @@
   <!-- login section -->
   <section class="info">
     <div class="copyright">
+      <p>Ranking nach Lieferrant</p>
+    </div>
+  </section>
+  <!-- statistic items section -->   
+  <section>
+      <div class="statisticList">
+        <div class="tableHeader">
+			<span class="statisticRank">Rang</span>
+			<span class="statisticUser">Lieferrant</span>
+			<span class="statisticAmountSpent">Einnahmen / €</span>
+			<span class="statisticProgress">relative Einnahmen</span>		
+		  </div>
+        
+        <!-- statistic supplier section row --> 
+        <!-- statistic supplier section row odd -->
+	  <div class="tableRowOdd">
+			  <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticSupplier%]</span>
+			  <span class="statisticAmountSpent">[%statisticAmount%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>				  
+		  	  </span>	
+	    </div>
+        <!-- statistic supplier section row odd --> 
+        <!-- statistic supplier section row even -->
+        <div class="tableRowEven">
+
+			  <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticSupplier%]</span>
+			  <span class="statisticAmountSpent">[%statisticAmount%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>				  
+		  	  </span>	
+        </div>
+        <!-- statistic supplier section row even --> 
+        
+        <!-- statistic supplier section row --> 
+      </div>
+  </section>
+  <!-- statistic supplier section -->
+	  
+  <section class="info">
+    <div class="copyright">
       <p>Ranking nach Geldverschwender</p>
     </div>
   </section>  
