@@ -1586,6 +1586,56 @@ function adminShowUserData( $page ) {
 	return $page;
 }
 
+function showRankBySpentMoney($page){
+	global $config;
+	
+	
+	$rowOdd = extractSection( "<!-- statistic items section row odd -->", $page );
+	$rowEven = extractSection( "<!-- statistic items section row even -->", $page );
+
+	$completeSum = 0;
+	
+	$sql = "SELECT SUM (orderDetail.price)
+			FROM   orderDetail";
+
+	foreach ( $config->db->query( $sql ) as $row ) {
+		$completeSum = $row[0];
+	}
+		
+	$sql = "SELECT 
+		    user.login, 
+		    SUM (orderDetail.price)
+			FROM   orderDetail
+				   INNER JOIN user ON user.id = orderDetail.user_ID
+			GROUP  BY user.login
+			ORDER  BY SUM (orderDetail.price) DESC;";
+	
+	$table = '';
+	$rank = 1;
+
+	foreach ( $config->db->query( $sql ) as $row ) {
+		if ( ( $rank % 2 ) == 0 ) {
+			$newRow = $rowEven;
+		} else {
+			$newRow = $rowOdd;
+		}
+		
+		
+		$percent = number_format($row[1] / $completeSum * 100,2);
+		$newRow = preg_replace( "/\[\%statisticRank%\]/", $rank, $newRow );
+		$newRow = preg_replace( "/\[\%statisticUser%\]/", $row[ 'login' ], $newRow );
+		$newRow = preg_replace( "/\[\%statisticAmount\%\]/", number_format($row[1],2), $newRow );
+		$newRow = preg_replace( "/\[\%statisticProgress\%\]/", number_format($percent,2) . '%', $newRow );		
+		$newRow = preg_replace( "/\[\%statisticProgressValue\%\]/", $percent, $newRow );		
+		$table = $table . $newRow;
+		$rank  = $rank + 1;
+		
+	}
+
+	$page = replaceSection( "<!-- statistic items section row --> ", $table, $page );
+	
+	return $page;
+}
 
 function showBankInfo( $page ) {
 	global $config;

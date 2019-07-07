@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<title>Pizzabestellskript</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="template/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<!-- Main Container -->
+<div class="container"> 
+  <!-- Navigation -->
+  <header> </header>
+  <!-- Hero Section -->
+  <section class="hero">
+    <p class="tagline">PIZZA ORDER SCRIPT</p>
+    <p class="tagline">Statistik</p>
+  </section>
+  
+  <!-- InfoMessage --> 
+  <!-- InfoMessage --> 
+  <!-- login section -->
+  <section class="logout">
+    <div class="userControlpanel"> <span class ="userCntrlLogin">[%loginName%]</span> <span class ="userCntrlMoney">Guthaben: [%money%] €</span> </div>
+    <div class="userControlpanel"> <span class ="userCntrlLink"> <a href="index.php"><<< zurück</a> </span><span class ="userCntrlLink"> <a href="?logout=1">Logout</a> </span> <span class ="userCntrlLink"> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ="userCntrlLink"> <a href="history.php">letzte Bestellungen anzeigen</a> </span>  </div>
+  </section>
+  <!-- login section -->
+	  
+  <!-- statistic items section -->   
+  <section>
+      <div class="statisticList">
+        <div class="tableHeader">
+			<span class="statisticRank">Rang</span>
+			<span class="statisticUser">Benutzer</span>
+			<span class="statisticAmountSpent">Ausgegeben / €</span>
+			<span class="statisticProgress">relative Ausgabe</span>		
+		  </div>
+        
+        <!-- statistic items section row --> 
+        <!-- statistic items section row odd -->
+	  <div class="tableRowOdd">
+	    <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticUser%]</span>
+			  <span class="statisticAmountSpent">[%statisticAmount%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>			  
+		  	  </span>		
+	    </div>
+        <!-- statistic items section row odd --> 
+        <!-- statistic items section row even -->
+        <div class="tableRowEven">
+
+			  <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticUser%]</span>
+			  <span class="statisticAmountSpent">[%statisticAmount%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>				  
+		  	  </span>	
+        </div>
+        <!-- statistic items section row even --> 
+        
+        <!-- statistic items section row --> 
+      </div>
+  </section>
+  <!-- statistic items section -->
+  
+  <section class="copyright">
+    <div class="copyright">
+      <p>PIZZA ORDER SCRIPT v. [%version%]</p>
+    </div>
+  </section>
+</div>
+<!-- Main Container Ends -->
+</body>
+</html>

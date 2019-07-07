@@ -13,8 +13,8 @@ body {
 	padding: 0;
 	color: #FFFFFF;
 }
-.userControlpanel {
-	width:x;
+.progressBackBar {
+	background: black;
 }
 .userCntrlLogout {
 	width: 156px;
@@ -25,6 +25,10 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	background-color: #4D0404;
+}
+.progressBar {
+	width: 100%;
+	color: white;
 }
 a {
 	color: #FFFFFF;
@@ -464,11 +468,9 @@ span.sumUpOrderItemNr {
 }
 div.historyList {
 	border: 1px;
-	margin: 0px;
 }
 div.historyItem {
 	border: 1px;
-	margin: 0px;
 }
 span.historyId {
 	display: inline-block;
@@ -476,11 +478,46 @@ span.historyId {
 	border: 0px;
 	margin: 0px;
 }
+.statisticRank {
+	display: inline-block;
+	width: 4%;
+	text-align: right;
+}
+.statisticUser {
+	display: inline-block;
+	width: 25%;
+	margin: 0 0 0 26px;
+}
 span.historyTimestamp {
 	display: inline-block;
 	width: 150px;
 	border: 0px;
 	margin: 0px;
+}
+.statisticAmountSpent {
+	display: inline-block;
+	width: 15%;
+	text-align: right;
+	padding: 0 10px 0 0;
+}
+.progressFront {
+}
+.progressBack {
+	width: 50%;
+	background: white;
+}
+.progressFront {
+	background: red;
+}
+.statisticProgress {
+	width: 50%;
+	display: inline-block;
+	color: black;
+	text-align: right;
+}
+.statisticProgressbar {
+	background: red;
+	color: white;
 }
 span.historyState {
 	display: inline-block;
@@ -765,7 +802,6 @@ input[type=text] {
 	background-size: cover;
 	color: rgba(27, 255, 2, 0.957);
 }
-
 .btnPayNfo {
 	height: 32px;
 	width: 32px;
@@ -775,7 +811,6 @@ input[type=text] {
 	border: none;
 	background-size: cover;
 }
-
 .btnSave {
 	height: 32px;
 	width: 32px;
