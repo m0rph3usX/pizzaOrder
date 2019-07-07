@@ -24,14 +24,18 @@
     <div class="userControlpanel"> <span class ="userCntrlLink"> <a href="index.php"><<< zurück</a> </span><span class ="userCntrlLink"> <a href="?logout=1">Logout</a> </span> <span class ="userCntrlLink"> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ="userCntrlLink"> <a href="history.php">letzte Bestellungen anzeigen</a> </span>  </div>
   </section>
   <!-- login section -->
-	  
+  <section class="info">
+    <div class="copyright">
+      <p>Ranking nach Geldverschwender</p>
+    </div>
+  </section>  
   <!-- statistic items section -->   
   <section>
       <div class="statisticList">
         <div class="tableHeader">
 			<span class="statisticRank">Rang</span>
 			<span class="statisticUser">Benutzer</span>
-			<span class="statisticAmountSpent">Ausgegeben / €</span>
+			<span class="statisticAmountSpent">Ausgaben / €</span>
 			<span class="statisticProgress">relative Ausgabe</span>		
 		  </div>
         
@@ -66,7 +70,52 @@
       </div>
   </section>
   <!-- statistic items section -->
-  
+ 
+	  
+  <section class="info">
+    <div class="copyright">
+      <p>Ranking nach Bestellungen</p>
+    </div>
+  </section>
+  <section>
+      <div class="statisticList">
+        <div class="tableHeader">
+			<span class="statisticRank">Rang</span>
+			<span class="statisticUser">Lieferrant</span>
+			<span class="statisticOrderTitle">Name</span>
+			<span class="statisticProgress"># der Bestellungen</span>		
+		  </div>
+        
+        <!-- statistic order items section row --> 
+        <!-- statistic order items section row odd -->
+	  <div class="tableRowOdd">
+	    <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticSupplier%]</span>
+			  <span class="statisticAmountSpent">[%statisticName%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>			  
+		  	  </span>		
+	    </div>
+        <!-- statistic order items section row odd --> 
+        <!-- statistic order items section row even -->
+        <div class="tableRowEven">
+			  <span class="statisticRank">[%statisticRank%]</span>
+			  <span class="statisticUser">[%statisticSupplier%]</span>
+			  <span class="statisticAmountSpent">[%statisticName%]</span>
+			  <span class="statisticProgress">
+				  <div class="statisticProgressbar" style="width:[%statisticProgressValue%]%">
+					  [%statisticProgress%]
+				  </div>			  
+		  	  </span>		
+	    </div>
+        <!-- statistic order items section row even --> 
+        
+        <!-- statistic order items section row --> 
+      </div>
+  </section>
+	  
   <section class="copyright">
     <div class="copyright">
       <p>PIZZA ORDER SCRIPT v. [%version%]</p>

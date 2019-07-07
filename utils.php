@@ -1586,6 +1586,62 @@ function adminShowUserData( $page ) {
 	return $page;
 }
 
+
+function showRankByOrderCount($page){
+	global $config;
+	
+	
+	$rowOdd = extractSection( "<!-- statistic order items section row odd -->", $page );
+	$rowEven = extractSection( "<!-- statistic order items section row even -->", $page );
+	
+	$completeSum = 0;
+	$sql = "SELECT COUNT (orderDetail.supplierCard_ID)
+			FROM   orderDetail";
+	
+	foreach ( $config->db->query( $sql ) as $row ) {
+		$completeSum = $row[0];
+	}	
+	
+	$sql = "SELECT 
+		   orderDetail.supplierCard_ID, 
+		   COUNT (orderDetail.supplierCard_ID), 
+		   supplier.name, 
+		   supplierCard.name AS name1
+	FROM   orderDetail
+		   INNER JOIN supplier ON supplier.id = orderDetail.supplier_ID
+		   INNER JOIN supplierCard ON supplierCard.id = orderDetail.supplierCard_ID
+	GROUP  BY
+			  orderDetail.supplierCard_ID, 
+			  supplier.name, 
+			  supplierCard.name
+	ORDER  BY COUNT (orderDetail.supplierCard_ID) DESC;";
+
+	$table = '';
+	$rank = 1;
+	foreach ( $config->db->query( $sql ) as $row ) {
+		if ( ( $rank % 2 ) == 0 ) {
+			$newRow = $rowEven;
+		} else {
+			$newRow = $rowOdd;
+		}
+		
+		
+		$percent = number_format($row[1] / $completeSum * 100,2);
+		$newRow = preg_replace( "/\[\%statisticRank%\]/", $rank, $newRow );
+		$newRow = preg_replace( "/\[\%statisticSupplier%\]/", $row[ 'name' ], $newRow );
+		$newRow = preg_replace( "/\[\%statisticName\%\]/", $row[ 'name1' ], $newRow );
+		$newRow = preg_replace( "/\[\%statisticProgress\%\]/", $row[1] , $newRow );		
+		$newRow = preg_replace( "/\[\%statisticProgressValue\%\]/", $percent, $newRow );		
+		$table = $table . $newRow;
+		$rank  = $rank + 1;
+		
+	}
+
+	$page = replaceSection( "<!-- statistic order items section row --> ", $table, $page );
+	
+	return $page;
+}
+
 function showRankBySpentMoney($page){
 	global $config;
 	
