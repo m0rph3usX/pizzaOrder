@@ -792,17 +792,35 @@ function eventOrderKill() {
 			tooLateMessage();
 		} else {
 			$order_ID = $_POST[ 'orderKill' ];
-			$sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID;
+			
+			$sql = "SELECT * FROM orderDetail WHERE orderDetail.id = " . $order_ID . " AND user_ID = " . $config->userid .
+				   " AND order_ID = " . getCurrentOrderId();
+			
+			$valid = false;
+			foreach ( $config->db->query( $sql ) as $row ) {
+				$valid = true;
+				break;
+			}
+			
+			if($valid){
+				$sql = "DELETE FROM orderDetail WHERE orderDetail.id = " . $order_ID . " AND user_ID = " . $config->userid .
+					   " AND order_ID = " . getCurrentOrderId();
 
-			$config->db->exec( $sql );
+				$config->db->exec( $sql );
 
-			$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;
+				$sql = "UPDATE bank SET amount = 0 WHERE orderDetail_id = " . $order_ID;
 
-			$config->db->exec( $sql );
+				$config->db->exec( $sql );
 
-			addMessage( "Bestellung storniert" );
-			usleep(500000);
-			header( "Location: index.php" );
+				addMessage( "Bestellung storniert" );
+				usleep(500000);
+				header( "Location: index.php" );	
+			}
+			else{
+				addMessage( "Ungültige Aktion!" );
+			}
+			
+
 		}
 	}
 }
@@ -810,27 +828,30 @@ function eventOrderKill() {
 function eventOrderPaid() {
 	global $config;
 
-	if ( isset( $_POST[ 'eventButtonPayOrder' ] ) ) {
-		$order_ID = $_POST[ 'orderId' ];
+	if(getUserWhoIsOrdering() == $config->userid){
+		if ( isset( $_POST[ 'eventButtonPayOrder' ] ) ) {
+			$order_ID = $_POST[ 'orderId' ];
 
-		$sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = " . $order_ID . " )";
-		$config->db->exec( $sql );
+			$sql = "UPDATE orderDetail SET isPaid = 1 WHERE ( orderDetail.id = " . $order_ID . " )";
+			$config->db->exec( $sql );
 
-		addMessage( "Bestellung als bezahlt markiert" );
-		usleep(500000);
-		header( "Location: index.php" );
+			addMessage( "Bestellung als bezahlt markiert" );
+			usleep(500000);
+			header( "Location: index.php" );
+		}
+
+		if ( isset( $_POST[ 'eventButtonOrderStorno' ] ) ) {
+
+			$order_ID = $_POST[ 'orderId' ];
+			$sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = " . $order_ID . " )";
+			$config->db->exec( $sql );
+
+			addMessage( "Bestellung als offen markiert" );
+			usleep(500000);
+			header( "Location: index.php" );
+		}	
 	}
 
-	if ( isset( $_POST[ 'eventButtonOrderStorno' ] ) ) {
-
-		$order_ID = $_POST[ 'orderId' ];
-		$sql = "UPDATE orderDetail SET isPaid = 0 WHERE ( orderDetail.id = " . $order_ID . " )";
-		$config->db->exec( $sql );
-
-		addMessage( "Bestellung als offen markiert" );
-		usleep(500000);
-		header( "Location: index.php" );
-	}
 }
 
 function eventOrderAdd() {
@@ -846,21 +867,29 @@ function eventOrderAdd() {
 			$supplierCard_ID = $_POST[ 'supplierCard_ID' ];
 
 			$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $config->userid;
-
-			$counter = 0;
-			foreach ( $config->db->query( $sql ) as $row ) {
-				$counter++;
-			}
-
-			$price = $_POST[ 'supplierCard_price' ];
+			
 			$supplierID = getCurrentSupplierId();
-			$config->db->exec( "INSERT INTO orderDetail 
-						(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
-					   VALUES ( " . $config->orderid . "," . $supplierCard_ID . "," . $supplierID . " , " . $config->userid . "," . $price . ")" );
+			
+			$sql = "SELECT price FROM supplierCard WHERE id = " . $supplierCard_ID . " AND supplier_ID = ". $supplierID;
+			
+			$price   = 0;
+			foreach ( $config->db->query( $sql ) as $row ) {
+				$price = $row[ 'price']; 
+			}
+			
+			if($price > 0){			
+				$config->db->exec( "INSERT INTO orderDetail 
+							(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
+						   VALUES ( " . $config->orderid . "," . $supplierCard_ID . "," . $supplierID . " , " . $config->userid . "," . $price . ")" );
 
-			addMessage( "Bestellung hinzugefügt" );
-			usleep(500000);
-			header( "Location: index.php" );
+				addMessage( "Bestellung hinzugefügt" );
+				usleep(500000);
+				header( "Location: index.php" );
+			}
+			else{
+				addMessage( "Ungültige Bestellung!" );
+			}
+			
 		}
 
 	}
@@ -933,19 +962,30 @@ function eventOrderFinished() {
 
 function eventBankInput() {
 	global $config;
-	if ( isset( $_POST[ 'eventButtonBankInput' ] ) ) {
-		$customer_id = $_POST[ 'customer_id' ];
-		$amount = $_POST[ 'amount' ];
+	
+	if(isBankTransactor()){
+		if ( isset( $_POST[ 'eventButtonBankInput' ] ) ) {
+			$customer_id = $_POST[ 'customer_id' ];
+			$amount = $_POST[ 'amount' ];
 
-		$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
-			    VALUES 		 (" . $config->userid . " , " . $customer_id . " , " . $amount . "," . time() . " )";
 
-		$config->db->exec( $sql );
+			if(($amount <= 50) && ($amount >= -50)){
+				$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`)
+						VALUES 		 (" . $config->userid . " , " . $customer_id . " , " . $amount . "," . time() . " )";
 
-		addMessage( "Betrag virtuell einbezahlt" );
-		usleep(1000000);
-		header( "Location: bank.php" );
-	}
+				$config->db->exec( $sql );
+
+				addMessage( "Betrag virtuell einbezahlt" );
+				usleep(1000000);
+				header( "Location: bank.php" );	
+			} 
+		   else{
+			   addMessage( "Ungültiger Betrag! max +/- 50€" );
+		   }
+
+
+		}	
+	}	
 }
 
 function eventBankTransfer() {
@@ -955,7 +995,7 @@ function eventBankTransfer() {
 		$amount = $_POST[ 'amount' ];
 		
 		
-		if($amount > 0){
+		if(($amount > 0) && ($amount <= countMoney())){
 			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, 			  `timeStamp`)
 			    VALUES 		 (" . $config->userid . " , " . $config->userid . " , " . -$amount . "," . time() . " )";
 
@@ -970,6 +1010,9 @@ function eventBankTransfer() {
 			usleep(1000000);
 			header( "Location: bank.php" );
 		}
+		else{
+			addMessage( "Unzulässige Transaktion!");
+		}
 
 
 	}
@@ -980,18 +1023,33 @@ function eventVirtualPay() {
 
 	if ( isset( $_POST[ 'eventVirtualPayButton' ] ) ) {
 		$orderDetail_id = $_POST[ 'orderDetail_id' ];
-		$price = $_POST[ 'price' ];
+				
+		
+		$sql = "SELECT price FROM orderDetail WHERE id = " . $orderDetail_id . " AND user_ID = " . $config->userid .
+			   " AND order_ID = " .getCurrentOrderId() .";";
+		
+		
+		$price = 0;
+		
+		foreach ( $config->db->query( $sql ) as $row ) {
+			$price = $row[ 'price']; 
+		}
+		
+		if($price > 0){
+			$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
+					VALUES 		 (" . $config->userid . " , " . $config->userid . " , " . - $price . "," . time() . "," . $orderDetail_id . ")";
+			$config->db->exec( $sql );
 
-		$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
-				VALUES 		 (" . $config->userid . " , " . $config->userid . " , " . - $price . "," . time() . "," . $orderDetail_id . ")";
-		$config->db->exec( $sql );
+			$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = " . $orderDetail_id;
+			$config->db->exec( $sql );
 
-		$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = " . $orderDetail_id;
-		$config->db->exec( $sql );
-
-		addMessage( "Bestellung virtuell bezahlt" );
-		usleep(500000);
-		header( "Location: index.php" );
+			addMessage( "Bestellung virtuell bezahlt" );
+			usleep(500000);
+			header( "Location: index.php" );
+		}
+		else{
+			addMessage( "ungültiger Bezahlvorgang!" );
+		}
 	}
 
 }
@@ -1059,6 +1117,37 @@ function getSupplierList() {
 }
 
 
+
+function showSupplierCfgList($page){
+	global $config;
+
+	$sql = "SELECT * FROM supplier";
+
+	$rowTemplate = extractSection( "<!-- section supplier row -->", $page );
+	
+	$table ="";
+	$counter = 0;
+	foreach ( $config->db->query( $sql ) as $row ) {
+		
+		$newRow = $rowTemplate;			
+		$newRow = preg_replace( "/\[\%row_nr\%\]/", $counter, $newRow);
+		$newRow = preg_replace( "/\[\%supplierName\%\]/", $row[ 'name' ], $newRow);
+		$newRow = preg_replace( "/\[\%supplierPhone\%\]/", $row[ 'phoneNumber' ], $newRow);
+		$newRow = preg_replace( "/\[\%supplierDiscountLimit\%\]/", $row[ 'discountThreshold' ], $newRow);
+		$newRow = preg_replace( "/\[\%supplierDiscountVal\%\]/", $row[ 'discountPercent' ], $newRow);
+		$newRow = preg_replace( "/\[\%supplierID\%\]/", $row[ 'id' ], $newRow);
+		$table = $table . $newRow;
+		
+		$counter = $counter +1;
+	}
+	
+	
+	$page = replaceSection("<!-- section supplier row -->",$table, $page);
+	
+	return $page;
+}
+
+
 function createOrderTable( $page ) {
 	global $config;
 
@@ -1081,8 +1170,7 @@ function createOrderTable( $page ) {
 	foreach ( $config->db->query( $sql ) as $row ) {
 		if ( $config->userid > -1 ) {
 			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' onclick='playAudio(`order.wav`)'></button>								   					   
-					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>
-					   <input type='hidden' value=" . $row[ 'price' ] . " name='supplierCard_price'/>";
+					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>";
 		} else {
 			$button = "";
 		}
@@ -1260,7 +1348,6 @@ function createIncomingOrdersTable( $page ) {
 					$virtualPayButton = "<form action='' method='post'>
 								   <button title='virtuell bezahlen' type='submit' class='btnvPay' name='eventVirtualPayButton' onclick='playAudio(`pay.wav`)'></button>								   								   
 								   <input type='hidden' value=" . $row[ 'order_ID' ] . " name='orderDetail_id'/>                        
-								   <input type='hidden' value=" . $price . " name='price'/>                        
 								 </form>";
 				}
 			}
@@ -1711,11 +1798,14 @@ function showRankBySpentMoney($page){
 	}
 		
 	$sql = "SELECT 
-		    user.login, 
-		    SUM (orderDetail.price)
-			FROM   orderDetail
-				   INNER JOIN user ON user.id = orderDetail.user_ID
-			GROUP  BY user.login
+				   user.login, 
+				   SUM (main.orderDetail.price), 
+				   user.id
+			FROM   user
+				   INNER JOIN orderDetail ON user.id = orderDetail.user_ID
+			GROUP  BY
+					  user.login, 
+					  user.id
 			ORDER  BY SUM (orderDetail.price) DESC;";
 	
 	$table = '';
@@ -1729,9 +1819,19 @@ function showRankBySpentMoney($page){
 		}
 		
 		
+		$login = $row[ 'login' ];
+		
+		if($config->userid == $row[ 'id' ]){
+			$login = $row[ 'login' ];	
+		}
+		else{
+			$login = '[anonymisiert]';	
+		}
+		
+		
 		$percent = number_format($row[1] / $completeSum * 100,2);
 		$newRow = preg_replace( "/\[\%statisticRank%\]/", $rank, $newRow );
-		$newRow = preg_replace( "/\[\%statisticUser%\]/", $row[ 'login' ], $newRow );
+		$newRow = preg_replace( "/\[\%statisticUser%\]/", $login , $newRow );
 		$newRow = preg_replace( "/\[\%statisticAmount\%\]/", number_format($row[1],2), $newRow );
 		$newRow = preg_replace( "/\[\%statisticProgress\%\]/", number_format($percent,2) . '%', $newRow );		
 		$newRow = preg_replace( "/\[\%statisticProgressValue\%\]/", $percent, $newRow );		
@@ -1926,7 +2026,83 @@ function getHistoryOrderList( $page ) {
 
 	return $page;
 }
+	
+function eventSaveSupplierCfgList() {
+	global $config;
 
+	if ( isset( $_POST[ 'eventButtonSaveSupplierCfgList' ] ) ) {
+		//$order_ID = $_POST[ 'order_ID' ];
+
+		$counter = 0;
+		//echo $_POST[ 'input_nr'][1];
+		while(1){
+			if(isset( $_POST[ 'input_nr'][$counter]) ){
+
+				$sql = "UPDATE supplierCard
+						SET nr   		= '" . $_POST[ 'input_nr'		  ][$counter] ."',
+						    name 		= '" . $_POST[ 'input_name'    	  ][$counter] ."',
+							ingredients = '" . $_POST[ 'input_ingredients'][$counter] ."',
+							price	    = '" . $_POST[ 'input_price'      ][$counter] ."' 
+						WHERE id = ".$_POST[ 'db_id'][$counter].";";
+				
+				$config->db->exec($sql);
+				
+			}
+			else{
+				// end of array
+				break;
+			}
+			$counter = $counter +1;
+		}
+		
+		//for($idx=0; idx)
+		//echo $_POST['input_nr[1]'];
+		//var_dump($_POST);
+		//var_dump($_POST["input_nr"]);
+		//header( "Location: supplierCfg.php");
+		header( "Location: supplierCfg.php?id=" . $config->supplierId);
+	}
+}
+
+
+function eventSaveSupplierCfg() {
+	global $config;
+
+	if ( isset( $_POST[ 'eventButtonSaveSupplierCfg' ] ) ) {
+		//$order_ID = $_POST[ 'order_ID' ];
+
+		
+		$counter = 0;
+		//echo $_POST[ 'input_nr'][1];
+		while(1){
+			if(isset( $_POST[ 'supplierName'][$counter]) ){
+
+				$sql = "UPDATE supplier
+						SET name 				= '" . $_POST[ 'supplierName'    	  ][$counter] ."',
+							phoneNumber 		= '" . $_POST[ 'supplierPhone'		  ][$counter] ."',
+							discountThreshold   = '" . $_POST[ 'supplierDiscountLimit'][$counter] ."',
+							discountPercent	    = '" . $_POST[ 'supplierDiscountVal'  ][$counter] ."'												
+						WHERE id = ".$_POST[ 'db_id'][$counter].";";
+				
+				$config->db->exec($sql);
+				
+				
+				echo $sql;
+			}
+			else{
+				// end of array
+				break;
+			}
+			$counter = $counter +1;
+		}
+		
+		//for($idx=0; idx)
+		//echo $_POST['input_nr[1]'];
+		//var_dump($_POST);
+		//var_dump($_POST["input_nr"]);
+		header( "Location: supplierCfg.php");
+	}
+}
 
 function eventShowHistoryDetails() {
 	global $config;
@@ -2177,6 +2353,58 @@ function checkDiscount($page){
 	return $page;
 }
 
+
+
+function showSuppliersCfg($page){
+	global $config;
+	
+	$rowOdd  = extractSection( "<!-- section row even -->", $page );
+	$rowEven = extractSection( "<!-- section row odd -->", $page );
+	
+	$sql = "SELECT 
+			   supplier.name, 
+			   supplierCard.id, 
+			   supplierCard.nr, 
+			   supplierCard.name AS name1, 
+			   supplierCard.ingredients, 
+			   supplierCard.price, 
+			   supplier.id AS id1
+		FROM   supplier
+			   INNER JOIN supplierCard ON supplier.id = supplierCard.supplier_ID
+		WHERE  supplier.id = " . $config->supplierId.";";
+	
+	
+	$table = "";
+
+	$counter = 0;
+	foreach ( $config->db->query( $sql ) as $row ) {
+
+		if ( ( $counter % 2 ) == 0 ) {
+			$newRow = $rowEven;
+		} else {
+			$newRow = $rowOdd;
+		}
+		
+		$button = "<input value='>> Details' type='submit' name='eventButtonHistoryDetails'> " .
+		"<input type='hidden' value=" . $row[ 'id' ] . "    name='order_ID'/>";			
+			
+		$newRow = preg_replace( "/\[\%db_id\%\]/"   		 , $row[ 'id' ]			, $newRow );
+		$newRow = preg_replace( "/\[\%input_nr\%\]/"	     , $row[ 'nr' ]			, $newRow );
+		$newRow = preg_replace( "/\[\%input_name\%\]/"		 , $row[ 'name1' ]		, $newRow );
+		$newRow = preg_replace( "/\[\%input_ingredients\%\]/", $row[ 'ingredients' ], $newRow );
+		$newRow = preg_replace( "/\[\%input_price\%\]/"		 , $row[ 'price' ]		, $newRow );
+		$newRow = preg_replace( "/\[\%row_nr\%\]/"			 , $counter				, $newRow );
+
+	
+		$table = $table . $newRow;
+		$counter = $counter + 1;
+	}
+
+	$page = replaceSection( "<!-- section row -->", $table, $page );
+
+	
+	return $page;
+}
 function check4arrival() {
 	//global $config;
 

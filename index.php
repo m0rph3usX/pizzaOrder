@@ -114,8 +114,6 @@ switch ( getOrderState() ) {
 		$page = removeSection( "<!-- order arrival info -->", $page );
 		$page = removeSection( "<!-- order arrival control -->", $page );
 
-		//$page = preg_replace($template_ordersTxt   , $layout_startNewOrder, $page);	
-
 		#----------------- create supplier list ------------------------------------
 		$page = preg_replace( "/\[\%supplierList\%\]/", getSupplierList(), $page );
 

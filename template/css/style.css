@@ -1,5 +1,30 @@
 @charset "UTF-8";
 /* Body */
+.supplierCfgAlias {
+	display: inline-block;
+	width: 20%;
+	text-align: left;
+}
+.supplierTable {
+	width: 65%;
+	margin: auto;
+}
+.supplierCfgAction {
+	display: inline-block;
+	width: 10%;
+}
+.supplierCfgPhone {
+	display: inline-block;
+	width: 15%;
+}
+.supplierCfgDiscountLimit {
+	display: inline-block;
+	width: 15%;
+}
+.supplierCfgDiscount {
+	display: inline-block;
+	width: 15%;
+}
 body {
 	font-family: verdana;
 	background-color: #212121;
@@ -53,8 +78,6 @@ a:active {
 }
 h1 {
 	text-align: center;
-}
-input {
 }
 header {
 	width: 100%;
@@ -496,9 +519,20 @@ span.historyTimestamp {
 }
 .statisticAmountSpent {
 	display: inline-block;
-	width: 15%;
+	width: 30%;
 	text-align: right;
 	padding: 0 10px 0 0;
+}
+.statisticName {
+	width: 30%;
+	display:block-inline;
+}
+.supplierCfgNr input {
+	display: inline-block;
+	width: 100%;
+}
+input {
+	display: inline-block;
 }
 .progressFront {
 }
@@ -510,10 +544,9 @@ span.historyTimestamp {
 	background: red;
 }
 .statisticProgress {
-	width: 50%;
+	width: 30%;
 	display: inline-block;
 	color: black;
-	text-align: right;
 }
 .statisticProgressbar {
 	background: red;
@@ -686,15 +719,6 @@ input[type=button], input[type=submit], input[type=reset] {
 	background: #000000;
 }
 .userCntrlLink {
-}
-input[type=text] {
-	background-color: #FFFFFF;
-	background-image: url('searchicon.png');
-	background-position: 0px 0px;
-	background-repeat: no-repeat;
-	padding-left: 0px;
-	height: ;
-	width: 80%;
 }
 .btnDelete {
 	height: 32px;
@@ -870,6 +894,27 @@ input[type=text] {
 	border: 1px solid #CCC;
 	border-radius: 2px;
 	width: 100%;
+}
+.supplierCfgName {
+	display: inline-block;
+	width: 22%;
+	margin-left: 5px;
+}
+.supplierCfgPrice {
+	display: inline-block;
+	width: 14%;
+}
+.supplierCfgActive {
+	display: inline-block;
+	width: 5%;
+}
+.supplierCfgIngredients {
+	display: inline-block;
+	width: 52%;
+}
+.supplierCfgNr {
+	display: inline-block;
+	width: 4%;
 }
 .userInfo {
 	width: 100px;

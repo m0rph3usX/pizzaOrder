@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+<title>Pizzabestellskript</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="template/css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<!-- Main Container -->
+<div class="container"> 
+  <!-- Navigation -->
+  <header> </header>
+  <!-- Hero Section -->
+  <section class="hero">
+    <p class="tagline">PIZZA ORDER SCRIPT</p>
+  </section>
+  
+  <!-- InfoMessage --> 
+  <!-- InfoMessage --> 
+  <!-- login section -->
+  <section class="logout">
+    <div class="userControlpanel"> <span class ="userCntrlLogin">[%loginName%]</span> <span class ="userCntrlMoney">Guthaben: [%money%] €</span> </div>
+    <div class="userControlpanel"> <span class ="userCntrlLink"> <a href="index.php"><<< zurück</a> </span><span class ="userCntrlLink"> <a href="?logout=1">Logout</a> </span> <span class ="userCntrlLink"> <a href="bank.php">Zahlungsverlauf anzeigen</a> </span> <span class ="userCntrlLink"> <a href="history.php">letzte Bestellungen anzeigen</a> </span>  </div>
+  </section>
+  <!-- login section -->
+  <section class="info">
+    <div class="copyright">
+	  <p class="tagline">Lieferrant Setup</p>
+		
+		<form method='post'> 
+			<div class="supplierTable">
+				<span class="supplierCfgAlias" >Lieferrant</span>				
+				<span class="supplierCfgPhone">Telefon</span>
+				<span class="supplierCfgDiscountLimit">Rabatt Limit / €</span>
+				<span class="supplierCfgDiscount">Rabatt %</span>			
+				<span class="supplierCfgAction"></span>
+			</div>
+			<!-- section supplier row --> 
+			<div class="supplierTable">
+				<input type="hidden" name="db_id[[%row_nr%]]" value= "[%supplierID%]">
+				<span class="supplierCfgAlias" ><input type="text" name="supplierName[[%row_nr%]]" value= "[%supplierName%]"></span>
+				<span class="supplierCfgPhone"><input type="text" name="supplierPhone[[%row_nr%]]" value= "[%supplierPhone%]"></span>
+				<span class="supplierCfgDiscountLimit"><input type="number" name="supplierDiscountLimit[[%row_nr%]]" value= "[%supplierDiscountLimit%]"> </span>
+				<span class="supplierCfgDiscount"><input type="number" name="supplierDiscountVal[[%row_nr%]]" value= "[%supplierDiscountVal%]"> </span>
+				<span class="supplierCfgAction"><a href="supplierCfg.php?id=[%supplierID%]">config</a></span>				
+			</div>
+			<!-- section supplier row -->
+			<button type='submit' class='btnSaveSupplierCfg' name='eventButtonSaveSupplierCfg'>Speichern</button>
+		</form>
+    </div>
+  </section>
+	  
+  <section class="info">
+    <div class="copyright">
+	  <p class="tagline">Speisekarte Setup</p>
+    </div>
+  </section>
+  <!-- statistic items section -->   
+  <section>
+	  
+  </section>
+  <section>
+      <div class="supplierCard">
+        <div class="tableHeader">
+			<span class="supplierCfgActive">Aktiv</span>
+			<span class="supplierCfgNr">Nr</span>
+			<span class="supplierCfgName">Name</span>
+			<span class="supplierCfgIngredients">Zutaten</span>
+			<span class="supplierCfgPrice">Preis / €</span>		
+		  </div>
+	  <form method='post'> 
+        <!-- section row --> 
+        <!-- section row odd -->
+	  <div class="tableRowOdd">
+		  	<input type="hidden" name="db_id[[%row_nr%]]" value= "[%db_id%]">
+			<span class="supplierCfgActive"></span>
+			<span class="supplierCfgNr"><input type="number" name="input_nr[[%row_nr%]]" value= "[%input_nr%]">
+		    </span>
+			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]">		    
+		    </span>
+			<span class="supplierCfgIngredients"><input type="text" name="input_ingredients[[%row_nr%]]" value= "[%input_ingredients%]"></span>
+			<span class="supplierCfgPrice"><input type="number" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>		
+	    </div>
+        <!-- section row odd --> 
+        <!-- section row even -->
+        <div class="tableRowEven">
+			<input type="hidden" name="db_id[[%row_nr%]]" value= "[%db_id%]">
+			<span class="supplierCfgActive"></span>
+			<span class="supplierCfgNr"><input type="number" name="input_nr[[%row_nr%]]" value= "[%input_nr%]"></span>
+			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]"></span>
+			<span class="supplierCfgIngredients"><input type="text" name="input_ingredients[[%row_nr%]]" value= "[%input_ingredients%]"></span>
+			<span class="supplierCfgPrice"><input type="number" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>	
+        </div>
+        <!-- section row even --> 
+        
+        <!-- section row --> 
+		<button type='submit' class='btnSaveSupplierCfgList' name='eventButtonSaveSupplierCfgList'>Speichern</button>
+	  </form> 
+      </div>
+  </section>
+  <!-- statistic supplier section -->
+
+
+	  
+  <section class="copyright">
+    <div class="copyright">
+      <p>PIZZA ORDER SCRIPT v. [%version%]</p>
+    </div>
+  </section>
+</div>
+<!-- Main Container Ends -->
+</body>
+</html>
