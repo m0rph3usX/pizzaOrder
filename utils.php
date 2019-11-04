@@ -13,6 +13,7 @@ class ConfigStruct {
 	public $isHistory;
 	public $messageList = array();
 	public $messageCount;
+	public $favouriteCount;
 }
 
 session_start();
@@ -1106,7 +1107,7 @@ function eventButtonStartNewOrder() {
 function getSupplierList() {
 	global $config;
 
-	$sql = "SELECT id, name FROM supplier";
+	$sql = "SELECT id, name FROM supplier WHERE active > 0";
 
 	$string = "<form action='?pollSubmit=1' method='post'>";
 
@@ -1130,6 +1131,15 @@ function showSupplierCfgList($page){
 	foreach ( $config->db->query( $sql ) as $row ) {
 		
 		$newRow = $rowTemplate;			
+		
+		if($row[ 'active'] == '1'){
+			$newRow = preg_replace( "/\[\%checked\%\]/", "checked", $newRow);	
+		}
+		else{
+			$newRow = preg_replace( "/\[\%checked\%\]/", "", $newRow);	
+		}
+		
+		
 		$newRow = preg_replace( "/\[\%row_nr\%\]/", $counter, $newRow);
 		$newRow = preg_replace( "/\[\%supplierName\%\]/", $row[ 'name' ], $newRow);
 		$newRow = preg_replace( "/\[\%supplierPhone\%\]/", $row[ 'phoneNumber' ], $newRow);
@@ -2046,6 +2056,7 @@ function eventSaveSupplierCfgList() {
 						WHERE id = ".$_POST[ 'db_id'][$counter].";";
 				
 				$config->db->exec($sql);
+								
 				
 			}
 			else{
@@ -2077,11 +2088,19 @@ function eventSaveSupplierCfg() {
 		while(1){
 			if(isset( $_POST[ 'supplierName'][$counter]) ){
 
+				if($_POST[ 'supplierEnable'][$counter]){
+					$enabled = 1;
+				}
+				else{
+					$enabled = 0;
+				}
 				$sql = "UPDATE supplier
 						SET name 				= '" . $_POST[ 'supplierName'    	  ][$counter] ."',
 							phoneNumber 		= '" . $_POST[ 'supplierPhone'		  ][$counter] ."',
 							discountThreshold   = '" . $_POST[ 'supplierDiscountLimit'][$counter] ."',
-							discountPercent	    = '" . $_POST[ 'supplierDiscountVal'  ][$counter] ."'												
+							discountPercent	    = '" . $_POST[ 'supplierDiscountVal'  ][$counter] ."',										
+							active 				= '" . $enabled ."'
+							
 						WHERE id = ".$_POST[ 'db_id'][$counter].";";
 				
 				$config->db->exec($sql);
@@ -2405,6 +2424,70 @@ function showSuppliersCfg($page){
 	
 	return $page;
 }
+
+
+function getFavourites($page){
+	global $config;
+	
+	$sql = "SELECT 
+			   (COUNT (*)) AS OrderCount, 
+			   orderDetail.user_ID, 
+			   orderDetail.supplier_ID, 
+			   orderDetail.supplierCard_ID AS id,
+			   supplierCard.nr AS nr, 
+			   supplierCard.name AS name, 
+			   supplierCard.ingredients AS ingredients, 
+			   supplierCard.price AS price
+			FROM   orderDetail
+				INNER JOIN orders ON orderDetail.order_ID = orders.id
+				INNER JOIN supplierCard ON main.orderDetail.supplierCard_ID = supplierCard.id
+			WHERE  orderDetail.user_ID = ".$config->userid ."
+			AND orderDetail.supplier_ID = ". getCurrentSupplierId() ."
+			GROUP  BY orderDetail.supplierCard_ID
+			ORDER  BY OrderCount DESC;";
+	
+	$templateRowOdd = extractSection( "<!-- favourites items section row odd -->", $page );
+	$templateRowEven = extractSection( "<!-- favourites items section row even -->", $page );
+	
+	
+	$table = "";
+	$rowCount = 0;
+
+	if ( $config->userid > -1 ){
+	foreach ( $config->db->query( $sql ) as $row ) {
+		
+		if ( $config->userid > -1 ) {
+			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' onclick='playAudio(`order.wav`)'></button>								   					   
+					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>";
+		}
+
+		if ( ( $rowCount % 2 ) > 0 ) {
+			$templateRow = $templateRowOdd;
+		} else {
+			$templateRow = $templateRowEven;
+		}
+		$newRow = preg_replace( "/\[\%orderButton\%\]/", $button, $templateRow );
+		$newRow = preg_replace( "/\[\%orderNr\%\]/", $row[ 'nr' ], $newRow );
+		$newRow = preg_replace( "/\[\%orderName\%\]/", $row[ 'name' ], $newRow );
+		$newRow = preg_replace( "/\[\%orderIngredients\%\]/", $row[ 'ingredients' ], $newRow );
+		$newRow = preg_replace( "/\[\%price\%\]/", number_format( $row[ 'price' ], 2 ), $newRow );
+
+		$table = $table . $newRow;
+
+		$rowCount = $rowCount + 1;
+		if($rowCount > 5){
+			break;
+		}
+	}	
+		
+	$config->favouriteCount = $rowCount;
+		
+	}
+	
+	
+	return $table;
+}
+
 function check4arrival() {
 	//global $config;
 

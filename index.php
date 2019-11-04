@@ -43,6 +43,7 @@ $page = file_get_contents( $template );
 
 if ( $config->userid == -1 ) {
 	$page = removeSection( "<!-- order finished section -->", $page );
+	$page = removeSection( "<!-- favourites items section -->", $page );
 }
 if ( !isset( $_SESSION[ 'userid' ] ) ) {
 	input_register();
@@ -51,7 +52,8 @@ if ( !isset( $_SESSION[ 'userid' ] ) ) {
 	$page = removeSection( "<!-- logout section -->", $page );
 	$page = removeSection( "<!-- new order section -->", $page );
 	$page = removeSection( "<!-- finish order section -->", $page );
-	$page = removeSection( "<!-- order arrival info -->", $page );
+	
+	
 } else if ( $config->userid != getUserWhoIsOrdering() ) {
 	$page = removeSection( "<!-- finish order section -->", $page );
 }
@@ -113,7 +115,7 @@ switch ( getOrderState() ) {
 		$page = removeSection( "<!-- order deadline -->", $page );
 		$page = removeSection( "<!-- order arrival info -->", $page );
 		$page = removeSection( "<!-- order arrival control -->", $page );
-
+		$page = removeSection( "<!-- favorites items section row -->", $page );
 		#----------------- create supplier list ------------------------------------
 		$page = preg_replace( "/\[\%supplierList\%\]/", getSupplierList(), $page );
 
@@ -144,6 +146,15 @@ switch ( getOrderState() ) {
 			$table = createIncomingOrdersTable( extractSection( "<!-- incoming orders section -->", $page ) );
 			$page = replaceSection( "<!-- incoming orders section -->", $table, $page );
 
+			if($config->userid > -1 ){
+				$table = getFavourites(extractSection( "<!-- favourites items section row --> ", $page ));
+				$page = replaceSection( "<!-- favourites items section row -->", $table, $page );
+
+				if($config->favouriteCount == 0){
+					$page = removeSection( "<!-- favourites items section -->", $page );
+				}
+			}
+								   
 			$table = createOrderTable( extractSection( "<!-- order items section row -->", $page ) );
 			$page = replaceSection( "<!-- order items section row -->", $table, $page );			
 			$page = removeSection( "<!-- order arrival control -->", $page );
@@ -163,6 +174,7 @@ switch ( getOrderState() ) {
 		$page = removeSection( "<!-- order items section -->", $page );
 		$page = removeSection( "<!-- finish order section -->", $page );
 		$page = removeSection( "<!-- order deadline -->", $page );
+		$page = removeSection( "<!-- favourites items section -->", $page );
 		$page = preg_replace( "/\[\%phoneNumber\%\]/", getCurrentSupplierPhoneNr(), $page );
 
 		

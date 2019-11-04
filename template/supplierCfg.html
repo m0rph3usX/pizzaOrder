@@ -29,15 +29,17 @@
 		
 		<form method='post'> 
 			<div class="supplierTable">
-				<span class="supplierCfgAlias" >Lieferrant</span>				
+				<span class="supplierCfgEnable" >aktiv</span>
+				<span class="supplierCfgAlias" >Lieferrant</span>					
 				<span class="supplierCfgPhone">Telefon</span>
 				<span class="supplierCfgDiscountLimit">Rabatt Limit / €</span>
 				<span class="supplierCfgDiscount">Rabatt %</span>			
 				<span class="supplierCfgAction"></span>
 			</div>
 			<!-- section supplier row --> 
-			<div class="supplierTable">
+			<div class="supplierTable">				
 				<input type="hidden" name="db_id[[%row_nr%]]" value= "[%supplierID%]">
+				<span class="supplierCfgEnable" ><input type="checkbox" name="supplierEnable[[%row_nr%]]" [%checked%]></span>			
 				<span class="supplierCfgAlias" ><input type="text" name="supplierName[[%row_nr%]]" value= "[%supplierName%]"></span>
 				<span class="supplierCfgPhone"><input type="text" name="supplierPhone[[%row_nr%]]" value= "[%supplierPhone%]"></span>
 				<span class="supplierCfgDiscountLimit"><input type="number" name="supplierDiscountLimit[[%row_nr%]]" value= "[%supplierDiscountLimit%]"> </span>
@@ -79,7 +81,7 @@
 			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]">		    
 		    </span>
 			<span class="supplierCfgIngredients"><input type="text" name="input_ingredients[[%row_nr%]]" value= "[%input_ingredients%]"></span>
-			<span class="supplierCfgPrice"><input type="number" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>		
+			<span class="supplierCfgPrice"><input type="number" step="0.01" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>		
 	    </div>
         <!-- section row odd --> 
         <!-- section row even -->
@@ -89,7 +91,7 @@
 			<span class="supplierCfgNr"><input type="number" name="input_nr[[%row_nr%]]" value= "[%input_nr%]"></span>
 			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]"></span>
 			<span class="supplierCfgIngredients"><input type="text" name="input_ingredients[[%row_nr%]]" value= "[%input_ingredients%]"></span>
-			<span class="supplierCfgPrice"><input type="number" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>	
+			<span class="supplierCfgPrice"><input type="number" step="0.01" name="input_price[[%row_nr%]]" value= "[%input_price%]"></span>	
         </div>
         <!-- section row even --> 
         
