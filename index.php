@@ -74,6 +74,7 @@ if ( $config->userid > -1 ) {
 	eventOrderFinished();
 	eventOrderRestart();
 	
+	
 
 	$page = preg_replace( "/\[\%loginName\%\]/", $config->login, $page );
 	$page = preg_replace( "/\[\%money\%\]/", countMoney(), $page );
@@ -115,7 +116,7 @@ switch ( getOrderState() ) {
 		$page = removeSection( "<!-- order deadline -->", $page );
 		$page = removeSection( "<!-- order arrival info -->", $page );
 		$page = removeSection( "<!-- order arrival control -->", $page );
-		$page = removeSection( "<!-- favorites items section row -->", $page );
+		$page = removeSection( "<!-- favourites items section row -->", $page );
 		#----------------- create supplier list ------------------------------------
 		$page = preg_replace( "/\[\%supplierList\%\]/", getSupplierList(), $page );
 
@@ -222,7 +223,9 @@ switch ( getOrderState() ) {
 		
 		break;
 }
+eventButtonPrintOrder();
 echo $page; # print page to browser
+
 
 # javascript section here, dynamical content etc..
 showMessages();

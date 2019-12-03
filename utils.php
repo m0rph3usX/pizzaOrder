@@ -14,6 +14,9 @@ class ConfigStruct {
 	public $messageList = array();
 	public $messageCount;
 	public $favouriteCount;
+	public $printDataUsers;
+	public $printDataSum;
+	
 }
 
 session_start();
@@ -763,6 +766,66 @@ function eventCreateResetCode() {
 	}
 }
 
+function eventButtonPrintOrder() {
+	global $config;
+
+	if ( isset( $_POST[ 'eventButtonPrintOrder' ] ) ) {
+		//$printData = $_POST[ 'printData' ];
+		$sSum   = toPrinterFormat(number_format($config->orderSum, 2),6);
+	
+		
+		$printData = "----------------;" .
+					 "PIZZABESTELLUNG ;" .
+					 "----------------;" .
+					 " # | Nr | Preis ;" .
+					 "----------------;" .
+			   $config->printDataSum     .
+					 "----------------;" .
+			  		 "  SUMME = ".$sSum.";" .
+					 "----------------;" .
+					 "Nr | Besteller  ;" .
+					 "----------------;" .
+			   $config->printDataUsers   .
+					 "----------------;";
+
+		//echo $printData;
+		if (!function_exists("ssh2_connect")) die("function ssh2_connect doesn't exist");
+			
+			// log in at server on port
+			if (!($con = ssh2_connect("server1.example.com", 22))) {
+				echo "fail: unable to establish connection\n";
+			} else {
+				// try to authenticate with username root, password secretpassword
+				if (!ssh2_auth_password($con, "pi", "raspberry")) {
+					echo "fail: unable to authenticate\n";
+				} else {
+					// allright, we're in!
+					echo "okay: logged in...\n";
+
+					// create a shell
+					if (!($shell = ssh2_shell($con, 'vt102', null, 80, 40, SSH2_TERM_UNIT_CHARS))) {
+						echo "fail: unable to establish shell\n";
+					} else {
+						stream_set_blocking($shell, true);
+						// send a command
+						fwrite($shell, "main.py '". $printData . "'");
+						sleep(1);
+
+						// & collect returning data
+						//$data = "";
+						//while ($buf = fread($shell,4096)) {
+						//	$data .= $buf;
+						//}
+						fclose($shell);
+					}
+				}
+			}
+
+		addMessage('Druckauftrag gesendet');
+		//header("Location: setup.php");	
+	}
+}
+
 function eventDeleteResetCode() {
 	global $config;
 
@@ -1243,6 +1306,13 @@ function getOrderTimestampStart() {
 	return $timeStampStarted;
 }
 
+function toPrinterFormat($input, $length) {
+	while(strlen($input) < $length){
+		$input = " " . $input;
+	}
+	return $input;
+}
+
 function createIncomingOrdersTable( $page ) {
 	global $config;
 
@@ -1284,6 +1354,7 @@ function createIncomingOrdersTable( $page ) {
 		public $count;
 		public $name;
 		public $comment;
+		public $price;
 	}
 
 	$nrList = array();
@@ -1305,6 +1376,9 @@ function createIncomingOrdersTable( $page ) {
 	$moneyVirtual = 0;
 	$moneyReal = 0;
 
+	$config->printDataUsers  = "";
+	$config->printDataSum    = "";
+	
 	foreach ( $config->db->query( $sql ) as $row ) {
 		$orderCounter = $orderCounter + 1;
 		$price = doubleval( str_replace( ',', '.', $row[ 'price' ] ) );
@@ -1331,7 +1405,8 @@ function createIncomingOrdersTable( $page ) {
 				$nrObject->nr = $supplierCardNr;
 				$nrObject->count = 1;
 				$nrObject->comment = $comment;
-				$nrObject->name = $row[ 'name' ];;
+				$nrObject->name = $row[ 'name' ];
+				$nrObject->price = $price;
 				array_push( $nrList, $nrObject );
 			}
 		}
@@ -1426,8 +1501,11 @@ function createIncomingOrdersTable( $page ) {
 								 </form>";
 			}
 		}
-
-		$newRow = preg_replace( "/\[\%comment\%\]/", $comment, $newRow );
+		
+		$supplierCardNr = toPrinterFormat($supplierCardNr,3);
+		$config->printDataUsers = $config->printDataUsers . $supplierCardNr . " " . $row[ 'login' ].";";
+		
+		$newRow = preg_replace( "/\[\%comment\%\]/", $comment, $newRow );	
 		$newRow = preg_replace( "/\[\%price\%\]/", number_format( $row[ 'price' ], 2 ) . " €", $newRow );
 
 		$table = $table . $newRow;
@@ -1472,11 +1550,18 @@ function createIncomingOrdersTable( $page ) {
 				} else {
 					$newRow = $newRowOdd;
 				}
-				$tableRow = preg_replace( "/\[\%finalCount\%\]/", $nrList[ $i ]->count, $newRow );
-				$tableRow = preg_replace( "/\[\%finalNumber\%\]/", $nrList[ $i ]->nr, $tableRow );
-				$tableRow = preg_replace( "/\[\%finalName\%\]/", $nrList[ $i ]->name, $tableRow );
+				$tableRow = preg_replace( "/\[\%finalCount\%\]/"  , $nrList[ $i ]->count, $newRow );
+				$tableRow = preg_replace( "/\[\%finalNumber\%\]/" , $nrList[ $i ]->nr, $tableRow );
+				$tableRow = preg_replace( "/\[\%finalName\%\]/"   , $nrList[ $i ]->name, $tableRow );
 				$tableRow = preg_replace( "/\[\%finalComment\%\]/", $nrList[ $i ]->comment, $tableRow );
 
+				$sCount = toPrinterFormat($nrList[ $i ]->count, 3);				
+				$sNr    = toPrinterFormat($nrList[ $i ]->nr   , 3);
+				$sPrice = toPrinterFormat(number_format($nrList[ $i ]->price,2), 6);
+							
+				
+				$config->printDataSum = $config->printDataSum . $sCount . "  " . $sNr . "  " . $sPrice .";";
+				
 				$finalTable = $finalTable . $tableRow;
 			}
 		}
