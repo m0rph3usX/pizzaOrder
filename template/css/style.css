@@ -317,7 +317,7 @@ div.tableRowOdd {
 	border: 1px;
 	margin: 0px;
 	color: #FFFFFF;
-	vertical-align: text-top;
+	vertical-align: middle;
 }
 div.pollQuery {
 	border: 1px;
@@ -473,6 +473,7 @@ span.sumUpOrderItem {
 	border: 0px;
 	margin: 0px 0px 0px 24px;
 	text-align: left;
+	vertical-align: middle;
 }
 span.sumUpOrderItemCount {
 	display: inline-block;

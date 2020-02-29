@@ -52,7 +52,7 @@ if ( !dbInitialized() ) {
 		eventButtonSetCurrentOrderer();
 		eventCreateResetCode();
 		eventDeleteResetCode();
-
+		eventEnableUser();
 		$page = adminSetCurrentOrderer( $page );
 		$page = adminShowUserData( $page );
 

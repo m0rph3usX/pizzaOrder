@@ -509,6 +509,19 @@ function updateDatabaseToV0_8_5() {
 }
 
 
+function updateDatabaseToV0_8_6() {
+
+	if ( !isset( $database ) ) {
+		include 'config.php';
+	}
+
+	$db = new PDO( 'sqlite:' . $database );
+	$db->exec( "ALTER TABLE user ADD enable integer" );
+	$db->exec( "UPDATE user SET enable = 1;" );
+	
+	$db->exec( "UPDATE cntrl SET value = 0.86 WHERE type = 'version';" );
+}
+
 function dbInitialized() {
 	global $config;
 
@@ -570,6 +583,12 @@ function updateDatabase() {
 			updateDatabaseToV0_8_5();
 			$version = getVersion();
 		}
+		
+		if ( $version == 0.85 ) {
+			updateDatabaseToV0_8_6();
+			$version = getVersion();
+		}
+		
 	}
 
 }
@@ -671,6 +690,28 @@ function getCurrentOrderId() {
 	return $orderId;
 }
 
+
+
+function eventEnableUser(){
+	global $config;
+
+	if ( isset( $_POST[ 'eventEnableUser' ] ) ) {
+		
+		$loginId   = $_POST[ 'userId' ];
+		$isAdmin   = $_POST[ 'isAdmin' ];
+		$isEnabled = $_POST[ 'enable' ];
+		
+		$sql = "UPDATE user SET enable = " . $isEnabled . " WHERE ( id = " . $loginId . " )";		
+		$config->db->exec( $sql );
+
+		header( "Location: setup.php" );		
+		//$sql = "UPDATE orders SET user_ID = " . $newOrdererId . " WHERE ( id = " . $config->orderid . " )";
+		//$config->db->exec( $sql );
+
+		//header("Location: setup.php");	
+	}
+	
+}
 
 
 function eventButtonSetCurrentOrderer() {
@@ -1623,7 +1664,7 @@ function isBankTransactor() {
 function addUserIdLogin( $item , $filtered) {
 	global $config;
 
-	$sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
+	$sql = "SELECT id, login FROM user WHERE enable = 1 ORDER BY UPPER(login) ASC";
 
 	$comboboxItems = "";
 	foreach ( $config->db->query( $sql ) as $row ) {
@@ -1654,7 +1695,7 @@ function countMoney() {
 function adminSetCurrentOrderer( $page ) {
 	global $config;
 
-	$sql = "SELECT id, login FROM user ORDER BY UPPER(login) ASC";
+	$sql = "SELECT id, login FROM user WHERE enable = 1 ORDER BY UPPER(login) ASC";
 
 	$defaultItem = extractSection( "<!-- admin current orderer item -->", $page );
 
@@ -1689,7 +1730,7 @@ function adminSetCurrentOrderer( $page ) {
 function adminShowUserData( $page ) {
 	global $config;
 
-	$sql = "SELECT id, login, created_at, isAdmin, isBankTransactor, resetcode FROM user ORDER BY UPPER(login) ASC";
+	$sql = "SELECT id, login, created_at, isAdmin, isBankTransactor, resetcode, enable FROM user ORDER BY UPPER(login) ASC";
 
 	$rowOdd = extractSection( "<!-- admin user section row odd -->", $page );
 	$rowEven = extractSection( "<!-- admin user section row even -->", $page );
@@ -1709,6 +1750,7 @@ function adminShowUserData( $page ) {
 
 
 		$resetcode = $row[ 'resetcode' ];
+		$enable    = $row[ 'enable' ];
 
 		$newRow = preg_replace( "/\[\%userLogin\%\]/", $row[ 'login' ], $newRow );
 
@@ -1728,10 +1770,6 @@ function adminShowUserData( $page ) {
 			$newRow = preg_replace( "/\[\%checkboxAdminrights\%\]/", $value, $newRow );
 		}
 
-
-
-
-
 		if ( $resetcode == null ) {
 			$resetcode = "<input type='submit' name='eventCreateResetCode' value='GENERATE'/>
 						  <input type='hidden'  value='" . $row[ 'id' ] . "' name='userId'/>";
@@ -1740,11 +1778,22 @@ function adminShowUserData( $page ) {
 						  <input type='submit' name='eventDeleteResetCode' value='X'/>
 						  <input type='hidden'  value='" . $row[ 'id' ] . "' name='userId'/>";
 		}
-
+		
 		$newRow = preg_replace( "/\[\%resetcode\%\]/", $resetcode, $newRow );
-
-
-
+		
+		if ( $enable == 1 ) {
+			$enableRow = "<input type='submit' name='eventEnableUser' value='DISABLE'/>
+						  <input type='hidden'  value='" . $row[ 'id' ] . "' name='userId'/>
+						  <input type='hidden'  value='0' name='enable'/>";
+		} else {
+			$enableRow = "<input type='submit' name='eventEnableUser' value='ENABLE'/>
+						  <input type='hidden'  value='" . $row[ 'id' ] . "' name='userId'/>
+						  <input type='hidden'  value='1' name='enable'/>";
+		}
+		
+		$newRow = preg_replace( "/\[\%userEnable\%\]/", $enableRow, $newRow );
+		
+		
 		if ( intval( $row[ 'isBankTransactor' ] ) == 1 ) {
 			$value = "TRUE";
 			$setValue = 1;
