@@ -522,6 +522,18 @@ function updateDatabaseToV0_8_6() {
 	$db->exec( "UPDATE cntrl SET value = 0.86 WHERE type = 'version';" );
 }
 
+function updateDatabaseToV0_8_7(){
+	if ( !isset( $database ) ) {
+		include 'config.php';
+	}
+
+	$db = new PDO( 'sqlite:' . $database );
+	$db->exec( "ALTER TABLE supplierCard ADD enable integer" );
+	$db->exec( "UPDATE supplierCard SET enable = 1;" );
+	$db->exec( "UPDATE cntrl SET value = 0.87 WHERE type = 'version';" );
+	
+}
+	
 function dbInitialized() {
 	global $config;
 
@@ -586,6 +598,11 @@ function updateDatabase() {
 		
 		if ( $version == 0.85 ) {
 			updateDatabaseToV0_8_6();
+			$version = getVersion();
+		}
+		
+		if ( $version == 0.86 ) {
+			updateDatabaseToV0_8_7();
 			$version = getVersion();
 		}
 		
@@ -2178,17 +2195,34 @@ function eventSaveSupplierCfgList() {
 		//$order_ID = $_POST[ 'order_ID' ];
 
 		$counter = 0;
+		
+		//var_dump($_POST);
 		//echo $_POST[ 'input_nr'][1];
 		while(1){
 			if(isset( $_POST[ 'input_nr'][$counter]) ){
 
-				$sql = "UPDATE supplierCard
-						SET nr   		= '" . $_POST[ 'input_nr'		  ][$counter] ."',
-						    name 		= '" . $_POST[ 'input_name'    	  ][$counter] ."',
-							ingredients = '" . $_POST[ 'input_ingredients'][$counter] ."',
-							price	    = '" . $_POST[ 'input_price'      ][$counter] ."' 
-						WHERE id = ".$_POST[ 'db_id'][$counter].";";
 				
+				//$sql = "UPDATE supplierCard
+				//		SET nr   		= '" . $_POST[ 'input_nr'		  ][$counter] ."',
+				//		    name 		= '" . $_POST[ 'input_name'    	  ][$counter] ."',
+				//			ingredients = '" . $_POST[ 'input_ingredients'][$counter] ."',
+				//			price	    = '" . $_POST[ 'input_price'      ][$counter] ."' 
+				//		WHERE id = ".$_POST[ 'db_id'][$counter].";";
+				
+				$itemAcitve = 0;
+				if(isset( $_POST[ 'input_itemEnable'][$counter])){
+					if($_POST[ 'input_itemEnable'][$counter] == "on"){
+					$itemAcitve = 1;
+					}	
+				}
+		
+				$sql = "UPDATE supplierCard
+						SET nr   		= '" . $_POST[ 'input_nr'		   ][$counter] ."',
+							enable 		= '" . $itemAcitve	 ."',
+						    name 		= '" . $_POST[ 'input_name'    	   ][$counter] ."',
+							ingredients = '" . $_POST[ 'input_ingredients' ][$counter] ."',
+							price	    = '" . $_POST[ 'input_price'       ][$counter] ."' 
+						WHERE id = ".$_POST[ 'db_id'][$counter].";";
 				$config->db->exec($sql);
 								
 				
@@ -2205,7 +2239,7 @@ function eventSaveSupplierCfgList() {
 		//var_dump($_POST);
 		//var_dump($_POST["input_nr"]);
 		//header( "Location: supplierCfg.php");
-		header( "Location: supplierCfg.php?id=" . $config->supplierId);
+		//header( "Location: supplierCfg.php?id=" . $config->supplierId);
 	}
 }
 
@@ -2248,6 +2282,49 @@ function eventSaveSupplierCfg() {
 			}
 			$counter = $counter +1;
 		}
+		
+		//for($idx=0; idx)
+		//echo $_POST['input_nr[1]'];
+		//var_dump($_POST);
+		//var_dump($_POST["input_nr"]);
+		//header( "Location: supplierCfg.php");
+		//header( "Location: supplierCfg.php?id=".$supplierID_item);
+		//header( "Location: supplierCfg.php?id=".$supplierID_item);
+	}
+}
+
+
+
+function eventAddNewSupplierItem() {
+	global $config;
+
+	if ( isset( $_POST[ 'eventButtonAddNewSupplierItem' ] ) ) {
+		//$order_ID = $_POST[ 'order_ID' ];
+		
+		$supplierID_item = $_POST[ 'supplierIdItem' ];
+		echo $supplierID_item;
+		
+		$sql = "INSERT INTO `supplierCard` (supplier_ID, nr, name, ingredients,price) VALUES (".$supplierID_item.",0,'new','-',0)";
+		$config->db->exec($sql);
+		
+		//for($idx=0; idx)
+		//echo $_POST['input_nr[1]'];
+		//var_dump($_POST);
+		//var_dump($_POST["input_nr"]);
+		header( "Location: supplierCfg.php?id=".$supplierID_item);
+	}
+}
+
+function eventAddNewSupplier() {
+	global $config;
+
+	if ( isset( $_POST[ 'eventButtonAddNewSupplier' ] ) ) {
+		//$order_ID = $_POST[ 'order_ID' ];
+	$config->db->exec( "INSERT INTO `cntrl` (type, value) VALUES (
+					  'regIsAllowed',1)" );
+		
+		$sql = "INSERT INTO `supplier` (name, active) VALUES ('new', 1)";
+		$config->db->exec($sql);
 		
 		//for($idx=0; idx)
 		//echo $_POST['input_nr[1]'];
@@ -2521,7 +2598,8 @@ function showSuppliersCfg($page){
 			   supplierCard.name AS name1, 
 			   supplierCard.ingredients, 
 			   supplierCard.price, 
-			   supplier.id AS id1
+			   supplier.id AS id1,
+			   supplierCard.enable
 		FROM   supplier
 			   INNER JOIN supplierCard ON supplier.id = supplierCard.supplier_ID
 		WHERE  supplier.id = " . $config->supplierId.";";
@@ -2538,11 +2616,15 @@ function showSuppliersCfg($page){
 			$newRow = $rowOdd;
 		}
 		
-		$button = "<input value='>> Details' type='submit' name='eventButtonHistoryDetails'> " .
-		"<input type='hidden' value=" . $row[ 'id' ] . "    name='order_ID'/>";			
-			
-		$newRow = preg_replace( "/\[\%db_id\%\]/"   		 , $row[ 'id' ]			, $newRow );
-		$newRow = preg_replace( "/\[\%input_nr\%\]/"	     , $row[ 'nr' ]			, $newRow );
+		if($row['enable'] == 1){
+			$newRow = preg_replace( "/\[\%checked\%\]/"	     , "checked"   	, $newRow );	
+		}
+		else{
+			$newRow = preg_replace( "/\[\%checked\%\]/"	     , ""   	, $newRow );
+		}
+				
+		$newRow = preg_replace( "/\[\%db_id\%\]/"   		 , $row[ 'id' ]			, $newRow );		
+		$newRow = preg_replace( "/\[\%input_nr\%\]/"	     , $row[ 'nr' ]			, $newRow );		
 		$newRow = preg_replace( "/\[\%input_name\%\]/"		 , $row[ 'name1' ]		, $newRow );
 		$newRow = preg_replace( "/\[\%input_ingredients\%\]/", $row[ 'ingredients' ], $newRow );
 		$newRow = preg_replace( "/\[\%input_price\%\]/"		 , $row[ 'price' ]		, $newRow );

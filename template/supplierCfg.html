@@ -49,6 +49,10 @@
 			<!-- section supplier row -->
 			<button type='submit' class='btnSaveSupplierCfg' name='eventButtonSaveSupplierCfg'>Speichern</button>
 		</form>
+	  <form method='post'>
+		  <button type='submit' class='btnAddNewSupplier' name='eventButtonAddNewSupplier'>neuer Lieferant anlegen</button>	
+	  </form> 
+		
     </div>
   </section>
 	  
@@ -61,6 +65,10 @@
   <section>
 	  
   </section>
+  <form method='post'>
+	  <button type='submit' class='btnAddNewSupplier' name='eventButtonAddNewSupplierItem'>neuer Eintrag anlegen</button>
+	  <input type="hidden" name="supplierIdItem" value= "[%newSupplierIdItem%]">
+  </form> 
   <section>
       <div class="supplierCard">
         <div class="tableHeader">
@@ -74,8 +82,8 @@
         <!-- section row --> 
         <!-- section row odd -->
 	  <div class="tableRowOdd">
-		  	<input type="hidden" name="db_id[[%row_nr%]]" value= "[%db_id%]">
-			<span class="supplierCfgActive"></span>
+		  	<input type="hidden" name="db_id[[%row_nr%]]" value= "[%db_id%]">		 
+			<span class="supplierCfgActive"><input type="checkbox" name="input_itemEnable[[%row_nr%]]"    [%checked%]   ></span>
 			<span class="supplierCfgNr"><input type="number" name="input_nr[[%row_nr%]]" value= "[%input_nr%]">
 		    </span>
 			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]">		    
@@ -87,7 +95,8 @@
         <!-- section row even -->
         <div class="tableRowEven">
 			<input type="hidden" name="db_id[[%row_nr%]]" value= "[%db_id%]">
-			<span class="supplierCfgActive"></span>
+			<span class="supplierCfgActive"><input type="checkbox" name="input_itemEnable[[%row_nr%]]"      [%checked%] >
+			</span>
 			<span class="supplierCfgNr"><input type="number" name="input_nr[[%row_nr%]]" value= "[%input_nr%]"></span>
 			<span class="supplierCfgName"><input type="text" name="input_name[[%row_nr%]]" value= "[%input_name%]"></span>
 			<span class="supplierCfgIngredients"><input type="text" name="input_ingredients[[%row_nr%]]" value= "[%input_ingredients%]"></span>
@@ -96,8 +105,10 @@
         <!-- section row even --> 
         
         <!-- section row --> 
-		<button type='submit' class='btnSaveSupplierCfgList' name='eventButtonSaveSupplierCfgList'>Speichern</button>
+		<button type='submit' class='btnSaveSupplierCfgList' name='eventButtonSaveSupplierCfgList'>Speichern</button>			  
 	  </form> 
+			  
+		 
       </div>
   </section>
   <!-- statistic supplier section -->

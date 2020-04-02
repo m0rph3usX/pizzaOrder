@@ -64,11 +64,14 @@ $page = showSuppliersCfg($page);
 
 	
 $page = preg_replace( "/\[\%version\%\]/", getVersion(), $page );
+$page = preg_replace( "/\[\%newSupplierIdItem\%\]/", $config->supplierId, $page );
+
 
 
 eventSaveSupplierCfgList();
 eventSaveSupplierCfg();
-
+eventAddNewSupplier();
+eventAddNewSupplierItem();
 echo $page;
 
 ?>
