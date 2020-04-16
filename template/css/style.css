@@ -740,6 +740,16 @@ input[type=button], input[type=submit], input[type=reset] {
 	border: none;
 	background-size: cover;
 }
+.btnNotEnoughMoney {
+	height: 32px;
+	width: 32px;
+	background-image: url('../images/no_money.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
+	vertical-align: middle;
+}
 .btnBuy {
 	height: 32px;
 	width: 32px;
@@ -749,6 +759,15 @@ input[type=button], input[type=submit], input[type=reset] {
 	border: none;
 	background-size: cover;
 	vertical-align: middle;
+}
+.btnNotEnoughMoney:hover {
+	height: 35px;
+	width: 35px;
+	background-image: url('../images/no_money.svg');
+	background-repeat: no-repeat;
+	background-color: transparent;
+	border: none;
+	background-size: cover;
 }
 .btnBuy:hover {
 	height: 35px;

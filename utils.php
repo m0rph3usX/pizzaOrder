@@ -533,6 +533,19 @@ function updateDatabaseToV0_8_7(){
 	$db->exec( "UPDATE cntrl SET value = 0.87 WHERE type = 'version';" );
 	
 }
+
+function updateDatabaseToV0_8_7_1(){
+	if ( !isset( $database ) ) {
+		include 'config.php';
+	}
+
+	$db = new PDO( 'sqlite:' . $database );
+	$db->exec( "ALTER TABLE user ADD limitedOrder integer" );
+	$db->exec( "UPDATE user SET limitedOrder = 1;" );
+	$db->exec( "UPDATE cntrl SET value = 0.871 WHERE type = 'version';" );
+	
+}
+
 	
 function dbInitialized() {
 	global $config;
@@ -606,6 +619,11 @@ function updateDatabase() {
 			$version = getVersion();
 		}
 		
+		if ( $version == 0.87 ) {
+			updateDatabaseToV0_8_7_1();
+			$version = getVersion();
+		}
+				
 	}
 
 }
@@ -989,7 +1007,7 @@ function eventOrderAdd() {
 			$sql = "SELECT * FROM orderDetail WHERE user_ID = " . $config->userid;
 			
 			$supplierID = getCurrentSupplierId();
-			
+				
 			$sql = "SELECT price FROM supplierCard WHERE id = " . $supplierCard_ID . " AND supplier_ID = ". $supplierID;
 			
 			$price   = 0;
@@ -997,14 +1015,24 @@ function eventOrderAdd() {
 				$price = $row[ 'price']; 
 			}
 			
-			if($price > 0){			
+			if($price > 0){
+					
 				$config->db->exec( "INSERT INTO orderDetail 
 							(order_ID, supplierCard_ID, supplier_ID, user_ID, price)                         
 						   VALUES ( " . $config->orderid . "," . $supplierCard_ID . "," . $supplierID . " , " . $config->userid . "," . $price . ")" );
 
+				$sql = "SELECT MAX(Id) FROM orderDetail";
+			
+				$orderDetail_PK   = 0;
+				foreach ( $config->db->query( $sql ) as $row ) {
+					$orderDetail_PK = $row[ 'MAX(Id)']; 
+				}
+				
+				
+				prepaidPay($orderDetail_PK);
 				addMessage( "Bestellung hinzugefügt" );
 				usleep(500000);
-				header( "Location: index.php" );
+				//header( "Location: index.php" );
 			}
 			else{
 				addMessage( "Ungültige Bestellung!" );
@@ -1175,6 +1203,39 @@ function eventVirtualPay() {
 }
 
 
+function prepaidPay($orderDetail_id) {
+	global $config;
+
+
+	$sql = "SELECT price FROM orderDetail WHERE id = " . $orderDetail_id;
+		
+		
+	$price = 0;
+
+	foreach ( $config->db->query( $sql ) as $row ) {
+		$price = $row[ 'price']; 
+	}
+		
+
+	if($price > 0){
+		$sql = "INSERT INTO bank (`user_id_transactor`,  `user_id_customer`,     `amount`, `timeStamp`, `orderDetail_id`)
+				VALUES 		 (" . $config->userid . " , " . $config->userid . " , " . - $price . "," . time() . "," . $orderDetail_id . ")";
+		$config->db->exec( $sql );
+
+		$sql = "UPDATE orderDetail SET isPaid = 2 WHERE id = " . $orderDetail_id;
+		$config->db->exec( $sql );
+
+		addMessage( "Bestellung virtuell bezahlt" );
+		usleep(500000);
+		header( "Location: index.php" );
+	}
+	else{
+		addMessage( "ungültiger Bezahlvorgang!" );
+	}
+
+}
+
+
 function eventButtonStartNewOrder() {
 	global $config;
 
@@ -1288,7 +1349,7 @@ function createOrderTable( $page ) {
 		$supplierName = $row[ 'name' ];
 	}
 
-	$sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " . $supplier_ID;
+	$sql = "SELECT id, nr, name, ingredients, price FROM supplierCard WHERE supplier_ID = " . $supplier_ID . " AND enable = 1";
 
 	$templateRowOdd = extractSection( "<!-- order items section row odd -->", $page );
 	$templateRowEven = extractSection( "<!-- order items section row even -->", $page );
@@ -1298,8 +1359,16 @@ function createOrderTable( $page ) {
 
 	foreach ( $config->db->query( $sql ) as $row ) {
 		if ( $config->userid > -1 ) {
-			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' onclick='playAudio(`order.wav`)'></button>								   					   
+			
+			if($row[ 'price' ] <= countMoney()) {
+				$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' 								onclick='playAudio(`order.wav`)'></button>				   
 					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>";
+			}
+			else{
+				$button = "<button type='button' title='ungenügend Guthaben' class='btnNotEnoughMoney' name='' 								onclick='playAudio(`noMoney.wav`)'></button>";				
+				
+			}
+		
 		} else {
 			$button = "";
 		}
@@ -2237,7 +2306,7 @@ function eventSaveSupplierCfgList() {
 		//var_dump($_POST);
 		//var_dump($_POST["input_nr"]);
 		//header( "Location: supplierCfg.php");
-		//header( "Location: supplierCfg.php?id=" . $config->supplierId);
+		header( "Location: supplierCfg.php?id=" . $config->supplierId);
 	}
 }
 
@@ -2300,10 +2369,12 @@ function eventAddNewSupplierItem() {
 		//$order_ID = $_POST[ 'order_ID' ];
 		
 		$supplierID_item = $_POST[ 'supplierIdItem' ];
-		echo $supplierID_item;
+		//echo $supplierID_item;
 		
 		$sql = "INSERT INTO `supplierCard` (supplier_ID, nr, name, ingredients,price) VALUES (".$supplierID_item.",0,'new','-',0)";
 		$config->db->exec($sql);
+		
+		echo $sql;
 		
 		//for($idx=0; idx)
 		//echo $_POST['input_nr[1]'];
@@ -2600,9 +2671,9 @@ function showSuppliersCfg($page){
 			   supplierCard.enable
 		FROM   supplier
 			   INNER JOIN supplierCard ON supplier.id = supplierCard.supplier_ID
-		WHERE  supplier.id = " . $config->supplierId.";";
+		WHERE  supplier.id = " . $config->supplierId;
 	
-	
+		
 	$table = "";
 
 	$counter = 0;
@@ -2656,7 +2727,7 @@ function getFavourites($page){
 				INNER JOIN orders ON orderDetail.order_ID = orders.id
 				INNER JOIN supplierCard ON main.orderDetail.supplierCard_ID = supplierCard.id
 			WHERE  orderDetail.user_ID = ".$config->userid ."
-			AND orderDetail.supplier_ID = ". getCurrentSupplierId() ."
+			AND orderDetail.supplier_ID = ". getCurrentSupplierId() ." AND enable = 1 
 			GROUP  BY orderDetail.supplierCard_ID
 			ORDER  BY OrderCount DESC;";
 	
@@ -2670,9 +2741,13 @@ function getFavourites($page){
 	if ( $config->userid > -1 ){
 	foreach ( $config->db->query( $sql ) as $row ) {
 		
-		if ( $config->userid > -1 ) {
-			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' onclick='playAudio(`order.wav`)'></button>								   					   
+		if (( $config->userid > -1 ) && ($row[ 'price' ] <= countMoney())) {
+			$button = "<button type='submit' class='btnBuy' name='eventButtonAddOrder' 								onclick='playAudio(`order.wav`)'></button>								   					   
 					   <input type='hidden' value=" . $row[ 'id' ] . "    name='supplierCard_ID'/>";
+		}
+		else{
+			$button = "<button type='button' title='ungenügend Guthaben' class='btnNotEnoughMoney' name='' 								onclick='playAudio(`noMoney.wav`)'></button>";	
+			
 		}
 
 		if ( ( $rowCount % 2 ) > 0 ) {
