@@ -848,32 +848,30 @@ function eventButtonPrintOrder() {
 
 		//echo $printData;
 		if (!function_exists("ssh2_connect")) die("function ssh2_connect doesn't exist");
-			
+
+			include 'params.php';
+
 			// log in at server on port
-			if (!($con = ssh2_connect("server1.example.com", 22))) {
+			if (!($con = ssh2_connect("$con_ip", "$con_port"))) {
 				echo "fail: unable to establish connection\n";
 			} else {
 				// try to authenticate with username root, password secretpassword
-				if (!ssh2_auth_password($con, "pi", "raspberry")) {
+				if (!ssh2_auth_password($con, "$con_user", "$con_pass")) {
 					echo "fail: unable to authenticate\n";
 				} else {
 					// allright, we're in!
 					echo "okay: logged in...\n";
 
 					// create a shell
-					if (!($shell = ssh2_shell($con, 'vt102', null, 80, 40, SSH2_TERM_UNIT_CHARS))) {
+					if (!($shell = ssh2_shell($con, 'xterm-256color', null, 80, 40, SSH2_TERM_UNIT_CHARS))) {
 						echo "fail: unable to establish shell\n";
 					} else {
 						stream_set_blocking($shell, true);
 						// send a command
-						fwrite($shell, "main.py '". $printData . "'");
+						$stream = ssh2_exec($con, "bash /home/pi/print.sh '$printData' ");
+						//fwrite($shell, "main.py '". $printData . "'");
 						sleep(1);
 
-						// & collect returning data
-						//$data = "";
-						//while ($buf = fread($shell,4096)) {
-						//	$data .= $buf;
-						//}
 						fclose($shell);
 					}
 				}
